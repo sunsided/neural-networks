@@ -53,6 +53,9 @@ namespace Neural.Perceptron
         private PerceptronNetwork Create<T>([NotNull] T layerConfigurations)
             where T : IEnumerable<LayerConfiguration>
         {
+            // Prepare a linked list of perceptron layers
+            var layerList = new LinkedList<Layer>();
+
             // This value encodes the number of neurons in the previous layer
             // that act as an input to each perceptron within this layer.
             // For the input layer, each input is directly assigned; 
@@ -67,9 +70,12 @@ namespace Neural.Perceptron
             foreach (var layerConfiguration in layerConfigurations)
             {
                 var layerNeurons = layerConfiguration.NeuronCount;
-                var weightMatrix = Matrix<float>.Build.Random(layerNeurons, inputNeurons);
-
                 var activation = layerConfiguration.ActivationFunction;
+
+                var weightMatrix = Matrix<float>.Build.Random(layerNeurons, inputNeurons);
+                
+                var layer = new Layer(weightMatrix, activation);
+                layerList.AddLast(layer);
 
                 // We now store the number of neurons in this layer 
                 // as the number of input neurons of the next layer.
