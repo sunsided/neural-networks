@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using JetBrains.Annotations;
@@ -76,15 +77,16 @@ namespace Neural.Perceptron
         [Pure, NotNull]
         private Vector<float> CalculateInternal([NotNull] Vector<float> inputs)
         {
-            return _layers.Aggregate(inputs, (activations, layer) => layer.Feedforward(activations));
+            return _layers.Aggregate(inputs, (activations, layer) => layer.Feedforward(activations).Activation);
         }
-
+        
         /// <summary>
         /// Trains the network using the given <paramref name="examples"/>.
         /// </summary>
         /// <param name="examples">The examples.</param>
         public void Train([NotNull] IEnumerable<TrainingExample> examples)
         {
+            CalculateCost(examples);
         }
 
         /// <summary>
@@ -94,20 +96,61 @@ namespace Neural.Perceptron
         /// <returns>System.Single.</returns>
         private float CalculateCost([NotNull] IEnumerable<TrainingExample> examples)
         {
-            var count = 0;
+            var layers = _layers;
+            var layerCount = layers.Count;
+
+            var exampleCount = 0;
             foreach (var example in examples)
             {
-                ++count;
+                ++exampleCount;
 
-                // run a forward propagation step and determine the error
                 var inputVector = Vector<float>.Build.SparseOfEnumerable(example.Inputs);
                 var outputVector = Vector<float>.Build.SparseOfEnumerable(example.Outputs);
 
-                var estimatedOutputs = CalculateInternal(inputVector);
-                var error = estimatedOutputs - outputVector;
+                // run a forward propagation step and keep track of all intermediate reults
+                var feedforwardResults = new LinkedList<Layer.FeedforwardResult>();
+                var layerInput = inputVector;
+                foreach (var layer in layers)
+                {
+                    // perform the feedforward iteration
+                    var result = layer.Feedforward(layerInput);
+                    layerInput = result.Activation;
 
-                // run the backward propagation step
+                    // store the intermediate result
+                    feedforwardResults.AddLast(result);
+                }
 
+                Debug.Assert(layers.Count == feedforwardResults.Count, "layers.Count == feedforwardResults.Count");
+
+                // calculate the error of the network output regarding the wanted training output
+                var networkOutput = feedforwardResults.Last.Value.Activation;
+                var error = networkOutput - outputVector;
+
+                // run the backward propagation steps
+                // we start with the last node and iterate until we reach the first
+                // hidden layer. The input layer is left out because there is no gradient
+                // to correct, as inputs are what they are.
+                var layerNodeOfCurrentLayer = layers.Last;
+                var resultNodeOfPreviousLayer = feedforwardResults.Last.Previous;
+                for (int layerIndex = 0; layerIndex < layerCount-1; ++layerIndex)
+                {
+                    Debug.Assert(layerNodeOfCurrentLayer != null, "layerNode != null");
+                    Debug.Assert(resultNodeOfPreviousLayer != null, "resultNode != null");
+
+                    // based on the current layer's matrix and the previous layer's
+                    // weighted inputs (not output activations!) we determine the error
+                    // of the previous (!) layer
+                    var z = resultNodeOfPreviousLayer.Value.Z;
+                    var layer = layerNodeOfCurrentLayer.Value;
+                    var previousLayerError = layer.Backpropagate(error, z);
+                    
+                    // set the error for the next recursion
+                    error = previousLayerError;
+
+                    // move to the previous layer
+                    layerNodeOfCurrentLayer = layerNodeOfCurrentLayer.Previous;
+                    resultNodeOfPreviousLayer = resultNodeOfPreviousLayer.Previous;
+                }
             }
 
             throw new NotImplementedException();

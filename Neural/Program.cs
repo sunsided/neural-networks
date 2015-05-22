@@ -40,7 +40,7 @@ namespace Neural
             var factory = new NetworkFactory();
             var network = factory.Create(inputLayer, hiddenLayers, outputLayer);
 
-            // evaluate the network
+            // train the network
             var examples = new[]
                            {
                                new TrainingExample(new[]{ 0F, 1F }, new [] {1F}),
@@ -48,7 +48,10 @@ namespace Neural
                                new TrainingExample(new[]{ 0F, 0F }, new [] {0F}),
                                new TrainingExample(new[]{ 1F, 1F }, new [] {0F})
                            };
-            
+
+            network.Train(examples);
+
+            // evaluate the network
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             Console.WriteLine("Evaluating network for input:");
             Console.WriteLine(String.Join(", ", examples[0].Inputs));
