@@ -15,7 +15,6 @@ namespace Neural.Perceptron
         /// Creates the specified input layer configuration.
         /// </summary>
         /// <param name="inputLayerConfiguration">The input layer configuration.</param>
-        /// <param name="hiddenLayerConfigurations">The hidden layer configurations.</param>
         /// <param name="outputLayerConfiguration">The output layer configuration.</param>
         /// <returns>PerceptronNetwork.</returns>
         public PerceptronNetwork Create(LayerConfiguration inputLayerConfiguration, LayerConfiguration outputLayerConfiguration)
