@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using JetBrains.Annotations;
 
 namespace Neural.perceptron
 {
@@ -14,13 +11,14 @@ namespace Neural.perceptron
         /// <summary>
         /// The activation function
         /// </summary>
+        [NotNull]
         private readonly Activation _activation;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Perceptron"/> class.
         /// </summary>
         /// <param name="activation">The activation function.</param>
-        public Perceptron(Activation activation)
+        public Perceptron([NotNull] Activation activation)
         {
             _activation = activation;
         }

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using JetBrains.Annotations;
 
 namespace Neural.perceptron
 {
@@ -10,6 +11,7 @@ namespace Neural.perceptron
         /// <summary>
         /// The perceptrons in this layer
         /// </summary>
+        [NotNull]
         private readonly ICollection<Perceptron> _perceptrons;
 
         /// <summary>
@@ -25,7 +27,7 @@ namespace Neural.perceptron
         /// Initializes a new instance of the <see cref="Layer"/> class.
         /// </summary>
         /// <param name="perceptrons">The perceptrons.</param>
-        public Layer(ICollection<Perceptron> perceptrons)
+        public Layer([NotNull] ICollection<Perceptron> perceptrons)
         {
             _perceptrons = perceptrons;
         }
