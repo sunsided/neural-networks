@@ -18,5 +18,15 @@ namespace Neural.Activations
         {
             throw new InvalidOperationException("An activation function of the input layer has been used erroneously.");
         }
+
+        /// <summary>
+        /// Always fails with a <see cref="InvalidOperationException"/>.
+        /// </summary>
+        /// <param name="value">The sum of weighted inputs.</param>
+        /// <exception cref="InvalidOperationException">An activation function of the input layer has been used erroneously.</exception>
+        public float Derivative(float value)
+        {
+            throw new InvalidOperationException("An activation function of the input layer has been used erroneously.");            
+        }
     }
 }
