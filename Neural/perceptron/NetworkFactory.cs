@@ -9,7 +9,7 @@ namespace Neural.perceptron
     /// <summary>
     /// Class PerceptronNetworkFactory. This class cannot be inherited.
     /// </summary>
-    sealed class PerceptronNetworkFactory
+    sealed class NetworkFactory
     {
         /// <summary>
         /// Creates the specified input layer configuration.
@@ -69,6 +69,8 @@ namespace Neural.perceptron
             {
                 var layerNeurons = layerConfiguration.NeuronCount;
                 var weightMatrix = Matrix<float>.Build.Random(layerNeurons, inputNeurons);
+
+                var activation = layerConfiguration.ActivationFunction;
 
                 // We now store the number of neurons in this layer 
                 // as the number of input neurons of the next layer.

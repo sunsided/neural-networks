@@ -28,7 +28,7 @@ namespace Neural
             var outputLayer = new LayerConfiguration(1);
 
             // construct a network
-            var factory = new PerceptronNetworkFactory();
+            var factory = new NetworkFactory();
             var network = factory.Create(inputLayer, hiddenLayers, outputLayer);
         }
     }

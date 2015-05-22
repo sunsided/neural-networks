@@ -52,9 +52,9 @@
     <Compile Include="activations\LinearActivation.cs" />
     <Compile Include="activations\IActivation.cs" />
     <Compile Include="perceptron\LayerConfiguration.cs" />
-    <Compile Include="perceptron\PerceptronNetwork.cs" />
+    <Compile Include="perceptron\Network.cs" />
     <Compile Include="perceptron\NetworkConfiguration.cs" />
-    <Compile Include="perceptron\PerceptronNetworkFactory.cs" />
+    <Compile Include="perceptron\NetworkFactory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
