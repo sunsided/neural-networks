@@ -12,7 +12,7 @@ namespace Neural.perceptron
         /// The perceptrons in this layer
         /// </summary>
         [NotNull]
-        private readonly ICollection<Perceptron> _perceptrons;
+        private readonly IReadOnlyCollection<Perceptron> _perceptrons;
 
         /// <summary>
         /// Gets the count.
@@ -27,7 +27,7 @@ namespace Neural.perceptron
         /// Initializes a new instance of the <see cref="Layer"/> class.
         /// </summary>
         /// <param name="perceptrons">The perceptrons.</param>
-        public Layer([NotNull] ICollection<Perceptron> perceptrons)
+        public Layer([NotNull] IReadOnlyCollection<Perceptron> perceptrons)
         {
             _perceptrons = perceptrons;
         }
