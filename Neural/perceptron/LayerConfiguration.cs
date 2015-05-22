@@ -10,6 +10,38 @@ namespace Neural.Perceptron
     struct LayerConfiguration
     {
         /// <summary>
+        /// Creates a configuration for the input layer.
+        /// </summary>
+        /// <param name="neuronCount">The neuron count.</param>
+        /// <returns>LayerConfiguration.</returns>
+        public static LayerConfiguration ForInput(int neuronCount)
+        {
+            return new LayerConfiguration(neuronCount, new InputLayerActivation());
+        }
+
+        /// <summary>
+        /// Creates a configuration for the hidden layer.
+        /// </summary>
+        /// <param name="neuronCount">The neuron count.</param>
+        /// <param name="activation">The activation function.</param>
+        /// <returns>LayerConfiguration.</returns>
+        public static LayerConfiguration ForHidden(int neuronCount, [NotNull] IActivation activation)
+        {
+            return new LayerConfiguration(neuronCount, activation);
+        }
+
+        /// <summary>
+        /// Creates a configuration for the output layer.
+        /// </summary>
+        /// <param name="neuronCount">The neuron count.</param>
+        /// <param name="activation">The activation function.</param>
+        /// <returns>LayerConfiguration.</returns>
+        public static LayerConfiguration ForOutput(int neuronCount, [NotNull] IActivation activation)
+        {
+            return new LayerConfiguration(neuronCount, activation);
+        }
+
+        /// <summary>
         /// Gets the number of neurons in this layer.
         /// </summary>
         /// <value>The neuron count.</value>

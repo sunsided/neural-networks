@@ -1,4 +1,9 @@
-﻿using Neural.Activations;
+﻿using System;
+using System.Diagnostics;
+using System.Globalization;
+using System.Runtime.CompilerServices;
+using MathNet.Numerics.LinearAlgebra;
+using Neural.Activations;
 using Neural.Perceptron;
 
 namespace Neural
@@ -20,20 +25,34 @@ namespace Neural
             var activation = new LinearActivation();
 
             // input layers with two neurons
-            var inputLayer = new LayerConfiguration(2, activation);
+            var inputLayer = LayerConfiguration.ForInput(2);
 
-            // one hidden layer with two neurons
+            // one hidden layer with three neurons
             var hiddenLayers = new[]
                                {
-                                   new LayerConfiguration(2, activation)
+                                   LayerConfiguration.ForHidden(3, activation)
                                };
 
             // output layer with one neuron
-            var outputLayer = new LayerConfiguration(1, activation);
+            var outputLayer = LayerConfiguration.ForOutput(1, activation);
 
             // construct a network
             var factory = new NetworkFactory();
             var network = factory.Create(inputLayer, hiddenLayers, outputLayer);
+
+            // evaluate the network
+            var inputs = Vector<float>.Build.Dense(new[]
+                                                   {
+                                                       0F, 1F
+                                                   });
+            Console.WriteLine("Evaluating network for input:");
+            Console.WriteLine(inputs.ToVectorString("G2", CultureInfo.InvariantCulture));
+
+            var outputs = network.Calculate(inputs);
+            Console.WriteLine("Obtained result from network:");
+            Console.WriteLine(outputs.ToVectorString("G2", CultureInfo.InvariantCulture));
+
+            if (Debugger.IsAttached) Console.ReadKey(true);
         }
     }
 }
