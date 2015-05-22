@@ -56,6 +56,7 @@
     <Compile Include="Perceptron\Network.cs" />
     <Compile Include="Perceptron\NetworkConfiguration.cs" />
     <Compile Include="Perceptron\NetworkFactory.cs" />
+    <Compile Include="Perceptron\TrainingExample.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

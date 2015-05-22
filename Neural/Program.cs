@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Globalization;
+using System.Linq;
 using System.Threading;
 using Neural.Activations;
 using Neural.Perceptron;
@@ -40,16 +41,19 @@ namespace Neural
             var network = factory.Create(inputLayer, hiddenLayers, outputLayer);
 
             // evaluate the network
-            var inputs = new[]
-                         {
-                             0F, 1F
-                         };
+            var examples = new[]
+                           {
+                               new TrainingExample(new[]{ 0F, 1F }, new [] {1F}),
+                               new TrainingExample(new[]{ 1F, 0F }, new [] {1F}),
+                               new TrainingExample(new[]{ 0F, 0F }, new [] {0F}),
+                               new TrainingExample(new[]{ 1F, 1F }, new [] {0F})
+                           };
             
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             Console.WriteLine("Evaluating network for input:");
-            Console.WriteLine(String.Join(", ", inputs));
+            Console.WriteLine(String.Join(", ", examples[0].Inputs));
 
-            var outputs = network.Calculate(inputs);
+            var outputs = network.Calculate(examples[0].Inputs);
 
             Console.WriteLine("Obtained result from network:");
             Console.WriteLine(String.Join(", ", outputs));
