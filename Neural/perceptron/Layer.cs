@@ -63,10 +63,10 @@ namespace Neural.Perceptron
             var activationFunction = _activationFunction;
 
             // calculate the sum of weighted activations for each neuron in the layer
-            var weighedActivations = matrix * activations + _biasVector;
+            var weightedActivations = matrix * activations + _biasVector;
 
             // apply the activation function to each weighted activation
-            return weighedActivations.Map(activationFunction);
+            return weightedActivations.Map(activationFunction);
         }
     }
 }
