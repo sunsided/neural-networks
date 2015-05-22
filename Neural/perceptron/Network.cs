@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
 
@@ -62,8 +64,53 @@ namespace Neural.Perceptron
         public IReadOnlyList<float> Calculate([NotNull] IReadOnlyList<float> inputs)
         {
             var inputVector = Vector<float>.Build.SparseOfEnumerable(inputs);
-            var outputVector = _layers.Aggregate(inputVector, (activations, layer) => layer.Feedforward(activations));
+            var outputVector = CalculateInternal(inputVector);
             return outputVector.ToArray();
+        }
+
+        /// <summary>
+        /// Calculates the outputs given the specified <paramref name="inputs"/>.
+        /// </summary>
+        /// <param name="inputs">The inputs.</param>
+        /// <returns>Vector&lt;System.Single&gt;.</returns>
+        [Pure, NotNull]
+        private Vector<float> CalculateInternal([NotNull] Vector<float> inputs)
+        {
+            return _layers.Aggregate(inputs, (activations, layer) => layer.Feedforward(activations));
+        }
+
+        /// <summary>
+        /// Trains the network using the given <paramref name="examples"/>.
+        /// </summary>
+        /// <param name="examples">The examples.</param>
+        public void Train([NotNull] IEnumerable<TrainingExample> examples)
+        {
+        }
+
+        /// <summary>
+        /// Calculates the cost given the training examples.
+        /// </summary>
+        /// <param name="examples">The examples.</param>
+        /// <returns>System.Single.</returns>
+        private float CalculateCost([NotNull] IEnumerable<TrainingExample> examples)
+        {
+            var count = 0;
+            foreach (var example in examples)
+            {
+                ++count;
+
+                // run a forward propagation step and determine the error
+                var inputVector = Vector<float>.Build.SparseOfEnumerable(example.Inputs);
+                var outputVector = Vector<float>.Build.SparseOfEnumerable(example.Outputs);
+
+                var estimatedOutputs = CalculateInternal(inputVector);
+                var error = estimatedOutputs - outputVector;
+
+                // run the backward propagation step
+
+            }
+
+            throw new NotImplementedException();
         }
     }
 }
