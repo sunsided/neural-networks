@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Globalization;
-using System.Runtime.CompilerServices;
-using MathNet.Numerics.LinearAlgebra;
+using System.Threading;
 using Neural.Activations;
 using Neural.Perceptron;
 
@@ -41,16 +40,19 @@ namespace Neural
             var network = factory.Create(inputLayer, hiddenLayers, outputLayer);
 
             // evaluate the network
-            var inputs = Vector<float>.Build.Dense(new[]
-                                                   {
-                                                       0F, 1F
-                                                   });
+            var inputs = new[]
+                         {
+                             0F, 1F
+                         };
+            
+            Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
             Console.WriteLine("Evaluating network for input:");
-            Console.WriteLine(inputs.ToVectorString("G2", CultureInfo.InvariantCulture));
+            Console.WriteLine(String.Join(", ", inputs));
 
             var outputs = network.Calculate(inputs);
+
             Console.WriteLine("Obtained result from network:");
-            Console.WriteLine(outputs.ToVectorString("G2", CultureInfo.InvariantCulture));
+            Console.WriteLine(String.Join(", ", outputs));
 
             if (Debugger.IsAttached) Console.ReadKey(true);
         }

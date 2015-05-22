@@ -59,9 +59,11 @@ namespace Neural.Perceptron
         /// <param name="inputs">The inputs.</param>
         /// <returns>Vector&lt;System.Single&gt;.</returns>
         [Pure, NotNull]
-        public Vector<float> Calculate([NotNull] Vector<float> inputs)
+        public IReadOnlyList<float> Calculate([NotNull] IReadOnlyList<float> inputs)
         {
-            return _layers.Aggregate(inputs, (activations, layer) => layer.Feedforward(activations));
+            var inputVector = Vector<float>.Build.SparseOfEnumerable(inputs);
+            var outputVector = _layers.Aggregate(inputVector, (activations, layer) => layer.Feedforward(activations));
+            return outputVector.ToArray();
         }
     }
 }
