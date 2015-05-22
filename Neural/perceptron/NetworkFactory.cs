@@ -82,7 +82,7 @@ namespace Neural.Perceptron
                 inputNeurons = layerNeurons;
             }
 
-            throw new NotImplementedException();
+            return new PerceptronNetwork(layerList);
         }
     }
 }
