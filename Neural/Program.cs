@@ -1,4 +1,5 @@
-﻿using Neural.Perceptron;
+﻿using Neural.Activations;
+using Neural.Perceptron;
 
 namespace Neural
 {
@@ -15,17 +16,20 @@ namespace Neural
         {
             // The XOR problem
 
+            // obtain an activation function
+            var activation = new LinearActivation();
+
             // input layers with two neurons
-            var inputLayer = new LayerConfiguration(2);
+            var inputLayer = new LayerConfiguration(2, activation);
 
             // one hidden layer with two neurons
             var hiddenLayers = new[]
                                {
-                                   new LayerConfiguration(2)
+                                   new LayerConfiguration(2, activation)
                                };
 
             // output layer with one neuron
-            var outputLayer = new LayerConfiguration(1);
+            var outputLayer = new LayerConfiguration(1, activation);
 
             // construct a network
             var factory = new NetworkFactory();

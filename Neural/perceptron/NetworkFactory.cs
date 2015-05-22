@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
 
@@ -74,6 +75,8 @@ namespace Neural.Perceptron
                 // as the number of input neurons of the next layer.
                 inputNeurons = layerNeurons;
             }
+
+            throw new NotImplementedException();
         }
     }
 }

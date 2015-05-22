@@ -1,4 +1,6 @@
-﻿namespace Neural.Activations
+﻿using JetBrains.Annotations;
+
+namespace Neural.Activations
 {
     /// <summary>
     /// An activation function for a <see cref="Perceptron"/>.
@@ -10,6 +12,7 @@
         /// </summary>
         /// <param name="value">The sum of weighted inputs.</param>
         /// <returns>System.Single.</returns>
+        [Pure]
         float Activate(float value);
     }
 }
