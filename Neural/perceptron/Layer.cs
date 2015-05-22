@@ -23,6 +23,16 @@ namespace Neural.Perceptron
         private readonly Func<float, float> _activationFunction;
 
         /// <summary>
+        /// Gets the number of neurons in this layer.
+        /// </summary>
+        /// <value>The number of neurons.</value>
+        public int NeuronCount
+        {
+            [Pure]
+            get { return _weightMatrix.RowCount; }
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="Layer" /> class.
         /// </summary>
         /// <param name="weightMatrix">The weight matrix.</param>
@@ -38,7 +48,8 @@ namespace Neural.Perceptron
         /// </summary>
         /// <param name="activations">The row vector of activations.</param>
         /// <returns>The activations of this layer's perceptrons.</returns>
-        public Vector<float> Feedforward(Vector<float> activations)
+        [Pure, NotNull] 
+        public Vector<float> Feedforward([NotNull] Vector<float> activations)
         {
             var matrix = _weightMatrix;
             var activationFunction = _activationFunction;
