@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
@@ -15,7 +14,6 @@ namespace Neural.Perceptron
         /// Creates the specified input layer configuration.
         /// </summary>
         /// <param name="inputLayerConfiguration">The input layer configuration.</param>
-        /// <param name="hiddenLayerConfigurations">The hidden layer configurations.</param>
         /// <param name="outputLayerConfiguration">The output layer configuration.</param>
         /// <returns>PerceptronNetwork.</returns>
         public PerceptronNetwork Create(LayerConfiguration inputLayerConfiguration, LayerConfiguration outputLayerConfiguration)
@@ -76,9 +74,10 @@ namespace Neural.Perceptron
                 var layerNeurons = layerConfiguration.NeuronCount;
                 var activation = layerConfiguration.ActivationFunction;
 
+                var biasVector = Vector<float>.Build.Random(layerNeurons);
                 var weightMatrix = Matrix<float>.Build.Random(layerNeurons, inputNeurons);
-                
-                var layer = new Layer(weightMatrix, activation);
+
+                var layer = new Layer(biasVector, weightMatrix, activation);
                 layerList.AddLast(layer);
 
                 // We now store the number of neurons in this layer 

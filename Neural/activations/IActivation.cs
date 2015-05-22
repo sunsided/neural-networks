@@ -14,5 +14,13 @@ namespace Neural.Activations
         /// <returns>System.Single.</returns>
         [Pure]
         float Activate(float value);
+
+        /// <summary>
+        /// Calculates the derivative of the activation <paramref name="value"/>.
+        /// </summary>
+        /// <param name="value">The sum of weighted inputs.</param>
+        /// <returns>System.Single.</returns>
+        [Pure]
+        float Derivative(float value);
     }
 }

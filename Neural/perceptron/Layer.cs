@@ -11,6 +11,12 @@ namespace Neural.Perceptron
     sealed class Layer
     {
         /// <summary>
+        /// The weight vector of the bias units
+        /// </summary>
+        [NotNull]
+        private readonly Vector<float> _biasVector;
+
+        /// <summary>
         /// The weight matrix
         /// </summary>
         [NotNull]
@@ -35,10 +41,12 @@ namespace Neural.Perceptron
         /// <summary>
         /// Initializes a new instance of the <see cref="Layer" /> class.
         /// </summary>
+        /// <param name="biasVector"></param>
         /// <param name="weightMatrix">The weight matrix.</param>
         /// <param name="activationFunction">The activation function.</param>
-        public Layer([NotNull] Matrix<float> weightMatrix, [NotNull] IActivation activationFunction)
+        public Layer([NotNull]  Vector<float> biasVector, [NotNull] Matrix<float> weightMatrix, [NotNull] IActivation activationFunction)
         {
+            _biasVector = biasVector;
             _weightMatrix = weightMatrix;
             _activationFunction = activationFunction.Activate;
         }
@@ -55,10 +63,10 @@ namespace Neural.Perceptron
             var activationFunction = _activationFunction;
 
             // calculate the sum of weighted activations for each neuron in the layer
-            var weighedActivations = matrix * activations;
+            var weightedActivations = matrix * activations + _biasVector;
 
             // apply the activation function to each weighted activation
-            return weighedActivations.Map(activationFunction);
+            return weightedActivations.Map(activationFunction);
         }
     }
 }
