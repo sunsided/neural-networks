@@ -51,8 +51,6 @@
     <Compile Include="activations\SignActivation.cs" />
     <Compile Include="activations\LinearActivation.cs" />
     <Compile Include="activations\IActivation.cs" />
-    <Compile Include="perceptron\Layer.cs" />
-    <Compile Include="perceptron\Perceptron.cs" />
     <Compile Include="PerceptronNetwork.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
