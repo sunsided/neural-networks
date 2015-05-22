@@ -1,27 +1,35 @@
-﻿using MathNet.Numerics.LinearAlgebra;
-using MathNet.Numerics.LinearAlgebra.Single;
+﻿using Neural.perceptron;
 
 namespace Neural
 {
+    /// <summary>
+    /// Class Program.
+    /// </summary>
     class Program
     {
+        /// <summary>
+        /// Defines the entry point of the application.
+        /// </summary>
+        /// <param name="args">The arguments.</param>
         private static void Main(string[] args)
         {
-            Matrix<float> A = DenseMatrix.OfArray(new float[,]
-                                                  {
-                                                      {1, 1, 1, 1},
-                                                      {1, 2, 3, 4},
-                                                      {4, 3, 2, 1}
-                                                  });
+            // The XOR problem
 
-            Matrix<float> B = DenseMatrix.OfArray(new float[,]
-                                                  {
-                                                      {1, 1, 1, 1},
-                                                      {1, 2, 3, 4},
-                                                      {4, 3, 2, 1}
-                                                  });
+            // input layers with two neurons
+            var inputLayer = new LayerConfiguration(2);
 
-            var C = A + B;
+            // one hidden layer with two neurons
+            var hiddenLayers = new[]
+                               {
+                                   new LayerConfiguration(2)
+                               };
+
+            // output layer with one neuron
+            var outputLayer = new LayerConfiguration(1);
+
+            // construct a network
+            var factory = new PerceptronNetworkFactory();
+            var network = factory.Create(inputLayer, hiddenLayers, outputLayer);
         }
     }
 }
