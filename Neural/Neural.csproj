@@ -48,9 +48,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="perceptron\IActivation.cs" />
     <Compile Include="activations\SignActivation.cs" />
     <Compile Include="activations\LinearActivation.cs" />
+    <Compile Include="activations\IActivation.cs" />
     <Compile Include="perceptron\Layer.cs" />
     <Compile Include="perceptron\Perceptron.cs" />
     <Compile Include="PerceptronNetwork.cs" />

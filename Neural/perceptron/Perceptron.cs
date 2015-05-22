@@ -12,13 +12,13 @@ namespace Neural.perceptron
         /// The activation function
         /// </summary>
         [NotNull]
-        private readonly Activation _activation;
+        private readonly IActivation _activation;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Perceptron"/> class.
         /// </summary>
         /// <param name="activation">The activation function.</param>
-        public Perceptron([NotNull] Activation activation)
+        public Perceptron([NotNull] IActivation activation)
         {
             _activation = activation;
         }
