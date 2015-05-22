@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
 
@@ -56,18 +57,21 @@ namespace Neural.Perceptron
             // Prepare a linked list of perceptron layers
             var layerList = new LinkedList<Layer>();
 
+            var inputLayer = layerConfigurations.First();
+            var remainingLayers = layerConfigurations.Skip(1);
+
             // This value encodes the number of neurons in the previous layer
             // that act as an input to each perceptron within this layer.
             // For the input layer, each input is directly assigned; 
             // we encode this as one (virtual) input neuron per perceptron.
-            var inputNeurons = 1;
+            var inputNeurons = inputLayer.NeuronCount;
 
             // We now iterate over all configurations and create weight vectors
             // for each perceptron according to the number of input neurons, where
             // each weight is initialized with a random value.
             // For efficient calculation, the weights of all nerons in a given layer 
             // are stored as rows of a weight matrix.
-            foreach (var layerConfiguration in layerConfigurations)
+            foreach (var layerConfiguration in remainingLayers)
             {
                 var layerNeurons = layerConfiguration.NeuronCount;
                 var activation = layerConfiguration.ActivationFunction;
