@@ -1,7 +1,8 @@
 ﻿using System;
 using JetBrains.Annotations;
+using Neural.Activations;
 
-namespace Neural.perceptron
+namespace Neural.Perceptron
 {
     /// <summary>
     /// Configuration of a single perceptron layer.

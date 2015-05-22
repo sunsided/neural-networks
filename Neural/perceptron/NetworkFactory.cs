@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
-using MathNet.Numerics.LinearAlgebra.Complex;
 
-namespace Neural.perceptron
+namespace Neural.Perceptron
 {
     /// <summary>
     /// Class PerceptronNetworkFactory. This class cannot be inherited.

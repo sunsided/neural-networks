@@ -1,9 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using JetBrains.Annotations;
-using Neural.perceptron;
 
-namespace Neural
+namespace Neural.Perceptron
 {
     /// <summary>
     /// Configuration of the perceptron network.

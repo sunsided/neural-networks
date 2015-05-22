@@ -1,4 +1,4 @@
-﻿namespace Neural.perceptron
+﻿namespace Neural.Activations
 {
     /// <summary>
     /// An activation function for a <see cref="Perceptron"/>.

@@ -1,4 +1,4 @@
-﻿using Neural.perceptron;
+﻿using Neural.Perceptron;
 
 namespace Neural
 {
