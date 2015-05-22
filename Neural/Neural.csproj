@@ -48,12 +48,15 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="activations\SignActivation.cs" />
-    <Compile Include="activations\LinearActivation.cs" />
-    <Compile Include="activations\IActivation.cs" />
-    <Compile Include="perceptron\Layer.cs" />
-    <Compile Include="perceptron\Perceptron.cs" />
-    <Compile Include="PerceptronNetwork.cs" />
+    <Compile Include="Activations\InputLayerActivation.cs" />
+    <Compile Include="Activations\SignActivation.cs" />
+    <Compile Include="Activations\LinearActivation.cs" />
+    <Compile Include="Activations\IActivation.cs" />
+    <Compile Include="Perceptron\Layer.cs" />
+    <Compile Include="Perceptron\LayerConfiguration.cs" />
+    <Compile Include="Perceptron\Network.cs" />
+    <Compile Include="Perceptron\NetworkConfiguration.cs" />
+    <Compile Include="Perceptron\NetworkFactory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

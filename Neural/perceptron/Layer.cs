@@ -1,35 +1,64 @@
-﻿using System.Collections.Generic;
+﻿using System;
 using JetBrains.Annotations;
+using MathNet.Numerics.LinearAlgebra;
+using Neural.Activations;
 
-namespace Neural.perceptron
+namespace Neural.Perceptron
 {
     /// <summary>
-    /// A network layer consisting of multiple <see cref="Perceptron"/> instances.
+    /// A perceptron layer.
     /// </summary>
-    class Layer
+    sealed class Layer
     {
         /// <summary>
-        /// The perceptrons in this layer
+        /// The weight matrix
         /// </summary>
         [NotNull]
-        private readonly IReadOnlyCollection<Perceptron> _perceptrons;
+        private readonly Matrix<float> _weightMatrix;
 
         /// <summary>
-        /// Gets the count.
+        /// The activation function
         /// </summary>
-        /// <value>The count.</value>
-        public int Count
+        [NotNull]
+        private readonly Func<float, float> _activationFunction;
+
+        /// <summary>
+        /// Gets the number of neurons in this layer.
+        /// </summary>
+        /// <value>The number of neurons.</value>
+        public int NeuronCount
         {
-            get { return _perceptrons.Count; }
+            [Pure]
+            get { return _weightMatrix.RowCount; }
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Layer"/> class.
+        /// Initializes a new instance of the <see cref="Layer" /> class.
         /// </summary>
-        /// <param name="perceptrons">The perceptrons.</param>
-        public Layer([NotNull] IReadOnlyCollection<Perceptron> perceptrons)
+        /// <param name="weightMatrix">The weight matrix.</param>
+        /// <param name="activationFunction">The activation function.</param>
+        public Layer([NotNull] Matrix<float> weightMatrix, [NotNull] IActivation activationFunction)
         {
-            _perceptrons = perceptrons;
+            _weightMatrix = weightMatrix;
+            _activationFunction = activationFunction.Activate;
+        }
+
+        /// <summary>
+        /// Performs a feed-forward step of the layer's <paramref name="activations"/>.
+        /// </summary>
+        /// <param name="activations">The row vector of activations.</param>
+        /// <returns>The activations of this layer's perceptrons.</returns>
+        [Pure, NotNull] 
+        public Vector<float> Feedforward([NotNull] Vector<float> activations)
+        {
+            var matrix = _weightMatrix;
+            var activationFunction = _activationFunction;
+
+            // calculate the sum of weighted activations for each neuron in the layer
+            var weighedActivations = matrix * activations;
+
+            // apply the activation function to each weighted activation
+            return weighedActivations.Map(activationFunction);
         }
     }
 }

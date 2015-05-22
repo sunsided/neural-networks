@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Neural.perceptron
+namespace Neural.Activations
 {
     /// <summary>
     /// Activation function that returns the sign of the input.

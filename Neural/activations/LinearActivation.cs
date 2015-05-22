@@ -1,4 +1,4 @@
-﻿namespace Neural.perceptron
+﻿namespace Neural.Activations
 {
     /// <summary>
     /// Linear activation function.
