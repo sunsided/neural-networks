@@ -77,33 +77,37 @@ namespace Neural.Perceptron
         [Pure, NotNull]
         private Vector<float> CalculateInternal([NotNull] Vector<float> inputs)
         {
+            // Starting with the given inputs as the first hidden layer's activation,
+            // iterate through all layers and calculate the next layer's activations.
+            // The resulting activation of the last layer are the outputs.
             return _layers.Aggregate(inputs, (activations, layer) => layer.Feedforward(activations).Activation);
         }
-        
+
         /// <summary>
-        /// Trains the network using the given <paramref name="examples"/>.
+        /// Trains the network using the given <paramref name="examples" />.
         /// </summary>
-        /// <param name="examples">The examples.</param>
-        public void Train([NotNull] IEnumerable<TrainingExample> examples)
+        /// <param name="trainingSet">The training set.</param>
+        /// <param name="crossValidationSet">The cross validation set.</param>
+        public void Train([NotNull] IReadOnlyCollection<TrainingExample> trainingSet, [NotNull] IReadOnlyCollection<TrainingExample> crossValidationSet)
         {
-            CalculateCost(examples);
+            CalculateCost(trainingSet, crossValidationSet);
         }
 
         /// <summary>
         /// Calculates the cost given the training examples.
         /// </summary>
-        /// <param name="examples">The examples.</param>
+        /// <param name="trainingSet">The training set.</param>
+        /// <param name="crossValidationSet">The cross validation set.</param>
         /// <returns>System.Single.</returns>
-        private float CalculateCost([NotNull] IEnumerable<TrainingExample> examples)
+        /// <exception cref="NotImplementedException"></exception>
+        private float CalculateCost([NotNull] IReadOnlyCollection<TrainingExample> trainingSet, [NotNull] IReadOnlyCollection<TrainingExample> crossValidationSet)
         {
             var layers = _layers;
             var layerCount = layers.Count;
 
-            var exampleCount = 0;
-            foreach (var example in examples)
+            var exampleCount = trainingSet.Count;
+            foreach (var example in trainingSet)
             {
-                ++exampleCount;
-
                 var inputVector = Vector<float>.Build.SparseOfEnumerable(example.Inputs);
                 var outputVector = Vector<float>.Build.SparseOfEnumerable(example.Outputs);
 
@@ -143,7 +147,7 @@ namespace Neural.Perceptron
                     var z = resultNodeOfPreviousLayer.Value.Z;
                     var layer = layerNodeOfCurrentLayer.Value;
                     var previousLayerError = layer.Backpropagate(error, z);
-                    
+
                     // set the error for the next recursion
                     error = previousLayerError;
 
