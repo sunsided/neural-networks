@@ -52,6 +52,8 @@
     <Compile Include="Activations\SigmoidActivation.cs" />
     <Compile Include="Activations\LinearActivation.cs" />
     <Compile Include="Activations\IActivation.cs" />
+    <Compile Include="Perceptron\BackpropagationResult.cs" />
+    <Compile Include="Perceptron\FeedforwardResult.cs" />
     <Compile Include="Perceptron\Layer.cs" />
     <Compile Include="Perceptron\LayerConfiguration.cs" />
     <Compile Include="Perceptron\Network.cs" />

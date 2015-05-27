@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Threading;
+using MathNet.Numerics.LinearAlgebra;
 using Neural.Activations;
 using Neural.Perceptron;
 
@@ -25,16 +26,16 @@ namespace Neural
             var activation = new SigmoidActivation();
 
             // input layers with two neurons
-            var inputLayer = LayerConfiguration.ForInput(2);
+            var inputLayer = LayerConfiguration.ForInput(400);
 
             // one hidden layer with three neurons
             var hiddenLayers = new[]
                                {
-                                   LayerConfiguration.ForHidden(3, activation)
+                                   LayerConfiguration.ForHidden(25, activation)
                                };
 
             // output layer with one neuron
-            var outputLayer = LayerConfiguration.ForOutput(1, activation);
+            var outputLayer = LayerConfiguration.ForOutput(10, activation);
 
             // construct a network
             var factory = new NetworkFactory();
@@ -43,13 +44,13 @@ namespace Neural
             // train the network
             var examples = new[]
                            {
-                               new TrainingExample(new[]{ 0F, 1F }, new [] {1F}),
-                               new TrainingExample(new[]{ 1F, 0F }, new [] {1F}),
-                               new TrainingExample(new[]{ 0F, 0F }, new [] {0F}),
-                               new TrainingExample(new[]{ 1F, 1F }, new [] {0F})
+                               new TrainingExample(Vector<float>.Build.Random(400), Vector<float>.Build.Random(10)),
+                               new TrainingExample(Vector<float>.Build.Random(400), Vector<float>.Build.Random(10)),
+                               new TrainingExample(Vector<float>.Build.Random(400), Vector<float>.Build.Random(10)),
+                               new TrainingExample(Vector<float>.Build.Random(400), Vector<float>.Build.Random(10))
                            };
 
-            network.Train(examples, examples);
+            network.Train(examples);
 
             // evaluate the network
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;

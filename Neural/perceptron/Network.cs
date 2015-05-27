@@ -89,12 +89,12 @@ namespace Neural.Perceptron
         /// <param name="input">The inputs.</param>
         /// <returns>LinkedList&lt;Layer.FeedforwardResult&gt;.</returns>
         [Pure, NotNull]
-        private LinkedList<Layer.FeedforwardResult> CalculateInternal([NotNull] Vector<float> input)
+        private LinkedList<FeedforwardResult> CalculateInternal([NotNull] Vector<float> input)
         {
             var layers = _layers;
 
             // prepare a list of all layer's results
-            var feedforwardResults = new LinkedList<Layer.FeedforwardResult>();
+            var feedforwardResults = new LinkedList<FeedforwardResult>();
 
             // run a forward propagation step and keep track of all intermediate reults
             var layerInput = input;
@@ -141,9 +141,7 @@ namespace Neural.Perceptron
                 Debug.Assert(layers.Count == feedforwardResults.Count, "layers.Count == feedforwardResults.Count");
 
                 // calculate the error of the network output regarding the wanted training output
-                var outputLayer = feedforwardResults.Last.Value;
-                var networkOutput = outputLayer.Activation;
-                var error = networkOutput - expectedOutput;
+                var error = CalculateNetworkOutputError(feedforwardResults, expectedOutput);
 
                 // run the backward propagation steps
                 // we start with the last node and iterate until we reach the first
@@ -151,7 +149,7 @@ namespace Neural.Perceptron
                 // to correct, as inputs are what they are.
                 var layerNodeOfCurrentLayer = layers.Last;
                 var resultNodeOfPreviousLayer = feedforwardResults.Last.Previous;
-                for (int layerIndex = 0; layerIndex < layerCount-1; ++layerIndex)
+                for (int layerIndex = 0; layerIndex < layerCount-1 /* -1 because we already know the output error as well */; ++layerIndex)
                 {
                     Debug.Assert(layerNodeOfCurrentLayer != null, "layerNode != null");
                     Debug.Assert(resultNodeOfPreviousLayer != null, "resultNode != null");
@@ -159,12 +157,14 @@ namespace Neural.Perceptron
                     // based on the current layer's matrix and the previous layer's
                     // weighted inputs (not output activations!) we determine the error
                     // of the previous (!) layer
-                    var z = resultNodeOfPreviousLayer.Value.Input;
-                    var layer = layerNodeOfCurrentLayer.Value;
-                    var previousLayerError = layer.Backpropagate(error, z);
+                    var previousLayerResults = resultNodeOfPreviousLayer.Value;
+                    var currentLayer = layerNodeOfCurrentLayer.Value;
+
+                    var z = previousLayerResults.Input;
+                    var previousLayerError = currentLayer.Backpropagate(error, z);
 
                     // set the error for the next recursion
-                    error = previousLayerError;
+                    error = previousLayerError.WeightingErrors;
 
                     // move to the previous layer
                     layerNodeOfCurrentLayer = layerNodeOfCurrentLayer.Previous;
@@ -173,6 +173,20 @@ namespace Neural.Perceptron
             }
 
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Calculates the network output error.
+        /// </summary>
+        /// <param name="feedforwardResults">The feedforward results.</param>
+        /// <param name="expectedOutput">The expected output.</param>
+        /// <returns>Vector&lt;System.Single&gt;.</returns>
+        private static Vector<float> CalculateNetworkOutputError([NotNull] LinkedList<FeedforwardResult> feedforwardResults, [NotNull] Vector<float> expectedOutput)
+        {
+            var outputLayer = feedforwardResults.Last.Value;
+            var networkOutput = outputLayer.Activation;
+            var error = networkOutput - expectedOutput;
+            return error;
         }
     }
 }

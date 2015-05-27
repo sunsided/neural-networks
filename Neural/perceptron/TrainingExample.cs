@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using JetBrains.Annotations;
+using MathNet.Numerics.LinearAlgebra;
 
 namespace Neural.Perceptron
 {
@@ -29,6 +30,16 @@ namespace Neural.Perceptron
         {
             Inputs = inputs;
             Outputs = outputs;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TrainingExample"/> struct.
+        /// </summary>
+        /// <param name="inputs">The inputs.</param>
+        /// <param name="outputs">The outputs.</param>
+        internal TrainingExample(Vector<float> inputs, Vector<float> outputs)
+            : this(inputs.ToArray(), outputs.ToArray())
+        {
         }
     }
 }

@@ -40,7 +40,7 @@ namespace Neural.Perceptron
             layerConfigurations.Add(inputLayerConfiguration);
             layerConfigurations.AddRange(hiddenLayerConfigurations);
             layerConfigurations.Add(outputLayerConfiguration);
-            
+
             return Create(layerConfigurations);
         }
 
@@ -60,14 +60,14 @@ namespace Neural.Perceptron
 
             // This value encodes the number of neurons in the previous layer
             // that act as an input to each perceptron within this layer.
-            // For the input layer, each input is directly assigned; 
+            // For the input layer, each input is directly assigned;
             // we encode this as one (virtual) input neuron per perceptron.
             var inputNeurons = inputLayer.NeuronCount;
 
             // We now iterate over all configurations and create weight vectors
             // for each perceptron according to the number of input neurons, where
             // each weight is initialized with a random value.
-            // For efficient calculation, the weights of all nerons in a given layer 
+            // For efficient calculation, the weights of all nerons in a given layer
             // are stored as rows of a weight matrix.
             foreach (var layerConfiguration in remainingLayers)
             {
@@ -80,7 +80,7 @@ namespace Neural.Perceptron
                 var layer = new Layer(biasVector, weightMatrix, activation);
                 layerList.AddLast(layer);
 
-                // We now store the number of neurons in this layer 
+                // We now store the number of neurons in this layer
                 // as the number of input neurons of the next layer.
                 inputNeurons = layerNeurons;
             }

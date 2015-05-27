@@ -61,35 +61,6 @@ namespace Neural.Perceptron
         }
 
         /// <summary>
-        /// Struct FeedforwardResult
-        /// </summary>
-        public struct FeedforwardResult
-        {
-            /// <summary>
-            /// The weighted sum of net inputs (z).
-            /// </summary>
-            [NotNull]
-            public readonly Vector<float> Input;
-
-            /// <summary>
-            /// The activation value
-            /// </summary>
-            [NotNull]
-            public readonly Vector<float> Activation;
-
-            /// <summary>
-            /// Initializes a new instance of the <see cref="FeedforwardResult"/> struct.
-            /// </summary>
-            /// <param name="input">The z.</param>
-            /// <param name="activation">The activation.</param>
-            public FeedforwardResult([NotNull] Vector<float> input, [NotNull] Vector<float> activation)
-            {
-                Input = input;
-                Activation = activation;
-            }
-        }
-
-        /// <summary>
         /// Performs a feed-forward step of the layer's <paramref name="activations"/>.
         /// </summary>
         /// <param name="activations">The row vector of activations.</param>
@@ -116,16 +87,20 @@ namespace Neural.Perceptron
         /// <param name="weightedInputActivations">This layer's weighted input activations.</param>
         /// <returns>The activations of this layer's perceptrons.</returns>
         [Pure, NotNull]
-        public Vector<float> Backpropagate([NotNull] Vector<float> errors, Vector<float> weightedInputActivations)
+        public BackpropagationResult Backpropagate([NotNull] Vector<float> errors, Vector<float> weightedInputActivations)
         {
             // calculate the gradient of the activation function
             var gradientFunction = _gradient;
             var gradient = gradientFunction(weightedInputActivations);
 
-            // calculate the delta for the current layer
+            // calculate the weighting error for the current layer
             var matrix = _weightMatrix.Transpose();
-            errors = matrix * errors;
-            return errors.PointwiseMultiply(gradient);
+            var weightingErrors = (matrix * errors).PointwiseMultiply(gradient);
+
+            // calculate the bias error for the current layer
+            var biasError = _biasVector * errors;
+
+            return new BackpropagationResult(weightingErrors, biasError);
         }
     }
 }
