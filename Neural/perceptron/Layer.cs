@@ -19,7 +19,7 @@ namespace Neural.Perceptron
         private readonly Vector<float> _biasVector;
 
         /// <summary>
-        /// The weight matrix
+        /// The weight matrix (Theta)
         /// </summary>
         [NotNull]
         private readonly Matrix<float> _weightMatrix;
@@ -68,13 +68,13 @@ namespace Neural.Perceptron
             /// <summary>
             /// The weighted sum of input activations.
             /// </summary>
-            [NotNull] 
+            [NotNull]
             public readonly Vector<float> Z;
-            
+
             /// <summary>
             /// The activation value
             /// </summary>
-            [NotNull] 
+            [NotNull]
             public readonly Vector<float> Activation;
 
             /// <summary>
@@ -115,9 +115,9 @@ namespace Neural.Perceptron
         /// <param name="errors">The training errors.</param>
         /// <param name="weightedInputActivations">This layer's weighted input activations.</param>
         /// <returns>The activations of this layer's perceptrons.</returns>
-        [Pure, NotNull] 
+        [Pure, NotNull]
         public Vector<float> Backpropagate([NotNull] Vector<float> errors, Vector<float> weightedInputActivations)
-        {           
+        {
             // calculate the gradient of the activation function
             var gradient = weightedInputActivations.Map(_gradient);
 
