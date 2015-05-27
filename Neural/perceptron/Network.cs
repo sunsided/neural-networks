@@ -87,20 +87,18 @@ namespace Neural.Perceptron
         /// Trains the network using the given <paramref name="examples" />.
         /// </summary>
         /// <param name="trainingSet">The training set.</param>
-        /// <param name="crossValidationSet">The cross validation set.</param>
-        public void Train([NotNull] IReadOnlyCollection<TrainingExample> trainingSet, [NotNull] IReadOnlyCollection<TrainingExample> crossValidationSet)
+        public void Train([NotNull] IReadOnlyCollection<TrainingExample> trainingSet)
         {
-            CalculateCost(trainingSet, crossValidationSet);
+            CalculateCost(trainingSet);
         }
 
         /// <summary>
         /// Calculates the cost given the training examples.
         /// </summary>
         /// <param name="trainingSet">The training set.</param>
-        /// <param name="crossValidationSet">The cross validation set.</param>
         /// <returns>System.Single.</returns>
         /// <exception cref="NotImplementedException"></exception>
-        private float CalculateCost([NotNull] IReadOnlyCollection<TrainingExample> trainingSet, [NotNull] IReadOnlyCollection<TrainingExample> crossValidationSet)
+        private float CalculateCost([NotNull] IReadOnlyCollection<TrainingExample> trainingSet)
         {
             var layers = _layers;
             var layerCount = layers.Count;

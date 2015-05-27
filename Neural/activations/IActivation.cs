@@ -1,26 +1,43 @@
 ﻿using JetBrains.Annotations;
+using MathNet.Numerics.LinearAlgebra;
 
 namespace Neural.Activations
 {
     /// <summary>
-    /// An activation function for a <see cref="Perceptron"/>.
+    /// An activation function for a <see cref="Perceptron" />.
     /// </summary>
     interface IActivation
     {
         /// <summary>
-        /// Calculates the activation given the perceptron's sum of weighted inputs.
+        /// Calculates the activation of the value <paramref name="z" />
         /// </summary>
-        /// <param name="value">The sum of weighted inputs.</param>
+        /// <param name="z">The value at which to calculate the activation.</param>
         /// <returns>System.Single.</returns>
         [Pure]
-        float Activate(float value);
+        float Transfer(float z);
 
         /// <summary>
-        /// Calculates the derivative of the activation <paramref name="value"/>.
+        /// Calculates the activation of the value <paramref name="z" />
         /// </summary>
-        /// <param name="value">The sum of weighted inputs.</param>
+        /// <param name="z">The values at which to calculate the activation.</param>
+        /// <returns>Vector&lt;System.Single&gt;.</returns>
+        [Pure]
+        Vector<float> Transfer(Vector<float> z);
+
+        /// <summary>
+        /// Calculates the gradient of the activation evaluated at <paramref name="z" />.
+        /// </summary>
+        /// <param name="z">The value at which to evaluate the gradients.</param>
         /// <returns>System.Single.</returns>
         [Pure]
-        float Derivative(float value);
+        float Gradient(float z);
+
+        /// <summary>
+        /// Calculates the gradient of the activation evaluated at each value of <paramref name="z" />.
+        /// </summary>
+        /// <param name="z">The value at which to evaluate the gradients.</param>
+        /// <returns>Vector&lt;System.Single&gt;.</returns>
+        [Pure]
+        Vector<float> Gradient(Vector<float> z);
     }
 }

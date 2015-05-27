@@ -22,7 +22,7 @@ namespace Neural
             // The XOR problem
 
             // obtain an activation function
-            var activation = new LinearActivation();
+            var activation = new SigmoidActivation();
 
             // input layers with two neurons
             var inputLayer = LayerConfiguration.ForInput(2);
@@ -49,7 +49,7 @@ namespace Neural
                                new TrainingExample(new[]{ 1F, 1F }, new [] {0F})
                            };
 
-            network.Train(examples);
+            network.Train(examples, examples);
 
             // evaluate the network
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;

@@ -49,6 +49,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activations\InputLayerActivation.cs" />
+    <Compile Include="Activations\SigmoidActivation.cs" />
     <Compile Include="Activations\LinearActivation.cs" />
     <Compile Include="Activations\IActivation.cs" />
     <Compile Include="Perceptron\Layer.cs" />

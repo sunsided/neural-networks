@@ -28,13 +28,13 @@ namespace Neural.Perceptron
         /// The activation function
         /// </summary>
         [NotNull]
-        private readonly Func<float, float> _activationFunction;
+        private readonly Func<Vector<float>, Vector<float>> _activationFunction;
 
         /// <summary>
         /// The gradient function
         /// </summary>
         [NotNull]
-        private readonly Func<float, float> _gradient;
+        private readonly Func<Vector<float>, Vector<float>> _gradient;
 
         /// <summary>
         /// Gets the number of neurons in this layer.
@@ -56,8 +56,8 @@ namespace Neural.Perceptron
         {
             _biasVector = biasVector;
             _weightMatrix = weightMatrix;
-            _activationFunction = activationFunction.Activate;
-            _gradient = activationFunction.Derivative;
+            _activationFunction = activationFunction.Transfer;
+            _gradient = activationFunction.Gradient;
         }
 
         /// <summary>
@@ -104,7 +104,7 @@ namespace Neural.Perceptron
             var weightedActivations = matrix * activations + _biasVector;
 
             // apply the activation function to each weighted activation
-            var outputActivations = weightedActivations.Map(activationFunction);
+            var outputActivations = activationFunction(weightedActivations);
 
             return new FeedforwardResult(weightedActivations, outputActivations);
         }
@@ -119,7 +119,8 @@ namespace Neural.Perceptron
         public Vector<float> Backpropagate([NotNull] Vector<float> errors, Vector<float> weightedInputActivations)
         {
             // calculate the gradient of the activation function
-            var gradient = weightedInputActivations.Map(_gradient);
+            var gradientFunction = _gradient;
+            var gradient = gradientFunction(weightedInputActivations);
 
             // calculate the delta for the current layer
             var matrix = _weightMatrix.Transpose();
