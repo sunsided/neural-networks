@@ -65,22 +65,49 @@ namespace Neural.Perceptron
         public IReadOnlyList<float> Calculate([NotNull] IReadOnlyList<float> inputs)
         {
             var inputVector = Vector<float>.Build.SparseOfEnumerable(inputs);
-            var outputVector = CalculateInternal(inputVector);
+            var outputVector = CalculateInternalFast(inputVector);
             return outputVector.ToArray();
         }
 
         /// <summary>
-        /// Calculates the outputs given the specified <paramref name="inputs"/>.
+        /// Calculates the network outputs given the specified <paramref name="inputs"/>.
         /// </summary>
         /// <param name="inputs">The inputs.</param>
         /// <returns>Vector&lt;System.Single&gt;.</returns>
         [Pure, NotNull]
-        private Vector<float> CalculateInternal([NotNull] Vector<float> inputs)
+        private Vector<float> CalculateInternalFast([NotNull] Vector<float> inputs)
         {
             // Starting with the given inputs as the first hidden layer's activation,
             // iterate through all layers and calculate the next layer's activations.
             // The resulting activation of the last layer are the outputs.
             return _layers.Aggregate(inputs, (activations, layer) => layer.Feedforward(activations).Activation);
+        }
+
+        /// <summary>
+        /// Performs a feed-forward pass through the network and stores the results of each layer.
+        /// </summary>
+        /// <param name="input">The inputs.</param>
+        /// <returns>LinkedList&lt;Layer.FeedforwardResult&gt;.</returns>
+        [Pure, NotNull]
+        private LinkedList<Layer.FeedforwardResult> CalculateInternal([NotNull] Vector<float> input)
+        {
+            var layers = _layers;
+
+            // prepare a list of all layer's results
+            var feedforwardResults = new LinkedList<Layer.FeedforwardResult>();
+
+            // run a forward propagation step and keep track of all intermediate reults
+            var layerInput = input;
+            foreach (var layer in layers)
+            {
+                // perform the feedforward iteration
+                var result = layer.Feedforward(layerInput);
+                layerInput = result.Activation;
+
+                // store the intermediate result
+                feedforwardResults.AddLast(result);
+            }
+            return feedforwardResults;
         }
 
         /// <summary>
@@ -106,27 +133,17 @@ namespace Neural.Perceptron
             var exampleCount = trainingSet.Count;
             foreach (var example in trainingSet)
             {
-                var inputVector = Vector<float>.Build.SparseOfEnumerable(example.Inputs);
-                var outputVector = Vector<float>.Build.SparseOfEnumerable(example.Outputs);
+                var input = Vector<float>.Build.SparseOfEnumerable(example.Inputs);
+                var expectedOutput = Vector<float>.Build.SparseOfEnumerable(example.Outputs);
 
-                // run a forward propagation step and keep track of all intermediate reults
-                var feedforwardResults = new LinkedList<Layer.FeedforwardResult>();
-                var layerInput = inputVector;
-                foreach (var layer in layers)
-                {
-                    // perform the feedforward iteration
-                    var result = layer.Feedforward(layerInput);
-                    layerInput = result.Activation;
-
-                    // store the intermediate result
-                    feedforwardResults.AddLast(result);
-                }
-
+                // perform a feed-forward pass and retrieve the intermediate results
+                var feedforwardResults = CalculateInternal(input);
                 Debug.Assert(layers.Count == feedforwardResults.Count, "layers.Count == feedforwardResults.Count");
 
                 // calculate the error of the network output regarding the wanted training output
-                var networkOutput = feedforwardResults.Last.Value.Activation;
-                var error = networkOutput - outputVector;
+                var outputLayer = feedforwardResults.Last.Value;
+                var networkOutput = outputLayer.Activation;
+                var error = networkOutput - expectedOutput;
 
                 // run the backward propagation steps
                 // we start with the last node and iterate until we reach the first
@@ -142,7 +159,7 @@ namespace Neural.Perceptron
                     // based on the current layer's matrix and the previous layer's
                     // weighted inputs (not output activations!) we determine the error
                     // of the previous (!) layer
-                    var z = resultNodeOfPreviousLayer.Value.Z;
+                    var z = resultNodeOfPreviousLayer.Value.Input;
                     var layer = layerNodeOfCurrentLayer.Value;
                     var previousLayerError = layer.Backpropagate(error, z);
 

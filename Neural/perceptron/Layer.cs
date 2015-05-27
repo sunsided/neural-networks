@@ -66,10 +66,10 @@ namespace Neural.Perceptron
         public struct FeedforwardResult
         {
             /// <summary>
-            /// The weighted sum of input activations.
+            /// The weighted sum of net inputs (z).
             /// </summary>
             [NotNull]
-            public readonly Vector<float> Z;
+            public readonly Vector<float> Input;
 
             /// <summary>
             /// The activation value
@@ -80,11 +80,11 @@ namespace Neural.Perceptron
             /// <summary>
             /// Initializes a new instance of the <see cref="FeedforwardResult"/> struct.
             /// </summary>
-            /// <param name="z">The z.</param>
+            /// <param name="input">The z.</param>
             /// <param name="activation">The activation.</param>
-            public FeedforwardResult([NotNull] Vector<float> z, [NotNull] Vector<float> activation)
+            public FeedforwardResult([NotNull] Vector<float> input, [NotNull] Vector<float> activation)
             {
-                Z = z;
+                Input = input;
                 Activation = activation;
             }
         }
