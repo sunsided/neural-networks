@@ -29,7 +29,7 @@ namespace Neural.Perceptron
         /// <summary>
         /// The transfer function
         /// </summary>
-        /// <seealso cref="_gradientFunction"/>
+        /// <seealso cref="_derivativeFunction"/>
         [NotNull]
         private readonly Func<Vector<float>, Vector<float>> _transferFunction;
 
@@ -38,7 +38,7 @@ namespace Neural.Perceptron
         /// </summary>
         /// <seealso cref="_transferFunction"/>
         [NotNull]
-        private readonly Func<Vector<float>, Vector<float>> _gradientFunction;
+        private readonly Func<Vector<float>, Vector<float>> _derivativeFunction;
 
         /// <summary>
         /// The input layer
@@ -121,7 +121,7 @@ namespace Neural.Perceptron
             _biasVector = biasVector;
             _weightMatrix = weightMatrix;
             _transferFunction = transferFunction.Transfer;
-            _gradientFunction = transferFunction.Derivative;
+            _derivativeFunction = transferFunction.Derivative;
         }
 
         /// <summary>
@@ -132,14 +132,11 @@ namespace Neural.Perceptron
         [Pure]
         public FeedforwardResult Feedforward([NotNull] Vector<float> input)
         {
-            var matrix = _weightMatrix;
-            var transferActivation = _transferFunction;
-
             // calculate activations for each neuron in the layer
-            var activation = matrix * input + _biasVector;
+            var activation = _weightMatrix * input + _biasVector;
 
             // apply the activation function to each weighted activation
-            var output = transferActivation(activation);
+            var output = _transferFunction(activation);
 
             return new FeedforwardResult(this, activation, output);
         }
@@ -154,8 +151,7 @@ namespace Neural.Perceptron
         public BackpropagationResult Backpropagate([NotNull] Vector<float> errors, Vector<float> weightedInputActivations)
         {
             // calculate the gradient of the activation function
-            var calculateGradient = _gradientFunction;
-            var gradient = calculateGradient(weightedInputActivations);
+            var gradient = _derivativeFunction(weightedInputActivations);
 
             // calculate the weighting error for the current layer
             var matrix = _weightMatrix.Transpose();
