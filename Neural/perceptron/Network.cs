@@ -141,7 +141,8 @@ namespace Neural.Perceptron
                 Debug.Assert(layers.Count == feedforwardResults.Count, "layers.Count == feedforwardResults.Count");
 
                 // calculate the error of the network output regarding the wanted training output
-                var error = CalculateNetworkOutputError(feedforwardResults, expectedOutput);
+                var networkOutputError = CalculateNetworkOutputError(feedforwardResults, expectedOutput);
+                var error = networkOutputError;
 
                 // run the backward propagation steps
                 // we start with the last node and iterate until we reach the first

@@ -58,6 +58,9 @@ namespace Neural.Perceptron
             var inputLayer = layerConfigurations.First();
             var remainingLayers = layerConfigurations.Skip(1);
 
+            // As the input layer has no previous layer, we initialize this as null.
+            Layer previousLayer = null;
+
             // This value encodes the number of neurons in the previous layer
             // that act as an input to each perceptron within this layer.
             // For the input layer, each input is directly assigned;
@@ -77,12 +80,14 @@ namespace Neural.Perceptron
                 var biasVector = Vector<float>.Build.Random(layerNeurons);
                 var weightMatrix = Matrix<float>.Build.Random(layerNeurons, inputNeurons);
 
-                var layer = new Layer(biasVector, weightMatrix, activation);
+                var layer = new Layer(previousLayer, biasVector, weightMatrix, activation);
                 layerList.AddLast(layer);
 
                 // We now store the number of neurons in this layer
-                // as the number of input neurons of the next layer.
+                // as the number of input neurons of the next layer
+                // and rewire the reference of the previous layer.
                 inputNeurons = layerNeurons;
+                previousLayer = layer;
             }
 
             return new PerceptronNetwork(layerList);

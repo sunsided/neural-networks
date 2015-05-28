@@ -9,6 +9,12 @@ namespace Neural.Perceptron
     struct FeedforwardResult
     {
         /// <summary>
+        /// The layer this result belongs to.
+        /// </summary>
+        [NotNull]
+        public readonly Layer Layer;
+
+        /// <summary>
         /// The weighted sum of net inputs (z).
         /// </summary>
         [NotNull]
@@ -21,12 +27,14 @@ namespace Neural.Perceptron
         public readonly Vector<float> Activation;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FeedforwardResult"/> struct.
+        /// Initializes a new instance of the <see cref="FeedforwardResult" /> struct.
         /// </summary>
+        /// <param name="parent">The parent.</param>
         /// <param name="input">The z.</param>
         /// <param name="activation">The activation.</param>
-        public FeedforwardResult([NotNull] Vector<float> input, [NotNull] Vector<float> activation)
+        public FeedforwardResult([NotNull] Layer parent, [NotNull] Vector<float> input, [NotNull] Vector<float> activation)
         {
+            Layer = parent;
             Input = input;
             Activation = activation;
         }

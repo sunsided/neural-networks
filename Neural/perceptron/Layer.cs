@@ -37,6 +37,31 @@ namespace Neural.Perceptron
         private readonly Func<Vector<float>, Vector<float>> _gradient;
 
         /// <summary>
+        /// The input layer
+        /// </summary>
+        [CanBeNull]
+        private readonly Layer _inputLayer;
+
+        /// <summary>
+        /// Gets the input layer.
+        /// </summary>
+        /// <value>The input layer.</value>
+        public Layer InputLayer
+        {
+            [CanBeNull]
+            get {  return _inputLayer; }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance is first layer in the network.
+        /// </summary>
+        /// <value><see langword="true" /> if this instance is first layer; otherwise, <see langword="false" />.</value>
+        public bool IsFirstLayer
+        {
+            get { return _inputLayer == null; }
+        }
+
+        /// <summary>
         /// Gets the number of neurons in this layer.
         /// </summary>
         /// <value>The number of neurons.</value>
@@ -52,8 +77,9 @@ namespace Neural.Perceptron
         /// <param name="biasVector"></param>
         /// <param name="weightMatrix">The weight matrix.</param>
         /// <param name="activationFunction">The activation function.</param>
-        public Layer([NotNull]  Vector<float> biasVector, [NotNull] Matrix<float> weightMatrix, [NotNull] IActivation activationFunction)
+        public Layer([CanBeNull] Layer inputLayer, [NotNull] Vector<float> biasVector, [NotNull] Matrix<float> weightMatrix, [NotNull] IActivation activationFunction)
         {
+            _inputLayer = inputLayer;
             _biasVector = biasVector;
             _weightMatrix = weightMatrix;
             _activationFunction = activationFunction.Transfer;
@@ -77,7 +103,7 @@ namespace Neural.Perceptron
             // apply the activation function to each weighted activation
             var outputActivations = activationFunction(weightedActivations);
 
-            return new FeedforwardResult(weightedActivations, outputActivations);
+            return new FeedforwardResult(this, weightedActivations, outputActivations);
         }
 
         /// <summary>
