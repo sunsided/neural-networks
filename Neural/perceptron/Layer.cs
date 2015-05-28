@@ -9,7 +9,7 @@ namespace Neural.Perceptron
     /// <summary>
     /// A perceptron layer.
     /// </summary>
-    [DebuggerDisplay("Maps {_weightMatrix.ColumnCount,nq} inputs to {_weightMatrix.RowCount,nq} outputs")]
+    [DebuggerDisplay("{Type,nq}: {_weightMatrix.ColumnCount,nq} --> {_weightMatrix.RowCount,nq}")]
     sealed class Layer
     {
         /// <summary>
@@ -81,36 +81,19 @@ namespace Neural.Perceptron
         }
 
         /// <summary>
-        /// Gets a value indicating whether this instance is the first layer in the network.
+        /// Gets the type.
         /// </summary>
-        /// <value><see langword="true" /> if this instance is the first layer; otherwise, <see langword="false" />.</value>
-        /// <seealso cref="IsOutput"/>
-        /// <seealso cref="IsHidden"/>
-        public bool IsInput
+        /// <value>The type.</value>
+        public LayerType Type
         {
-            get { return Previous == null; }
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether this instance is the last layer in the network.
-        /// </summary>
-        /// <value><see langword="true" /> if this instance is the last layer; otherwise, <see langword="false" />.</value>
-        /// <seealso cref="IsInput"/>
-        /// <seealso cref="IsHidden"/>
-        public bool IsOutput
-        {
-            get { return Next == null; }
-        }
-
-        /// <summary>
-        /// Gets a value indicating whether this instance is a hidden layer in the network.
-        /// </summary>
-        /// <value><see langword="true" /> if this instance is a hidden layer; otherwise, <see langword="false" />.</value>
-        /// <seealso cref="IsInput"/>
-        /// <seealso cref="IsOutput"/>
-        public bool IsHidden
-        {
-            get { return !(IsInput || IsOutput); }
+            [Pure]
+            get
+            {
+                if (Previous == null) return LayerType.Input;
+                return (Next == null)
+                    ? LayerType.Output
+                    : LayerType.Hidden;
+            }
         }
 
         /// <summary>

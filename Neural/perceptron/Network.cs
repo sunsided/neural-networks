@@ -104,6 +104,10 @@ namespace Neural.Perceptron
                 var layerResult = layer.Feedforward(layerInput);
                 nextInput = layerResult.Output;
 
+                // the input layer must never change the input values,
+                // it is here only for cosmetics.
+                Debug.Assert((layer.Type != LayerType.Input) || layerResult.Output.Equals(layerInput), "(layer.Type != LayerType.Input) || layerResult.Output.Equals(layerInput)");
+
                 // store the intermediate result
                 feedforwardResults.AddLast(layerResult);
             }

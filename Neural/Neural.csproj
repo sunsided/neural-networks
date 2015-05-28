@@ -56,6 +56,7 @@
     <Compile Include="Perceptron\FeedforwardResult.cs" />
     <Compile Include="Perceptron\Layer.cs" />
     <Compile Include="Perceptron\LayerConfiguration.cs" />
+    <Compile Include="Perceptron\LayerType.cs" />
     <Compile Include="Perceptron\Network.cs" />
     <Compile Include="Perceptron\NetworkConfiguration.cs" />
     <Compile Include="Perceptron\NetworkFactory.cs" />
