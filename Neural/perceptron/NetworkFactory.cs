@@ -52,13 +52,13 @@ namespace Neural.Perceptron
         /// <param name="layerConfigurations">The layer configurations.</param>
         /// <returns>PerceptronNetwork.</returns>
         private PerceptronNetwork Create<T>([NotNull] T layerConfigurations)
-            where T : IEnumerable<LayerConfiguration>
+            where T : IReadOnlyList<LayerConfiguration>
         {
             // Prepare a linked list of perceptron layers
             var layerList = new LinkedList<Layer>();
 
             var inputLayerConfiguration = layerConfigurations.First();
-            var remainingLayers = layerConfigurations.Skip(1);
+            var nonInputLayerConfigurations = layerConfigurations.Skip(1);
 
             // As the input layer has no previous layer, we initialize this as null.
             var previousNextLayer = new WeakReference<Layer>(null);
@@ -88,7 +88,7 @@ namespace Neural.Perceptron
             // each weight is initialized with a random value.
             // For efficient calculation, the weights of all nerons in a given layer
             // are stored as rows of a weight matrix.
-            foreach (var layerConfiguration in remainingLayers)
+            foreach (var layerConfiguration in nonInputLayerConfigurations)
             {
                 var layerNeurons = layerConfiguration.NeuronCount;
                 var activation = layerConfiguration.ActivationFunction;
