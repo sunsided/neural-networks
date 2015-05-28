@@ -22,8 +22,8 @@ namespace Neural
         {
             // The XOR problem
 
-            // obtain an activation function
-            var activation = new SigmoidActivation();
+            // obtain a transfer function
+            var activation = new SigmoidTransfer();
 
             // input layers with two neurons
             var inputLayer = LayerConfiguration.ForInput(400);

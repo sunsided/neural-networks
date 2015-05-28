@@ -48,10 +48,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Activations\InputLayerActivation.cs" />
-    <Compile Include="Activations\SigmoidActivation.cs" />
-    <Compile Include="Activations\LinearActivation.cs" />
-    <Compile Include="Activations\IActivation.cs" />
+    <Compile Include="Activations\InputLayerTransfer.cs" />
+    <Compile Include="Activations\SigmoidTransfer.cs" />
+    <Compile Include="Activations\LinearTransfer.cs" />
+    <Compile Include="Activations\ITransfer.cs" />
     <Compile Include="Perceptron\BackpropagationResult.cs" />
     <Compile Include="Perceptron\FeedforwardResult.cs" />
     <Compile Include="Perceptron\Layer.cs" />

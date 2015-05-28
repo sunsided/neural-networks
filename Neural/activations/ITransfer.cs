@@ -6,7 +6,7 @@ namespace Neural.Activations
     /// <summary>
     /// An activation function for a <see cref="Perceptron" />.
     /// </summary>
-    interface IActivation
+    interface ITransfer
     {
         /// <summary>
         /// Calculates the activation of the value <paramref name="z" />

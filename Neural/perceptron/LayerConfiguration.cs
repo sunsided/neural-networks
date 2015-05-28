@@ -16,7 +16,7 @@ namespace Neural.Perceptron
         /// <returns>LayerConfiguration.</returns>
         public static LayerConfiguration ForInput(int neuronCount)
         {
-            return new LayerConfiguration(neuronCount, new InputLayerActivation());
+            return new LayerConfiguration(neuronCount, new InputLayerTransfer());
         }
 
         /// <summary>
@@ -25,7 +25,7 @@ namespace Neural.Perceptron
         /// <param name="neuronCount">The neuron count.</param>
         /// <param name="activation">The activation function.</param>
         /// <returns>LayerConfiguration.</returns>
-        public static LayerConfiguration ForHidden(int neuronCount, [NotNull] IActivation activation)
+        public static LayerConfiguration ForHidden(int neuronCount, [NotNull] ITransfer activation)
         {
             return new LayerConfiguration(neuronCount, activation);
         }
@@ -36,7 +36,7 @@ namespace Neural.Perceptron
         /// <param name="neuronCount">The neuron count.</param>
         /// <param name="activation">The activation function.</param>
         /// <returns>LayerConfiguration.</returns>
-        public static LayerConfiguration ForOutput(int neuronCount, [NotNull] IActivation activation)
+        public static LayerConfiguration ForOutput(int neuronCount, [NotNull] ITransfer activation)
         {
             return new LayerConfiguration(neuronCount, activation);
         }
@@ -50,7 +50,7 @@ namespace Neural.Perceptron
         /// <summary>
         /// Gets the activation function of all neurons in the layer.
         /// </summary>
-        public readonly IActivation ActivationFunction;
+        public readonly ITransfer ActivationFunction;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LayerConfiguration" /> class.
@@ -58,7 +58,7 @@ namespace Neural.Perceptron
         /// <param name="neuronCount">The number of neurons in this layer.</param>
         /// <param name="activationFunction">The activation function.</param>
         /// <exception cref="System.ArgumentOutOfRangeException">The number of neurons was negative or zero.</exception>
-        public LayerConfiguration(int neuronCount, [NotNull] IActivation activationFunction)
+        public LayerConfiguration(int neuronCount, [NotNull] ITransfer activationFunction)
         {
             if (neuronCount <= 0) throw new ArgumentOutOfRangeException("neuronCount", neuronCount, "The number of neurons must be positive.");
             

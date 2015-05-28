@@ -1,11 +1,12 @@
-﻿using MathNet.Numerics.LinearAlgebra;
+﻿using System;
+using MathNet.Numerics.LinearAlgebra;
 
 namespace Neural.Activations
 {
     /// <summary>
-    /// Linear activation function.
+    /// Sigmoid activation function.
     /// </summary>
-    sealed class LinearActivation : IActivation
+    sealed class SigmoidTransfer : ITransfer
     {
         /// <summary>
         /// Calculates the activation of the value <paramref name="z" />
@@ -14,7 +15,7 @@ namespace Neural.Activations
         /// <returns>System.Single.</returns>
         public float Transfer(float z)
         {
-            return z;
+            return 1.0F / (1.0F + (float)Math.Exp(-z));
         }
 
         /// <summary>
@@ -24,7 +25,7 @@ namespace Neural.Activations
         /// <returns>Vector&lt;System.Single&gt;.</returns>
         public Vector<float> Transfer(Vector<float> z)
         {
-            return z;
+            return z.Map(value => 1.0F/(1.0F + (float) Math.Exp(-value)), Zeros.Include);
         }
 
         /// <summary>
@@ -34,7 +35,8 @@ namespace Neural.Activations
         /// <returns>System.Single.</returns>
         public float Gradient(float z)
         {
-            return 1;
+            var s = Transfer(z);
+            return s*(1 - s);
         }
 
         /// <summary>
@@ -44,7 +46,8 @@ namespace Neural.Activations
         /// <returns>Vector&lt;System.Single&gt;.</returns>
         public Vector<float> Gradient(Vector<float> z)
         {
-            return z.Map(value => 1F);
+            var s = Transfer(z);
+            return s.Map(value => value*(1 - value));
         }
     }
 }

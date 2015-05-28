@@ -25,16 +25,16 @@ namespace Neural.Perceptron
         private readonly Matrix<float> _weightMatrix;
 
         /// <summary>
-        /// The activation function
+        /// The transfer function
         /// </summary>
         [NotNull]
-        private readonly Func<Vector<float>, Vector<float>> _activationFunction;
+        private readonly Func<Vector<float>, Vector<float>> _transferFunction;
 
         /// <summary>
         /// The gradient function
         /// </summary>
         [NotNull]
-        private readonly Func<Vector<float>, Vector<float>> _gradient;
+        private readonly Func<Vector<float>, Vector<float>> _gradientFunction;
 
         /// <summary>
         /// The input layer
@@ -76,34 +76,34 @@ namespace Neural.Perceptron
         /// </summary>
         /// <param name="biasVector"></param>
         /// <param name="weightMatrix">The weight matrix.</param>
-        /// <param name="activationFunction">The activation function.</param>
-        public Layer([CanBeNull] Layer inputLayer, [NotNull] Vector<float> biasVector, [NotNull] Matrix<float> weightMatrix, [NotNull] IActivation activationFunction)
+        /// <param name="transferFunction">The activation function.</param>
+        public Layer([CanBeNull] Layer inputLayer, [NotNull] Vector<float> biasVector, [NotNull] Matrix<float> weightMatrix, [NotNull] ITransfer transferFunction)
         {
             _inputLayer = inputLayer;
             _biasVector = biasVector;
             _weightMatrix = weightMatrix;
-            _activationFunction = activationFunction.Transfer;
-            _gradient = activationFunction.Gradient;
+            _transferFunction = transferFunction.Transfer;
+            _gradientFunction = transferFunction.Gradient;
         }
 
         /// <summary>
-        /// Performs a feed-forward step of the layer's <paramref name="activations"/>.
+        /// Performs a feed-forward step of the layer's <paramref name="input"/>.
         /// </summary>
-        /// <param name="activations">The row vector of activations.</param>
+        /// <param name="input">The row vector of inputs.</param>
         /// <returns>The activations of this layer's perceptrons.</returns>
         [Pure]
-        public FeedforwardResult Feedforward([NotNull] Vector<float> activations)
+        public FeedforwardResult Feedforward([NotNull] Vector<float> input)
         {
             var matrix = _weightMatrix;
-            var activationFunction = _activationFunction;
+            var transferActivation = _transferFunction;
 
-            // calculate the sum of weighted activations for each neuron in the layer
-            var weightedActivations = matrix * activations + _biasVector;
+            // calculate activations for each neuron in the layer
+            var activation = matrix * input + _biasVector;
 
             // apply the activation function to each weighted activation
-            var outputActivations = activationFunction(weightedActivations);
+            var output = transferActivation(activation);
 
-            return new FeedforwardResult(this, weightedActivations, outputActivations);
+            return new FeedforwardResult(this, activation, output);
         }
 
         /// <summary>
@@ -116,8 +116,8 @@ namespace Neural.Perceptron
         public BackpropagationResult Backpropagate([NotNull] Vector<float> errors, Vector<float> weightedInputActivations)
         {
             // calculate the gradient of the activation function
-            var gradientFunction = _gradient;
-            var gradient = gradientFunction(weightedInputActivations);
+            var calculateGradient = _gradientFunction;
+            var gradient = calculateGradient(weightedInputActivations);
 
             // calculate the weighting error for the current layer
             var matrix = _weightMatrix.Transpose();

@@ -7,7 +7,7 @@ namespace Neural.Activations
     /// Invalid activation function that acts as a placeholder in the
     /// input layer configuration.
     /// </summary>
-    sealed class InputLayerActivation : IActivation
+    sealed class InputLayerTransfer : ITransfer
     {
         /// <summary>
         /// Always fails with a <see cref="InvalidOperationException" />.
