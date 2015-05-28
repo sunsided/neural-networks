@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
@@ -60,6 +61,7 @@ namespace Neural.Perceptron
 
             // As the input layer has no previous layer, we initialize this as null.
             Layer previousLayer = null;
+            var previousNextLayer = new WeakReference<Layer>(null);
 
             // This value encodes the number of neurons in the previous layer
             // that act as an input to each perceptron within this layer.
@@ -80,8 +82,19 @@ namespace Neural.Perceptron
                 var biasVector = Vector<float>.Build.Random(layerNeurons);
                 var weightMatrix = Matrix<float>.Build.Random(layerNeurons, inputNeurons);
 
-                var layer = new Layer(previousLayer, biasVector, weightMatrix, activation);
+                var nextLayer = new WeakReference<Layer>(null);
+
+                var layer = new Layer(previousLayer, nextLayer, biasVector, weightMatrix, activation);
                 layerList.AddLast(layer);
+
+                // update the "next layer" reference in the previous layer.
+                // if this is the first iteration, this update will do nothing as
+                // the reference is not yet in used.
+                previousNextLayer.SetTarget(layer);
+
+                // now we update the reference to the new instance created above
+                // so that the next iteration can update it accordingly.
+                previousNextLayer = nextLayer;
 
                 // We now store the number of neurons in this layer
                 // as the number of input neurons of the next layer

@@ -15,50 +15,102 @@ namespace Neural.Perceptron
         /// <summary>
         /// The weight vector of the bias units
         /// </summary>
+        /// <seealso cref="_weightMatrix"/>
         [NotNull]
         private readonly Vector<float> _biasVector;
 
         /// <summary>
         /// The weight matrix (Theta)
         /// </summary>
+        /// <seealso cref="_biasVector"/>
         [NotNull]
         private readonly Matrix<float> _weightMatrix;
 
         /// <summary>
         /// The transfer function
         /// </summary>
+        /// <seealso cref="_gradientFunction"/>
         [NotNull]
         private readonly Func<Vector<float>, Vector<float>> _transferFunction;
 
         /// <summary>
         /// The gradient function
         /// </summary>
+        /// <seealso cref="_transferFunction"/>
         [NotNull]
         private readonly Func<Vector<float>, Vector<float>> _gradientFunction;
 
         /// <summary>
         /// The input layer
         /// </summary>
+        /// <seealso cref="Previous"/>
         [CanBeNull]
-        private readonly Layer _inputLayer;
+        private readonly Layer _previousLayer;
+
+        /// <summary>
+        /// The input layer
+        /// </summary>
+        /// <seealso cref="Next"/>
+        [NotNull]
+        private readonly WeakReference<Layer> _nextLayer;
 
         /// <summary>
         /// Gets the input layer.
         /// </summary>
         /// <value>The input layer.</value>
-        public Layer InputLayer
+        /// <seealso cref="Next"/>
+        public Layer Previous
         {
             [CanBeNull]
-            get {  return _inputLayer; }
+            get {  return _previousLayer; }
         }
 
         /// <summary>
-        /// Gets a value indicating whether this instance is first layer in the network.
+        /// Gets the output layer.
         /// </summary>
-        /// <value><see langword="true" /> if this instance is first layer; otherwise, <see langword="false" />.</value>
-        public bool IsFirstLayer
+        /// <value>The output layer.</value>
+        /// <seealso cref="Previous"/>
+        public Layer Next
         {
-            get { return _inputLayer == null; }
+            [CanBeNull]
+            get
+            {
+                Layer output;
+                return _nextLayer.TryGetTarget(out output) ? output : null;
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance is the first layer in the network.
+        /// </summary>
+        /// <value><see langword="true" /> if this instance is the first layer; otherwise, <see langword="false" />.</value>
+        /// <seealso cref="IsOutput"/>
+        /// <seealso cref="IsHidden"/>
+        public bool IsInput
+        {
+            get { return Previous == null; }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance is the last layer in the network.
+        /// </summary>
+        /// <value><see langword="true" /> if this instance is the last layer; otherwise, <see langword="false" />.</value>
+        /// <seealso cref="IsInput"/>
+        /// <seealso cref="IsHidden"/>
+        public bool IsOutput
+        {
+            get { return Next == null; }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this instance is a hidden layer in the network.
+        /// </summary>
+        /// <value><see langword="true" /> if this instance is a hidden layer; otherwise, <see langword="false" />.</value>
+        /// <seealso cref="IsInput"/>
+        /// <seealso cref="IsOutput"/>
+        public bool IsHidden
+        {
+            get { return !(IsInput || IsOutput); }
         }
 
         /// <summary>
@@ -74,12 +126,15 @@ namespace Neural.Perceptron
         /// <summary>
         /// Initializes a new instance of the <see cref="Layer" /> class.
         /// </summary>
-        /// <param name="biasVector"></param>
+        /// <param name="previousLayer">The previous layer.</param>
+        /// <param name="nextLayer">The next layer.</param>
+        /// <param name="biasVector">The bias vector.</param>
         /// <param name="weightMatrix">The weight matrix.</param>
         /// <param name="transferFunction">The activation function.</param>
-        public Layer([CanBeNull] Layer inputLayer, [NotNull] Vector<float> biasVector, [NotNull] Matrix<float> weightMatrix, [NotNull] ITransfer transferFunction)
+        public Layer([CanBeNull] Layer previousLayer, [NotNull] WeakReference<Layer> nextLayer, [NotNull] Vector<float> biasVector, [NotNull] Matrix<float> weightMatrix, [NotNull] ITransfer transferFunction)
         {
-            _inputLayer = inputLayer;
+            _previousLayer = previousLayer;
+            _nextLayer = nextLayer;
             _biasVector = biasVector;
             _weightMatrix = weightMatrix;
             _transferFunction = transferFunction.Transfer;
