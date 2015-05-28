@@ -41,7 +41,7 @@ namespace Neural.Activations
         /// <param name="z">The value at which to evaluate the gradients.</param>
         /// <returns>System.Single.</returns>
         /// <exception cref="InvalidOperationException">An activation function of the input layer has been used erroneously.</exception>
-        public float Gradient(float z)
+        public float Derivative(float z)
         {
             throw new InvalidOperationException("An activation function of the input layer has been used erroneously.");
         }
@@ -52,7 +52,7 @@ namespace Neural.Activations
         /// <param name="z">The value at which to evaluate the gradients.</param>
         /// <returns>Vector&lt;System.Single&gt;.</returns>
         /// <exception cref="InvalidOperationException">An activation function of the input layer has been used erroneously.</exception>
-        public Vector<float> Gradient(Vector<float> z)
+        public Vector<float> Derivative(Vector<float> z)
         {
             throw new InvalidOperationException("An activation function of the input layer has been used erroneously.");
         }

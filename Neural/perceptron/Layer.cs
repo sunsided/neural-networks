@@ -121,7 +121,7 @@ namespace Neural.Perceptron
             _biasVector = biasVector;
             _weightMatrix = weightMatrix;
             _transferFunction = transferFunction.Transfer;
-            _gradientFunction = transferFunction.Gradient;
+            _gradientFunction = transferFunction.Derivative;
         }
 
         /// <summary>

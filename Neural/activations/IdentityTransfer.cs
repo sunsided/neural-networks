@@ -32,7 +32,7 @@ namespace Neural.Activations
         /// </summary>
         /// <param name="z">The value at which to evaluate the gradients.</param>
         /// <returns>Always the value <c>1</c></returns>
-        public float Gradient(float z)
+        public float Derivative(float z)
         {
             return 1;
         }
@@ -42,7 +42,7 @@ namespace Neural.Activations
         /// </summary>
         /// <param name="z">The value at which to evaluate the gradients.</param>
         /// <returns>Always the value <c>1</c></returns>
-        public Vector<float> Gradient(Vector<float> z)
+        public Vector<float> Derivative(Vector<float> z)
         {
             return z.Map(value => 1F);
         }

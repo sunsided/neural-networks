@@ -33,7 +33,7 @@ namespace Neural.Activations
         /// </summary>
         /// <param name="z">The value at which to evaluate the gradients.</param>
         /// <returns>System.Single.</returns>
-        public float Gradient(float z)
+        public float Derivative(float z)
         {
             var s = Transfer(z);
             return s*(1 - s);
@@ -44,7 +44,7 @@ namespace Neural.Activations
         /// </summary>
         /// <param name="z">The value at which to evaluate the gradients.</param>
         /// <returns>Vector&lt;System.Single&gt;.</returns>
-        public Vector<float> Gradient(Vector<float> z)
+        public Vector<float> Derivative(Vector<float> z)
         {
             var s = Transfer(z);
             return s.Map(value => value*(1 - value));

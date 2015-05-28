@@ -30,7 +30,7 @@ namespace Neural.Activations
         /// <param name="z">The value at which to evaluate the gradients.</param>
         /// <returns>System.Single.</returns>
         [Pure]
-        float Gradient(float z);
+        float Derivative(float z);
 
         /// <summary>
         /// Calculates the gradient of the transfer function evaluated at each value of <paramref name="z" />.
@@ -38,6 +38,6 @@ namespace Neural.Activations
         /// <param name="z">The value at which to evaluate the gradients.</param>
         /// <returns>Vector&lt;System.Single&gt;.</returns>
         [Pure, NotNull]
-        Vector<float> Gradient([NotNull] Vector<float> z);
+        Vector<float> Derivative([NotNull] Vector<float> z);
     }
 }
