@@ -47,6 +47,26 @@ namespace Neural.Perceptron
         }
 
         /// <summary>
+        /// Gets the input layer.
+        /// </summary>
+        /// <value>The input layer.</value>
+        protected Layer InputLayer
+        {
+            [Pure, NotNull]
+            get { return _layers.First.Value; }
+        }
+
+        /// <summary>
+        /// Gets the output layer.
+        /// </summary>
+        /// <value>The output layer.</value>
+        protected Layer OutputLayer
+        {
+            [Pure, NotNull]
+            get { return _layers.Last.Value; }
+        }
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="PerceptronNetwork"/> class.
         /// </summary>
         /// <param name="layers">The perceptron layers.</param>
@@ -148,6 +168,21 @@ namespace Neural.Perceptron
                 var networkOutputError = CalculateNetworkOutputError(feedforwardResults, expectedOutput);
                 var error = networkOutputError;
 
+
+                // work it ... manually
+                var outputLayer = OutputLayer;
+                var networkOutput = feedforwardResults.Last.Value;
+                var hiddenError = outputLayer.Backpropagate(
+                    layerOutput:networkOutput.Output,
+                    layerOutputErrors:networkOutputError);
+
+
+
+
+
+
+
+
                 // run the backward propagation steps
                 // we start with the last node and iterate until we reach the first
                 // hidden layer. The input layer is left out because there is no gradient
@@ -166,7 +201,7 @@ namespace Neural.Perceptron
                     var currentLayer = layerNodeOfCurrentLayer.Value;
 
                     var z = previousLayerResults.Activation;
-                    var previousLayerError = currentLayer.Backpropagate(error, z);
+                    var previousLayerError = currentLayer.Backpropagate(z, error);
 
                     // set the error for the next recursion
                     error = previousLayerError.WeightingErrors;
