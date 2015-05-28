@@ -4,12 +4,12 @@ using MathNet.Numerics.LinearAlgebra;
 namespace Neural.Activations
 {
     /// <summary>
-    /// Sigmoid activation function.
+    /// Sigmoid transfer function.
     /// </summary>
     sealed class SigmoidTransfer : ITransfer
     {
         /// <summary>
-        /// Calculates the activation of the value <paramref name="z" />
+        /// Applies the transfer function to the value <paramref name="z" />.
         /// </summary>
         /// <param name="z">The value at which to calculate the activation.</param>
         /// <returns>System.Single.</returns>
@@ -19,7 +19,7 @@ namespace Neural.Activations
         }
 
         /// <summary>
-        /// Calculates the activation of the value <paramref name="z" />
+        /// Applies the transfer function to the values of <paramref name="z" />.
         /// </summary>
         /// <param name="z">The values at which to calculate the activation.</param>
         /// <returns>Vector&lt;System.Single&gt;.</returns>
@@ -29,7 +29,7 @@ namespace Neural.Activations
         }
 
         /// <summary>
-        /// Calculates the gradient of the activation evaluated at <paramref name="z" />.
+        /// Calculates the gradient of the transfer function evaluated at <paramref name="z" />.
         /// </summary>
         /// <param name="z">The value at which to evaluate the gradients.</param>
         /// <returns>System.Single.</returns>
@@ -40,7 +40,7 @@ namespace Neural.Activations
         }
 
         /// <summary>
-        /// Calculates the gradient of the activation evaluated at each value of <paramref name="z" />.
+        /// Calculates the gradient of the transfer function evaluated at each value of <paramref name="z" />.
         /// </summary>
         /// <param name="z">The value at which to evaluate the gradients.</param>
         /// <returns>Vector&lt;System.Single&gt;.</returns>

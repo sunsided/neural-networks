@@ -3,45 +3,45 @@
 namespace Neural.Activations
 {
     /// <summary>
-    /// Linear activation function.
+    /// Identity transfer function.
     /// </summary>
-    sealed class LinearTransfer : ITransfer
+    sealed class IdentityTransfer : ITransfer
     {
         /// <summary>
-        /// Calculates the activation of the value <paramref name="z" />
+        /// Applies the transfer function to the value <paramref name="z" />.
         /// </summary>
         /// <param name="z">The value at which to calculate the activation.</param>
-        /// <returns>System.Single.</returns>
+        /// <returns>The value of <paramref name="z"/></returns>
         public float Transfer(float z)
         {
             return z;
         }
 
         /// <summary>
-        /// Calculates the activation of the value <paramref name="z" />
+        /// Applies the transfer function to the values of <paramref name="z" />.
         /// </summary>
         /// <param name="z">The values at which to calculate the activation.</param>
-        /// <returns>Vector&lt;System.Single&gt;.</returns>
+        /// <returns>The value of <paramref name="z"/></returns>
         public Vector<float> Transfer(Vector<float> z)
         {
             return z;
         }
 
         /// <summary>
-        /// Calculates the gradient of the activation evaluated at <paramref name="z" />.
+        /// Calculates the gradient of the transfer function evaluated at <paramref name="z" />.
         /// </summary>
         /// <param name="z">The value at which to evaluate the gradients.</param>
-        /// <returns>System.Single.</returns>
+        /// <returns>Always the value <c>1</c></returns>
         public float Gradient(float z)
         {
             return 1;
         }
 
         /// <summary>
-        /// Calculates the gradient of the activation evaluated at each value of <paramref name="z" />.
+        /// Calculates the gradient of the transfer function evaluated at each value of <paramref name="z" />.
         /// </summary>
         /// <param name="z">The value at which to evaluate the gradients.</param>
-        /// <returns>Vector&lt;System.Single&gt;.</returns>
+        /// <returns>Always the value <c>1</c></returns>
         public Vector<float> Gradient(Vector<float> z)
         {
             return z.Map(value => 1F);

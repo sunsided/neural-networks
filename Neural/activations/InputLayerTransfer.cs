@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
 
 namespace Neural.Activations
@@ -6,29 +7,32 @@ namespace Neural.Activations
     /// <summary>
     /// Invalid activation function that acts as a placeholder in the
     /// input layer configuration.
+    /// <para>
+    /// It always acts as an identity transfer function and throws an exception
+    /// whenever the gradient is attempted to be obtained.
+    /// </para>
     /// </summary>
     sealed class InputLayerTransfer : ITransfer
     {
         /// <summary>
-        /// Always fails with a <see cref="InvalidOperationException" />.
+        /// Always return <paramref name="z"/>
         /// </summary>
         /// <param name="z">The value at which to calculate the activation.</param>
         /// <returns>System.Single.</returns>
-        /// <exception cref="InvalidOperationException">An activation function of the input layer has been used erroneously.</exception>
         public float Transfer(float z)
         {
-            throw new InvalidOperationException("An activation function of the input layer has been used erroneously.");
+            return z;
         }
 
         /// <summary>
-        /// Always fails with a <see cref="InvalidOperationException" />.
+        /// Always return <paramref name="z"/>
         /// </summary>
         /// <param name="z">The values at which to calculate the activation.</param>
         /// <returns>Vector&lt;System.Single&gt;.</returns>
-        /// <exception cref="InvalidOperationException">An activation function of the input layer has been used erroneously.</exception>
-        public Vector<float> Transfer(Vector<float> z)
+        [NotNull]
+        public Vector<float> Transfer([NotNull] Vector<float> z)
         {
-            throw new InvalidOperationException("An activation function of the input layer has been used erroneously.");
+            return z;
         }
 
         /// <summary>
