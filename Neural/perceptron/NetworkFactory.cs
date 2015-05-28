@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
+using Neural.Activations;
 
 namespace Neural.Perceptron
 {
@@ -56,18 +57,31 @@ namespace Neural.Perceptron
             // Prepare a linked list of perceptron layers
             var layerList = new LinkedList<Layer>();
 
-            var inputLayer = layerConfigurations.First();
+            var inputLayerConfiguration = layerConfigurations.First();
             var remainingLayers = layerConfigurations.Skip(1);
 
             // As the input layer has no previous layer, we initialize this as null.
-            Layer previousLayer = null;
             var previousNextLayer = new WeakReference<Layer>(null);
 
             // This value encodes the number of neurons in the previous layer
             // that act as an input to each perceptron within this layer.
             // For the input layer, each input is directly assigned;
             // we encode this as one (virtual) input neuron per perceptron.
-            var inputNeurons = inputLayer.NeuronCount;
+            var inputNeurons = inputLayerConfiguration.NeuronCount;
+
+            // the first layer is of purely cosmetic nature:
+            // although the input layer does not do anything, it is still
+            // considered a layer, so it is added here with linear activation,
+            // zero bias and linear transfer.
+            var biasVector = Vector<float>.Build.Dense(inputNeurons, Matrix<float>.Zero);
+            var weightMatrix = Matrix<float>.Build.Diagonal(inputNeurons, inputNeurons, Matrix<float>.One);
+            var inputLayerTransfer = new InputLayerTransfer();
+
+            var inputLayer = new Layer(null, previousNextLayer, biasVector, weightMatrix, inputLayerTransfer);
+            layerList.AddLast(inputLayer);
+
+            // for the first iteration we initialize the previous layer as the input layer
+            Layer previousLayer = inputLayer;
 
             // We now iterate over all configurations and create weight vectors
             // for each perceptron according to the number of input neurons, where
@@ -80,8 +94,8 @@ namespace Neural.Perceptron
                 var activation = layerConfiguration.ActivationFunction;
 
                 // TODO: These values should be rather small (e.g. -0.5 .. 0.5)
-                var biasVector = Vector<float>.Build.Random(layerNeurons);
-                var weightMatrix = Matrix<float>.Build.Random(layerNeurons, inputNeurons);
+                biasVector = Vector<float>.Build.Random(layerNeurons);
+                weightMatrix = Matrix<float>.Build.Random(layerNeurons, inputNeurons);
 
                 // we create a new weak reference to the following layer
                 // that will be wired up accordingly in the next iteration.
@@ -91,13 +105,10 @@ namespace Neural.Perceptron
                 var layer = new Layer(previousLayer, nextLayer, biasVector, weightMatrix, activation);
                 layerList.AddLast(layer);
 
-                // update the "next layer" reference in the previous layer.
-                // if this is the first iteration, this update will do nothing as
-                // the reference is not yet in used.
-                previousNextLayer.SetTarget(layer);
-
-                // now we update the reference to the new instance created above
+                // update the "next layer" reference in the previous layer,
+                // then rewire the reference to the new instance created above
                 // so that the next iteration can update it accordingly.
+                previousNextLayer.SetTarget(layer);
                 previousNextLayer = nextLayer;
 
                 // We now store the number of neurons in this layer
