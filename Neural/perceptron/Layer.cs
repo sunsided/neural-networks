@@ -142,46 +142,38 @@ namespace Neural.Perceptron
         }
 
         /// <summary>
-        /// Performs a backpropagation step of the layer's <paramref name="layerOutputErrors" />.
+        /// Performs a backpropagation step of the layer's <paramref name="outputErrors" />.
         /// </summary>
-        /// <param name="layerOutput">This layer's weighted input activations.</param>
-        /// <param name="layerOutputErrors">The training errors.</param>
+        /// <param name="weightedInputs">This layer's weighted input activations.</param>
+        /// <param name="outputErrors">The training errors.</param>
         /// <returns>The activations of this layer's perceptrons.</returns>
         /// <exception cref="System.InvalidOperationException">Attempted to backpropagate through the input layer.</exception>
         [Pure, NotNull]
-        public BackpropagationResult Backpropagate([NotNull] Vector<float> layerOutput, [NotNull] Vector<float> layerOutputErrors)
+        public BackpropagationResult Backpropagate([NotNull] Vector<float> weightedInputs, [NotNull] Vector<float> outputErrors)
         {
-            try
-            {
-                // calculate the gradient of the transfer function.
-                // This function will fail on the input layer.
-                var gradient = _derivativeFunction(layerOutput);
+            if (Type != LayerType.Hidden) throw new InvalidOperationException("Backpropagation only allowed on hidden layers.");
 
-                // In case of the output layer, the error is trivially
-                // the difference of expected and calculated outputs,
-                // so nothing needs to be done.
-                // On hidden layers, the error is the weighted sum
-                // of the errors to each originating neuron.
-                var errors = layerOutputErrors;
-                if (Type == LayerType.Hidden)
-                {
-                    // sum errors weighted by connection weights
-                    var matrix = _weightMatrix.Transpose();
-                    errors = (matrix * layerOutputErrors);
-                }
+            // calculate the gradient of the transfer function.
+            // This function will fail on the input layer.
+            var gradient = _derivativeFunction(weightedInputs);
 
-                // calculate the weightig matrix errors
-                var weightError = errors.PointwiseMultiply(gradient);
+            // In case of the output layer, the error is trivially
+            // the difference of expected and calculated outputs,
+            // so nothing needs to be done.
+            // On hidden layers, the error is the weighted sum
+            // of the errors to each originating neuron.
 
-                // calculate the bias error for the current layer
-                var biasError = _biasVector * layerOutputErrors; // TODO verify that!
+            // sum errors weighted by connection weights
+            var transposedMatrix = Next._weightMatrix.Transpose();
+            var weightError = (transposedMatrix * outputErrors).PointwiseMultiply(gradient);
 
-                return new BackpropagationResult(weightError, biasError);
-            }
-            catch (InvalidOperationException e)
-            {
-                throw new InvalidOperationException("Attempted to backpropagate through the input layer.", e);
-            }
+            // calculate the bias error for the current layer
+            // in analogy to the weight error calculaction above; however, since
+            // the bias unit is not affected by the nonlinear transfer function,
+            // it has linear effect, hence the multiplication with b' = 1.
+            var biasError = (Next._biasVector * outputErrors) * 1.0F;
+
+            return new BackpropagationResult(weightError, biasError);
         }
     }
 }

@@ -15,13 +15,13 @@ namespace Neural.Perceptron
         public readonly Layer Layer;
 
         /// <summary>
-        /// The layer's activation, i.e. weighted sum of net inputs (z).
+        /// The layer's weighted sums of net inputs (Z).
         /// </summary>
         [NotNull]
-        public readonly Vector<float> Activation;
+        public readonly Vector<float> WeightedInputs;
 
         /// <summary>
-        /// The layer's output, i.e. transferred activation.
+        /// The layer's output, i.e. transferred activation (A).
         /// </summary>
         [NotNull]
         public readonly Vector<float> Output;
@@ -30,12 +30,12 @@ namespace Neural.Perceptron
         /// Initializes a new instance of the <see cref="FeedforwardResult" /> struct.
         /// </summary>
         /// <param name="parent">The parent.</param>
-        /// <param name="activation">The layer's activation.</param>
+        /// <param name="weightedInputs">The weighted inputs.</param>
         /// <param name="output">The layer's output.</param>
-        public FeedforwardResult([NotNull] Layer parent, [NotNull] Vector<float> activation, [NotNull] Vector<float> output)
+        public FeedforwardResult([NotNull] Layer parent, [NotNull] Vector<float> weightedInputs, [NotNull] Vector<float> output)
         {
             Layer = parent;
-            Activation = activation;
+            WeightedInputs = weightedInputs;
             Output = output;
         }
     }

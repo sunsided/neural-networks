@@ -168,17 +168,29 @@ namespace Neural.Perceptron
                 var networkOutputError = CalculateNetworkOutputError(feedforwardResults, expectedOutput);
                 var error = networkOutputError;
 
-
                 // work it ... manually
                 var outputLayer = OutputLayer;
+                var hiddenLayer = outputLayer.Previous;
+
                 var networkOutput = feedforwardResults.Last.Value;
-                var hiddenError = outputLayer.Backpropagate(
-                    layerOutput:networkOutput.Output,
-                    layerOutputErrors:networkOutputError);
+                var hiddenOutput = feedforwardResults.Last.Previous.Value;
 
+                // errors on the output layer can be calculated directly
+                var z3 = networkOutput.WeightedInputs;
+                var a3 = networkOutput.Output;
+                var d3 = networkOutputError;
 
+                // errors on the hidden layer must be obtained through backpropagation
+                var z2 = hiddenOutput.WeightedInputs;
+                var a2 = hiddenOutput.Output;
+                var d2 = hiddenLayer.Backpropagate(
+                    weightedInputs:z2,
+                    outputErrors:d3);
 
+                // backpropagation stops at the first hidden layer, since the
+                // input layer cannot be changed
 
+                throw new NotImplementedException("gradient calculation from weight errors not implemented");
 
 
 
@@ -200,7 +212,7 @@ namespace Neural.Perceptron
                     var previousLayerResults = resultNodeOfPreviousLayer.Value;
                     var currentLayer = layerNodeOfCurrentLayer.Value;
 
-                    var z = previousLayerResults.Activation;
+                    var z = previousLayerResults.WeightedInputs;
                     var previousLayerError = currentLayer.Backpropagate(z, error);
 
                     // set the error for the next recursion
