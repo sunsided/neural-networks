@@ -93,9 +93,15 @@ namespace Neural.Perceptron
                 var layerNeurons = layerConfiguration.NeuronCount;
                 var activation = layerConfiguration.ActivationFunction;
 
-                // TODO: These values should be rather small (e.g. -0.5 .. 0.5)
-                biasVector = Vector<float>.Build.Random(layerNeurons);
-                weightMatrix = Matrix<float>.Build.Random(layerNeurons, inputNeurons);
+                // set weights and biases
+                weightMatrix = layerConfiguration.Weights;
+                biasVector = layerConfiguration.Bias;
+                if (weightMatrix == null || biasVector == null)
+                {
+                    // TODO: These values should be rather small (e.g. -0.5 .. 0.5)
+                    biasVector = Vector<float>.Build.Random(layerNeurons);
+                    weightMatrix = Matrix<float>.Build.Random(layerNeurons, inputNeurons);
+                }
 
                 // we create a new weak reference to the following layer
                 // that will be wired up accordingly in the next iteration.

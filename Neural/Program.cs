@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Linq;
 using System.Threading;
 using MathNet.Numerics.LinearAlgebra;
+using MathNet.Numerics.LinearAlgebra.Single;
 using Neural.Activations;
 using Neural.Perceptron;
 
@@ -26,16 +27,94 @@ namespace Neural
             var activation = new SigmoidTransfer();
 
             // input layers with two neurons
-            var inputLayer = LayerConfiguration.ForInput(400);
+            var inputLayer = LayerConfiguration.ForInput(3);
 
             // one hidden layer with three neurons
+            var weights = Matrix<float>.Build.DenseOfColumnArrays(
+                new[]
+                {
+                    -0.0279415498198926F,
+                    0.0656986598718789F,
+                    0.0989358246623382F,
+                    0.0412118485241757F,
+                    -0.054402111088937F
+                },
+                new[]
+                {
+                    -0.0999990206550704F,
+                    -0.0536572918000435F,
+                    0.0420167036826641F,
+                    0.099060735569487F,
+                    0.0650287840157117F
+                },
+                new[]
+                {
+                    -0.0287903316665065F,
+                    -0.0961397491879557F,
+                    -0.0750987246771676F,
+                    0.0149877209662952F,
+                    0.0912945250727628F
+                }
+                );
+
+            var bias = Vector<float>.Build.DenseOfArray(
+                new[]
+                {
+                    0.0841470984807896F,
+                    0.0909297426825682F,
+                    0.0141120008059867F,
+                    -0.0756802495307928F,
+                    -0.0958924274663139F
+                });
+
             var hiddenLayers = new[]
                                {
-                                   LayerConfiguration.ForHidden(25, activation)
+                                   LayerConfiguration.ForHidden(activation, weights, bias)
                                };
 
             // output layer with one neuron
-            var outputLayer = LayerConfiguration.ForOutput(10, activation);
+            weights = Matrix<float>.Build.DenseOfColumnArrays(
+                new[]
+                {
+                    -0.0756802495307928F,
+                    -0.0958924274663139F,
+                    -0.0279415498198926F
+                },
+                new[]
+                {
+                    0.0656986598718789F,
+                    0.0989358246623382F,
+                    0.0412118485241757F
+                },
+                new[]
+                {
+                    -0.054402111088937F,
+                    -0.0999990206550704F,
+                    -0.0536572918000435F
+                },
+                new[]
+                {
+                    0.0420167036826641F,
+                    0.099060735569487F,
+                    0.0650287840157117F
+                },
+                new[]
+                {
+                    -0.0287903316665065F,
+                    -0.0961397491879557F,
+                    -0.0750987246771676F
+                }
+                );
+
+            bias = Vector<float>.Build.DenseOfArray(
+                new[]
+                {
+                    0.0841470984807896F,
+                    0.0909297426825682F,
+                    0.0141120008059867F
+                });
+
+            var outputLayer = LayerConfiguration.ForOutput(activation, weights, bias);
 
             // construct a network
             var factory = new NetworkFactory();
@@ -44,10 +123,11 @@ namespace Neural
             // train the network
             var examples = new[]
                            {
-                               new TrainingExample(Vector<float>.Build.Random(400), Vector<float>.Build.Random(10)),
-                               new TrainingExample(Vector<float>.Build.Random(400), Vector<float>.Build.Random(10)),
-                               new TrainingExample(Vector<float>.Build.Random(400), Vector<float>.Build.Random(10)),
-                               new TrainingExample(Vector<float>.Build.Random(400), Vector<float>.Build.Random(10))
+                               new TrainingExample(Vector<float>.Build.DenseOfArray(new[] {0.0841470984807896F, -0.0279415498198926F, -0.0999990206550704F}), Vector<float>.Build.DenseOfArray(new [] { 0F, 1F, 0F })),
+                               new TrainingExample(Vector<float>.Build.DenseOfArray(new[] {0.0909297426825682F, 0.0656986598718789F, -0.0536572918000435F}), Vector<float>.Build.DenseOfArray((new [] { 0F, 0F, 1F }))),
+                               new TrainingExample(Vector<float>.Build.DenseOfArray(new[] {0.0141120008059867F, 0.0989358246623382F, 0.0420167036826641F}), Vector<float>.Build.DenseOfArray((new [] { 1F, 0F, 0F }))),
+                               new TrainingExample(Vector<float>.Build.DenseOfArray(new[] {-0.0756802495307928F, 0.0412118485241757F, 0.099060735569487F}), Vector<float>.Build.DenseOfArray((new [] { 0F, 1F, 0F }))),
+                               new TrainingExample(Vector<float>.Build.DenseOfArray(new[] {-0.0958924274663139F, -0.054402111088937F, 0.0650287840157117F}), Vector<float>.Build.DenseOfArray((new [] { 0F, 0F, 1F })))
                            };
 
             network.Train(examples);
