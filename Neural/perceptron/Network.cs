@@ -265,40 +265,7 @@ namespace Neural.Perceptron
                     }
                 }
 
-
-
-
-
-                throw new NotImplementedException("gradient calculation from weight errors not implemented");
-
-                // run the backward propagation steps
-                // we start with the last node and iterate until we reach the first
-                // hidden layer. The input layer is left out because there is no gradient
-                // to correct, as inputs are what they are.
-                var layerNodeOfCurrentLayer = layers.Last;
-                var resultNodeOfPreviousLayer = feedforwardResults.Last.Previous;
-                for (int layerIndex = 0; layerIndex < layerCount-1 /* -1 because we already know the output error as well */; ++layerIndex)
-                {
-                    Debug.Assert(layerNodeOfCurrentLayer != null, "layerNode != null");
-                    Debug.Assert(resultNodeOfPreviousLayer != null, "resultNode != null");
-
-                    // based on the current layer's matrix and the previous layer's
-                    // weighted inputs (not output activations!) we determine the error
-                    // of the previous (!) layer
-                    var previousLayerResults = resultNodeOfPreviousLayer.Value;
-                    var currentLayer = layerNodeOfCurrentLayer.Value;
-
-                    var z = previousLayerResults.WeightedInputs;
-                    var previousLayerError = currentLayer.Backpropagate(z, error);
-
-                    // set the error for the next recursion
-                    error = previousLayerError.WeightingErrors;
-
-                    // move to the previous layer
-                    layerNodeOfCurrentLayer = layerNodeOfCurrentLayer.Previous;
-                    resultNodeOfPreviousLayer = resultNodeOfPreviousLayer.Previous;
-                }
-            }
+            } // for(examples)
 
             throw new NotImplementedException();
         }
