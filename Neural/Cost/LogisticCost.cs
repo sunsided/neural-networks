@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
 using Neural.Perceptron;
@@ -11,75 +10,42 @@ namespace Neural.Cost
     /// <summary>
     /// Logistic regression-like multivariate cost function.
     /// </summary>
-    sealed class LogisticCost : ICostFunction
+    sealed class LogisticCost : CostBase
     {
+        #region Actual cost calculation (no gradients)
+
         /// <summary>
-        /// Calculates the cost and the gradient of the cost function given the training examples.
+        /// Calculates the network's training cost.
         /// </summary>
-        /// <param name="network">The network.</param>
-        /// <param name="trainingSet">The training set.</param>
-        /// <param name="lambda">The regularization parameter.</param>
+        /// <param name="expectedOutput">The expected output, i.e. ground truth.</param>
+        /// <param name="networkOutput">The network output.</param>
         /// <returns>System.Single.</returns>
-        [Pure]
-        public TrainingResult CalculateCostAndGradient([NotNull] Network network, [NotNull] IReadOnlyCollection<TrainingExample> trainingSet, float lambda)
+        private float CalculateCost(Vector<float> expectedOutput, FeedforwardResult networkOutput)
         {
-            return lambda > 0
-                ? CalculateCostAndGradientRegularized(network, trainingSet, lambda)
-                : CalculateCostAndGradientUnregularized(network, trainingSet);
+            Debug.Assert(networkOutput.LayerType == LayerType.Output, "networkOutput.LayerType == LayerType.Output");
+            return CalculateCost(expectedOutput, networkOutput.Output);
         }
 
         /// <summary>
-        /// Calculates the cost given the training examples.
+        /// Calculates the network's training cost.
         /// </summary>
-        /// <param name="trainingSet">The training set.</param>
+        /// <param name="expectedOutput">The expected output, i.e. ground truth.</param>
+        /// <param name="networkOutput">The network output.</param>
         /// <returns>System.Single.</returns>
-        [Pure]
-        public TrainingResult CalculateCostAndGradientUnregularized(Network network, IReadOnlyCollection<TrainingExample> trainingSet)
+        private float CalculateCost(Vector<float> expectedOutput, Vector<float> networkOutput)
         {
-            // Map: Apply training method to each example
-            var trainingResults = trainingSet.Select(example => CalculateCostAndGradientUnregularized(network, example));
+            var logOutput = networkOutput.Map(v => (float)Math.Log(v));
+            var firstPart = expectedOutput * logOutput;
 
-            // initialize cost and accumulated gradients
-            var gradientDictionary = new Dictionary<Layer, ErrorGradient>();
-            var cost = 0.0F;
+            var logInvOutput = networkOutput.Map(v => (float)Math.Log(1 - v)); // BUG: this will blow up if the network output is actually 1 (or larger)
+            var secondPart = (1 - expectedOutput) * logInvOutput;
 
-            // for each layer after the input, initialize the gradient
-            // accumulation matrices to zero
-            foreach (var layer in network.Skip(1))
-            {
-                Debug.Assert(layer.Type != LayerType.Input, "layer.Type != LayerType.Input");
-
-                var gradient = ErrorGradient.EmptyFromLayer(layer);
-                gradientDictionary.Add(layer, gradient);
-            }
-
-            // Reduce: merge the training examples
-            foreach (var trainingResult in trainingResults)
-            {
-                // accumulate cost over all training examples
-                cost += trainingResult.Cost;
-
-                // iterate over all layer's error gradients of this training example
-                // TODO: this is data parallel with respect to layers, so may run in parallel
-                var trainingGradients = trainingResult.ErrorGradients;
-                foreach (var trainingGradient in trainingGradients)
-                {
-                    var layer = trainingGradient.Key;
-                    var gradient = trainingGradient.Value;
-
-                    // accumulate gradients over all training examples
-                    gradientDictionary[layer] += gradient;
-                }
-            }
-
-            // scale cost and gradients by the number of training examples
-            var inverseExampleCount = 1.0F / trainingSet.Count;
-            cost *= inverseExampleCount;
-            gradientDictionary = gradientDictionary.AsParallel()
-                .ToDictionary(item => item.Key, item => item.Value * inverseExampleCount);
-
-            return new TrainingResult(cost, gradientDictionary);
+            return -firstPart - secondPart;
         }
+
+        #endregion Actual cost calculation (no gradients)
+
+        #region Gradient calculation
 
         /// <summary>
         /// Calculates the (unregularized) cost and gradient given a single training example.
@@ -88,7 +54,7 @@ namespace Neural.Cost
         /// <param name="example">The training example.</param>
         /// <returns>TrainingResult.</returns>
         [Pure]
-        public TrainingResult CalculateCostAndGradientUnregularized(Network network, TrainingExample example)
+        public override TrainingResult CalculateCostAndGradientUnregularized(Network network, TrainingExample example)
         {
             // prepare the output structures
             var gradients = new Dictionary<Layer, ErrorGradient>();
@@ -187,107 +153,6 @@ namespace Neural.Cost
             return new ErrorGradient(weightGradient, biasGradient);
         }
 
-        #region Actual cost calculation (no gradients)
-
-        /// <summary>
-        /// Calculates the network's training cost.
-        /// </summary>
-        /// <param name="expectedOutput">The expected output, i.e. ground truth.</param>
-        /// <param name="networkOutput">The network output.</param>
-        /// <returns>System.Single.</returns>
-        private float CalculateCost(Vector<float> expectedOutput, FeedforwardResult networkOutput)
-        {
-            Debug.Assert(networkOutput.LayerType == LayerType.Output, "networkOutput.LayerType == LayerType.Output");
-            return CalculateCost(expectedOutput, networkOutput.Output);
-        }
-
-        /// <summary>
-        /// Calculates the network's training cost.
-        /// </summary>
-        /// <param name="expectedOutput">The expected output, i.e. ground truth.</param>
-        /// <param name="networkOutput">The network output.</param>
-        /// <returns>System.Single.</returns>
-        private float CalculateCost(Vector<float> expectedOutput, Vector<float> networkOutput)
-        {
-            var logOutput = networkOutput.Map(v => (float)Math.Log(v));
-            var firstPart = expectedOutput * logOutput;
-
-            var logInvOutput = networkOutput.Map(v => (float)Math.Log(1 - v)); // BUG: this will blow up if the network output is actually 1 (or larger)
-            var secondPart = (1 - expectedOutput) * logInvOutput;
-
-            return -firstPart - secondPart;
-        }
-
-        #endregion Actual cost calculation (no gradients)
-
-        #region Helper functions
-
-        /// <summary>
-        /// Gets the input values of the <see cref="Layer"/> that belongs to the <paramref name="resultNode"/>.
-        /// </summary>
-        /// <param name="resultNode">The result node.</param>
-        /// <returns>Vector&lt;System.Single&gt;.</returns>
-        [Pure, NotNull]
-        private static Vector<float> GetLayerInput([NotNull] LinkedListNode<FeedforwardResult> resultNode)
-        {
-            Debug.Assert(resultNode.Value.LayerType != LayerType.Input, "resultNode.Value.LayerType != LayerType.Input");
-
-            // obtain the previous node
-            var previousLayerNode = resultNode.Previous;
-            Debug.Assert(previousLayerNode != null, "previousLayerNode != null");
-
-            // the previous layer's output are the inputs of the layer given to this function
-            var previousLayer = previousLayerNode.Value;
-            return previousLayer.Output;
-        }
-
-        #endregion Helper functions
-
-        #region Regularization
-
-        /// <summary>
-        /// Calculates the cost and the gradient of the cost function given the training examples.
-        /// </summary>
-        /// <param name="trainingSet">The training set.</param>
-        /// <param name="lambda">The regularization parameter.</param>
-        /// <returns>System.Single.</returns>
-        [Pure]
-        public TrainingResult CalculateCostAndGradientRegularized([NotNull] Network network, [NotNull] IReadOnlyCollection<TrainingExample> trainingSet, float lambda)
-        {
-            var unregularizedResult = CalculateCostAndGradientUnregularized(network, trainingSet);
-            var count = trainingSet.Count;
-
-            // regularize the training cost
-            var layers = network.Skip(1);
-            var sumOfSquaredWeights = layers.AsParallel().Sum(layer => layer.Weights.Map(v => v * v).RowSums().Sum());
-            var costRegularization = lambda / (2 * count) * sumOfSquaredWeights;
-            var regularizedCost = unregularizedResult.Cost + costRegularization;
-
-            // regularization of gradients is obtained by simply adding
-            // the scaled weights to the gradient
-            var unregularizedGradients = unregularizedResult.ErrorGradients;
-            var regularizationFactor = lambda / count;
-            var regularizedGradient = unregularizedGradients.AsParallel().ToDictionary(
-                entry => entry.Key,
-                entry => RegularizeErrorGradient(entry.Key, entry.Value, regularizationFactor));
-
-            // return the regularized result
-            return new TrainingResult(regularizedCost, regularizedGradient);
-        }
-
-        /// <summary>
-        /// Regularizes the error gradient.
-        /// </summary>
-        /// <param name="layer">The layer.</param>
-        /// <param name="unregularizedGradient">The unregularized gradient.</param>
-        /// <param name="regularizationFactor">The regularization factor (lambda/no. of training examples).</param>
-        /// <returns>ErrorGradient.</returns>
-        private static ErrorGradient RegularizeErrorGradient([NotNull] Layer layer, ErrorGradient unregularizedGradient, float regularizationFactor)
-        {
-            var regularizedWeightGradient = unregularizedGradient.Weight + regularizationFactor * layer.Weights;
-            return new ErrorGradient(regularizedWeightGradient, unregularizedGradient.Bias);
-        }
-
-        #endregion Regularization
+        #endregion Gradient calculation
     }
 }

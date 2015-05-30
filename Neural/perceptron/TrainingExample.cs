@@ -7,7 +7,7 @@ namespace Neural.Perceptron
     /// <summary>
     /// Defines a training example
     /// </summary>
-    struct TrainingExample
+    public struct TrainingExample
     {
         /// <summary>
         /// The input values

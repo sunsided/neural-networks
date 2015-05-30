@@ -10,7 +10,7 @@ namespace Neural.Perceptron
     /// A perceptron layer.
     /// </summary>
     [DebuggerDisplay("{Type,nq}: {_weightMatrix.ColumnCount,nq} --> {_weightMatrix.RowCount,nq}")]
-    internal sealed class Layer
+    public sealed class Layer
     {
         /// <summary>
         /// The weight vector of the bias units

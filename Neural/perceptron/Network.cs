@@ -13,7 +13,7 @@ namespace Neural.Perceptron
     /// <summary>
     /// A perceptron network.
     /// </summary>
-    sealed class Network : IEnumerable<Layer>
+    public sealed class Network : IEnumerable<Layer>
     {
         /// <summary>
         /// The perceptron layers

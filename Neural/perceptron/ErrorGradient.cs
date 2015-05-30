@@ -7,7 +7,7 @@ namespace Neural.Perceptron
     /// <summary>
     /// Struct ErrorGradient
     /// </summary>
-    struct ErrorGradient : IEquatable<ErrorGradient>
+    public struct ErrorGradient : IEquatable<ErrorGradient>
     {
         /// <summary>
         /// The weight gradient

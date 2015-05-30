@@ -6,7 +6,7 @@ namespace Neural.Perceptron
     /// <summary>
     /// Struct FeedforwardResult
     /// </summary>
-    struct FeedforwardResult
+    public struct FeedforwardResult
     {
         /// <summary>
         /// Gets the type of the layer.

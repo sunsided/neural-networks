@@ -6,7 +6,7 @@ namespace Neural.Perceptron
     /// <summary>
     /// Struct BackpropagationResult
     /// </summary>
-    struct BackpropagationResult
+    public struct BackpropagationResult
     {
         /// <summary>
         /// The weighting errors

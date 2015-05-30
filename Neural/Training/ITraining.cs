@@ -7,7 +7,7 @@ namespace Neural.Training
     /// <summary>
     /// Interface for network training implementations
     /// </summary>
-    internal interface ITraining
+    public interface ITraining
     {
         /// <summary>
         /// Trains the specified <paramref name="network" /> using the <paramref name="trainingSet" />.
