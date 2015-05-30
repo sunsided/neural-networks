@@ -1,14 +1,23 @@
 ﻿using System;
 using MathNet.Numerics.LinearAlgebra;
+using Neural.Cost;
 
 namespace Neural.Activations
 {
     /// <summary>
     /// Heaviside step function.
     /// <remarks>
+    /// <para>
     /// The step function is nondifferentiable and thus cannot be used in backpropagation.
     /// As a consequence it can only be applied to the last neuron, where it serves as
     /// a binary classifier.
+    /// </para>
+    /// <para>
+    /// Also note that this function won't work with the <see cref="LogisticCost"/> function,
+    /// as this takes the logarithm of <c>1-cost</c> and <c>cost</c>, rendering it broken
+    /// for either one of the binary output values unless the <see cref="Epsilon"/> property
+    /// of this class is set to a small value.
+    /// </para>
     /// </remarks>
     /// </summary>
     sealed class StepTransfer : ITransfer
@@ -21,7 +30,7 @@ namespace Neural.Activations
         /// <summary>
         /// The epsilon
         /// </summary>
-        private const float DefaultEpsilon = 1E-7F;
+        private const float DefaultEpsilon = 0;
 
         /// <summary>
         /// Gets or sets the epsilon.

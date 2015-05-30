@@ -25,7 +25,10 @@ namespace Neural
 
             // obtain a transfer function
             ITransfer hiddenActivation = new SigmoidTransfer();
-            ITransfer outputActivation = new SigmoidTransfer();
+            ITransfer outputActivation = new StepTransfer
+                                         {
+                                             Epsilon = 0
+                                         };
 
             // input layers with two neurons
             var inputLayer = LayerConfiguration.ForInput(2);
@@ -53,7 +56,7 @@ namespace Neural
                            };
 
             // select a cost function
-            var cost = new LogisticCost();
+            var cost = new SumSquaredErrorCost();
 
             // select a training strategy
             var training = new MomentumDescend(cost)
