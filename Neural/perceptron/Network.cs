@@ -195,6 +195,7 @@ namespace Neural.Perceptron
                 cost += trainingResult.Cost;
 
                 // iterate over all layer's error gradients of this training example
+                // TODO: this is data parallel with respect to layers, so may run in parallel
                 var trainingGradients = trainingResult.ErrorGradients;
                 foreach (var trainingGradient in trainingGradients)
                 {
@@ -211,6 +212,7 @@ namespace Neural.Perceptron
             cost *= inverseExampleCount;
 
             // scale gradients over all training examples
+            // TODO: this is data parallel, so may run in parallel
             foreach (var errorGradient in gradientDictionary)
             {
                 var layer = errorGradient.Key;
