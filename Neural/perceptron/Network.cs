@@ -158,16 +158,29 @@ namespace Neural.Perceptron
             // TODO For the time being the learning parameters are hardcoded here until a better solution is implemented.
             const float learningRate = 0.05F;
             const float momentum = 0.8F;
+            const float epsilon = 5E-6F;
+            const int minimumIterations = 50;
 
             var lastCost = 0.0F;
             for (int i = 0; i < maximumIterations; ++i)
             {
-                // TODO: Add epsilon criterion: If the cost does not reduce more than an epsilon value, terminate the training.
                 var trainingResult = lambda > 0
                     ? CalculateCostAndGradientRegularized(trainingSet, lambda)
                     : CalculateCostAndGradientUnregularized(trainingSet);
-                lastCost = trainingResult.Cost;
 
+                // determine cost delta and early-exit if it is smaller than epsilon
+                var costDelta = lastCost - trainingResult.Cost;
+                if (costDelta <= epsilon && i >= minimumIterations)
+                {
+                    Debug.WriteLine("Training stopped at iteration {0} because cost delta {1} <= {2}", i, costDelta, epsilon);
+                    break;
+                }
+
+                // store the cost for the next iteration
+                lastCost = trainingResult.Cost;
+                Debug.WriteLine("iteration {0}: cost {1}, cost delta {2}", i, trainingResult.Cost, costDelta);
+
+                // perform a single gradient descend step
                 GradientDescend(trainingResult, previousDeltas, learningRate, momentum);
             }
 
