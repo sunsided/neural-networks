@@ -46,7 +46,7 @@ namespace Neural.Perceptron
         /// Obtains the inputs as a <see cref="Vector{T}"/>
         /// </summary>
         /// <returns>Vector&lt;System.Single&gt;.</returns>
-        [NotNull]
+        [NotNull, Pure]
         internal Vector<float> GetInputs()
         {
             return Vector<float>.Build.SparseOfEnumerable(Inputs);
@@ -56,7 +56,7 @@ namespace Neural.Perceptron
         /// Obtains the outputs as a <see cref="Vector{T}"/>
         /// </summary>
         /// <returns>Vector&lt;System.Single&gt;.</returns>
-        [NotNull]
+        [NotNull, Pure]
         internal Vector<float> GetOutputs()
         {
             return Vector<float>.Build.SparseOfEnumerable(Outputs);

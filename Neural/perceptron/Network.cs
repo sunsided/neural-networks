@@ -178,12 +178,13 @@ namespace Neural.Perceptron
         /// <param name="trainingSet">The training set.</param>
         /// <returns>System.Single.</returns>
         /// <exception cref="NotImplementedException"></exception>
-        private float CalculateCostAndGradient([NotNull] IReadOnlyCollection<TrainingExample> trainingSet)
+        [Pure]
+        private TrainingResult CalculateCostAndGradient([NotNull] IReadOnlyCollection<TrainingExample> trainingSet)
         {
             var exampleCount = trainingSet.Count;
             foreach (var example in trainingSet)
             {
-                CalculateCostAndGradientUnregularized(example);
+                var result = CalculateCostAndGradientUnregularized(example);
 
                 // TODO: Accumulate cost over all training examples
                 // TODO: Scale host over all training examples
@@ -201,9 +202,13 @@ namespace Neural.Perceptron
         /// Calculates the (unregularized) cost and gradient given a single training example.
         /// </summary>
         /// <param name="example">The training example.</param>
-        private void CalculateCostAndGradientUnregularized(TrainingExample example)
+        [Pure]
+        private TrainingResult CalculateCostAndGradientUnregularized(TrainingExample example)
         {
             var layers = _layers;
+
+            // prepare the output structures
+            var gradients = new Dictionary<Layer, ErrorGradient>();
 
             // fetch the training data
             var input = example.GetInputs();
@@ -222,6 +227,7 @@ namespace Neural.Perceptron
             // The calculated error will also serve as an input to the layer loop below.
             var error = CalculateNetworkOutputError(feedforwardResults, expectedOutput);
             var outputGradient = CalculateErrorGradient(resultNode, error);
+            gradients.Add(layer, outputGradient);
 
             // calculate the training cost
             var j = CalculateCost(expectedOutput, resultNode.Value);
@@ -239,21 +245,22 @@ namespace Neural.Perceptron
                 Debug.Assert(resultNode != null, "resultNode != null");
 
                 // obtain this layer's feedforward results
-                var layerOutput = resultNode.Value;
+                var feedforwardResult = resultNode.Value;
 
                 // errors on the hidden layer must be obtained through backpropagation
-                var z = layerOutput.WeightedInputs;
-                var a = layerOutput.Output;
-                var d = layer.Backpropagate(
-                    layerResult: layerOutput,
+                var delta = layer.Backpropagate(
+                    feeforwardResult: feedforwardResult,
                     outputErrors: error);
 
-                // store the error for the next iteration
-                error = d.WeightingErrors;
-
                 // calculate the error gradient
-                var hiddenGradient = CalculateErrorGradient(resultNode, error);
+                var hiddenGradient = CalculateErrorGradient(resultNode, delta);
+                gradients.Add(layer, hiddenGradient);
+
+                // store the error for the next iteration
+                error = delta.WeightErrors;
             }
+
+            return new TrainingResult(j, gradients);
         }
 
         /// <summary>
@@ -266,7 +273,24 @@ namespace Neural.Perceptron
         /// <param name="resultNode">The layer's feedforward result node.</param>
         /// <param name="error">The layer's output error.</param>
         /// <returns>ErrorGradient.</returns>
-        private static ErrorGradient CalculateErrorGradient([NotNull] LinkedListNode<FeedforwardResult> resultNode, [NotNull] Vector<float> error)
+        [Pure]
+        private static ErrorGradient CalculateErrorGradient([NotNull] LinkedListNode<FeedforwardResult> resultNode, BackpropagationResult error)
+        {
+            return CalculateErrorGradient(resultNode, error.WeightErrors);
+        }
+
+        /// <summary>
+        /// Calculates the error gradient of a given layer.
+        /// </summary>
+        /// <remarks>
+        /// This assumes a single training pass. If the gradients are aggregated over multiple training examples,
+        /// the result needs to be scaled accordingly.
+        /// </remarks>
+        /// <param name="resultNode">The layer's feedforward result node.</param>
+        /// <param name="weightErrors">The layer's output error.</param>
+        /// <returns>ErrorGradient.</returns>
+        [Pure]
+        private static ErrorGradient CalculateErrorGradient([NotNull] LinkedListNode<FeedforwardResult> resultNode, [NotNull] Vector<float> weightErrors)
         {
             // in order to calculate the gradient, we require the
             // output activations of the previous layer. In case the previous
@@ -274,8 +298,8 @@ namespace Neural.Perceptron
             var layerInput = GetLayerInput(resultNode);
 
             // calculate the gradient
-            var weightGradient = error.OuterProduct(layerInput);
-            var biasGradient = error; // the bias input is always 1, so this is trivial
+            var weightGradient = weightErrors.OuterProduct(layerInput);
+            var biasGradient = weightErrors; // the bias input is always 1, so this is trivial
 
             return new ErrorGradient(weightGradient, biasGradient);
         }
@@ -285,7 +309,7 @@ namespace Neural.Perceptron
         /// </summary>
         /// <param name="resultNode">The result node.</param>
         /// <returns>Vector&lt;System.Single&gt;.</returns>
-        [NotNull]
+        [Pure, NotNull]
         private static Vector<float> GetLayerInput([NotNull] LinkedListNode<FeedforwardResult> resultNode)
         {
             Debug.Assert(resultNode.Value.LayerType != LayerType.Input, "resultNode.Value.LayerType != LayerType.Input");
@@ -305,6 +329,7 @@ namespace Neural.Perceptron
         /// <param name="feedforwardResults">The feedforward results.</param>
         /// <param name="expectedOutput">The expected output.</param>
         /// <returns>Vector&lt;System.Single&gt;.</returns>
+        [Pure, NotNull]
         private static Vector<float> CalculateNetworkOutputError([NotNull] LinkedList<FeedforwardResult> feedforwardResults, [NotNull] Vector<float> expectedOutput)
         {
             var outputLayer = feedforwardResults.Last.Value;

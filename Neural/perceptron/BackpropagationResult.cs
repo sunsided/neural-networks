@@ -12,7 +12,7 @@ namespace Neural.Perceptron
         /// The weighting errors
         /// </summary>
         [NotNull]
-        public readonly Vector<float> WeightingErrors;
+        public readonly Vector<float> WeightErrors;
 
         /// <summary>
         /// The bias error
@@ -22,11 +22,11 @@ namespace Neural.Perceptron
         /// <summary>
         /// Initializes a new instance of the <see cref="BackpropagationResult"/> struct.
         /// </summary>
-        /// <param name="weightingErrors">The weighting errors.</param>
+        /// <param name="weightErrors">The weighting errors.</param>
         /// <param name="biasError">The bias error.</param>
-        public BackpropagationResult([NotNull] Vector<float> weightingErrors, float biasError)
+        public BackpropagationResult([NotNull] Vector<float> weightErrors, float biasError)
         {
-            WeightingErrors = weightingErrors;
+            WeightErrors = weightErrors;
             BiasError = biasError;
         }
     }

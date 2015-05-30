@@ -136,14 +136,14 @@ namespace Neural.Perceptron
         /// <summary>
         /// Performs a backpropagation step of the layer's <paramref name="outputErrors" />.
         /// </summary>
-        /// <param name="layerResult">The layer's feedforward result.</param>
+        /// <param name="feeforwardResult">The layer's feedforward result.</param>
         /// <param name="outputErrors">The training errors.</param>
         /// <returns>The activations of this layer's perceptrons.</returns>
         /// <exception cref="System.InvalidOperationException">Attempted to backpropagate through the input layer.</exception>
         [Pure]
-        public BackpropagationResult Backpropagate(FeedforwardResult layerResult, [NotNull] Vector<float> outputErrors)
+        public BackpropagationResult Backpropagate(FeedforwardResult feeforwardResult, [NotNull] Vector<float> outputErrors)
         {
-            return Backpropagate(layerResult.WeightedInputs, outputErrors);
+            return Backpropagate(feeforwardResult.WeightedInputs, outputErrors);
         }
 
         /// <summary>
@@ -179,6 +179,17 @@ namespace Neural.Perceptron
             var biasError = (Next._biasVector * outputErrors) * 1.0F;
 
             return new BackpropagationResult(weightError, biasError);
+        }
+
+        /// <summary>
+        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// </summary>
+        /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
+        public override string ToString()
+        {
+            var inputs = _weightMatrix.ColumnCount;
+            var outputs = _weightMatrix.RowCount;
+            return string.Format("{0}: {1} --> {2}", Type, inputs, outputs);
         }
     }
 }
