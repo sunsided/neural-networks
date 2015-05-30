@@ -22,7 +22,7 @@ namespace Neural
         /// <param name="args">The arguments.</param>
         private static void Main(string[] args)
         {
-            // The XOR problem, taken from Clever Algorithms by Jason Brownlee
+            // The XOR problem, adapted from Clever Algorithms by Jason Brownlee
 
             // obtain a transfer function
             var activation = new SigmoidTransfer();
@@ -30,10 +30,10 @@ namespace Neural
             // input layers with two neurons
             var inputLayer = LayerConfiguration.ForInput(2);
 
-            // single hidden layer with four neurons
+            // single hidden layer with two neurons
             var hiddenLayers = new[]
                                {
-                                   LayerConfiguration.ForHidden(4, activation)
+                                   LayerConfiguration.ForHidden(2, activation)
                                };
 
             // output layer with one neuron
