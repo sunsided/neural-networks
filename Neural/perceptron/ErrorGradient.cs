@@ -61,5 +61,43 @@ namespace Neural.Perceptron
                 return ((Weight != null ? Weight.GetHashCode() : 0)*397) ^ (Bias != null ? Bias.GetHashCode() : 0);
             }
         }
+
+        /// <summary>
+        /// Implements the binary + operator.
+        /// </summary>
+        /// <param name="a">a.</param>
+        /// <param name="b">The b.</param>
+        /// <returns>The result of the operator.</returns>
+        public static ErrorGradient operator +(ErrorGradient a, ErrorGradient b)
+        {
+            var weight = a.Weight + b.Weight;
+            var bias = a.Bias + b.Bias;
+            return new ErrorGradient(weight, bias);
+        }
+
+        /// <summary>
+        /// Implements the * operator.
+        /// </summary>
+        /// <param name="a">a.</param>
+        /// <param name="scale">The scale.</param>
+        /// <returns>The result of the operator.</returns>
+        public static ErrorGradient operator *(ErrorGradient a, float scale)
+        {
+            var weight = a.Weight * scale;
+            var bias = a.Bias * scale;
+            return new ErrorGradient(weight, bias);
+        }
+
+        /// <summary>
+        /// Implements the / operator.
+        /// </summary>
+        /// <param name="a">a.</param>
+        /// <param name="scale">The scale.</param>
+        /// <returns>The result of the operator.</returns>
+        public static ErrorGradient operator /(ErrorGradient a, float scale)
+        {
+            var invScale = 1.0F/scale;
+            return a*scale;
+        }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -140,7 +141,7 @@ namespace Neural.Perceptron
         /// <param name="trainingSet">The training set.</param>
         public void Train([NotNull] IReadOnlyCollection<TrainingExample> trainingSet)
         {
-            CalculateCostAndGradient(trainingSet);
+            CalculateCostAndGradientUnregularized(trainingSet);
         }
 
         /// <summary>
@@ -179,21 +180,46 @@ namespace Neural.Perceptron
         /// <returns>System.Single.</returns>
         /// <exception cref="NotImplementedException"></exception>
         [Pure]
-        private TrainingResult CalculateCostAndGradient([NotNull] IReadOnlyCollection<TrainingExample> trainingSet)
+        private TrainingResult CalculateCostAndGradientUnregularized([NotNull] IReadOnlyCollection<TrainingExample> trainingSet)
         {
-            var exampleCount = trainingSet.Count;
-            foreach (var example in trainingSet)
+            // Map
+            var trainingResults = trainingSet.Select(CalculateCostAndGradientUnregularized);
+
+            // Reduce
+            var gradientDictionary = new ConcurrentDictionary<Layer, ErrorGradient>();
+            var cost = 0.0F;
+
+            foreach (var trainingResult in trainingResults)
             {
-                var result = CalculateCostAndGradientUnregularized(example);
+                // accumulate cost over all training examples
+                cost += trainingResult.Cost;
 
-                // TODO: Accumulate cost over all training examples
-                // TODO: Scale host over all training examples
+                // iterate over all layer's error gradients of this training example
+                var trainingGradients = trainingResult.ErrorGradients;
+                foreach (var trainingGradient in trainingGradients)
+                {
+                    var layer = trainingGradient.Key;
+                    var gradient = trainingGradient.Value;
 
-                // TODO: Accumulate gradients over all training examples
-                // TODO: Scale gradients by the number of training examples
-                // TODO: Add regularization
+                    // accumulate gradients over all training examples
+                    gradientDictionary.AddOrUpdate(layer, l => gradient, (l, g) => g + gradient);
+                }
+            }
 
-            } // for(examples)
+            // scale cost by the number of training examples
+            var inverseExampleCount = 1.0F/trainingSet.Count;
+            cost *= inverseExampleCount;
+
+            // scale gradients over all training examples
+            foreach (var errorGradient in gradientDictionary)
+            {
+                var layer = errorGradient.Key;
+                var gradient = errorGradient.Value;
+                gradientDictionary[layer] = gradient * inverseExampleCount;
+            }
+
+            // TODO: Add regularization of cost
+            // TODO: Add regularization of gradients
 
             throw new NotImplementedException();
         }
