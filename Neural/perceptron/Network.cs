@@ -186,44 +186,46 @@ namespace Neural.Perceptron
                 var error = networkOutputError;
 
                 // work it ... manually
-                var outputLayer = OutputLayer;
-                var hiddenLayer = outputLayer.Previous;
+                {
+                    var outputLayer = OutputLayer;
+                    var hiddenLayer = outputLayer.Previous;
 
-                var networkOutput = feedforwardResults.Last.Value;
-                var hiddenOutput = feedforwardResults.Last.Previous.Value;
-                var inputOutput = feedforwardResults.First.Value;
+                    var networkOutput = feedforwardResults.Last.Value;
+                    var hiddenOutput = feedforwardResults.Last.Previous.Value;
+                    var inputOutput = feedforwardResults.First.Value;
 
-                // errors on the output layer can be calculated directly
-                var z3 = networkOutput.WeightedInputs;
-                var a3 = networkOutput.Output;
-                var d3 = networkOutputError;
+                    // errors on the output layer can be calculated directly
+                    var z3 = networkOutput.WeightedInputs;
+                    var a3 = networkOutput.Output;
+                    var d3 = networkOutputError;
 
-                // errors on the hidden layer must be obtained through backpropagation
-                var z2 = hiddenOutput.WeightedInputs;
-                var a2 = hiddenOutput.Output;
-                var d2 = hiddenLayer.Backpropagate(
-                    layerResult: hiddenOutput,
-                    outputErrors:d3);
+                    // errors on the hidden layer must be obtained through backpropagation
+                    var z2 = hiddenOutput.WeightedInputs;
+                    var a2 = hiddenOutput.Output;
+                    var d2 = hiddenLayer.Backpropagate(
+                        layerResult: hiddenOutput,
+                        outputErrors: d3);
 
-                // outputs on the input layer are required for gradient calculation
-                var a1 = inputOutput.Output; // i.e. the training inputs
+                    // outputs on the input layer are required for gradient calculation
+                    var a1 = inputOutput.Output; // i.e. the training inputs
 
-                // backpropagation stops at the first hidden layer, since the
-                // input layer cannot be changed
+                    // backpropagation stops at the first hidden layer, since the
+                    // input layer cannot be changed
 
-                var outputLayerWeightGradient = d3.OuterProduct(a2);
-                var outputLayerBiasGradient = networkOutputError; // the bias always has linear influence on the error
+                    var outputLayerWeightGradient = d3.OuterProduct(a2);
+                    var outputLayerBiasGradient = networkOutputError; // the bias always has linear influence on the error
 
-                var hiddenLayerWeightGradient = d2.WeightingErrors.OuterProduct(a1);
-                var hiddenLayerBiasGradient = d2.WeightingErrors; // the bias always has linear influence on the error
+                    var hiddenLayerWeightGradient = d2.WeightingErrors.OuterProduct(a1);
+                    var hiddenLayerBiasGradient = d2.WeightingErrors; // the bias always has linear influence on the error
 
-                // TODO: Accumulate gradients over all training examples
-                // TODO: Scale gradients by the number of training examples
-                // TODO: Add regularization
+                    // TODO: Accumulate gradients over all training examples
+                    // TODO: Scale gradients by the number of training examples
+                    // TODO: Add regularization
 
-                var j = CalculateCost(expectedOutput, networkOutput.Output);
+                    var j = CalculateCost(expectedOutput, networkOutput.Output);
+                }
 
-                throw new NotImplementedException("gradient calculation from weight errors not implemented");
+            throw new NotImplementedException("gradient calculation from weight errors not implemented");
 
 
 
