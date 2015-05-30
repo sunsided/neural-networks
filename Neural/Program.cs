@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
 using MathNet.Numerics.LinearAlgebra;
-using MathNet.Numerics.LinearAlgebra.Single;
 using Neural.Activations;
 using Neural.Perceptron;
 using Neural.Training;
@@ -25,7 +23,7 @@ namespace Neural
             // The XOR problem, adapted from Clever Algorithms by Jason Brownlee
 
             // obtain a transfer function
-            var activation = new SigmoidTransfer();
+            var activation = new RectifiedTransfer();
 
             // input layers with two neurons
             var inputLayer = LayerConfiguration.ForInput(2);
