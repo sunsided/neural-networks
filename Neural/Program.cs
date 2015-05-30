@@ -23,7 +23,7 @@ namespace Neural
             // The XOR problem, adapted from Clever Algorithms by Jason Brownlee
 
             // obtain a transfer function
-            var activation = new RectifiedTransfer();
+            var activation = new TanhTransfer();
 
             // input layers with two neurons
             var inputLayer = LayerConfiguration.ForInput(2);
