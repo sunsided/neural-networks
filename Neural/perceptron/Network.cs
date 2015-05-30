@@ -140,7 +140,7 @@ namespace Neural.Perceptron
         /// </summary>
         /// <param name="trainingSet">The training set.</param>
         /// <param name="lambda">The regularization parameter; a value of <see literal="0"/> means no regularization.</param>
-        public TrainingResult Train([NotNull] IReadOnlyCollection<TrainingExample> trainingSet, float lambda = 1.0F)
+        public void Train([NotNull] IReadOnlyCollection<TrainingExample> trainingSet, float lambda = 1.0F)
         {
             if (lambda < 0) throw new ArgumentOutOfRangeException("lambda", lambda, "Regularization parameter must be nonnegative");
             if (double.IsInfinity(lambda) || double.IsNaN(lambda)) throw new NotFiniteNumberException("Regularization parameter must be a finite number", lambda);
@@ -149,7 +149,7 @@ namespace Neural.Perceptron
                 ? CalculateCostAndGradientRegularized(trainingSet, lambda)
                 : CalculateCostAndGradientUnregularized(trainingSet);
 
-            return result;
+            throw new NotImplementedException("Parameter optimization is not yet implemented.");
         }
 
         /// <summary>
