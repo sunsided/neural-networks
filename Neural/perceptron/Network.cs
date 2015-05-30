@@ -146,11 +146,25 @@ namespace Neural.Perceptron
             if (lambda < 0) throw new ArgumentOutOfRangeException("lambda", lambda, "Regularization parameter must be nonnegative");
             if (double.IsInfinity(lambda) || double.IsNaN(lambda)) throw new NotFiniteNumberException("Regularization parameter must be a finite number", lambda);
 
-            var trainingResult = lambda > 0
-                ? CalculateCostAndGradientRegularized(trainingSet, lambda)
-                : CalculateCostAndGradientUnregularized(trainingSet);
+            // for momentum-based gradient descent, we need to keep track of the
+            // weight delta used in the previous iteration.
+            var previousDeltas = _layers.ToDictionary(layer => layer, ErrorGradient.EmptyFromLayer);
 
-            UpdateLayerWeights(trainingResult);
+            // learning parameters.
+            // Since these are strategy specific, they should be defined in a LearningStrategy passed to
+            // the learning function, rather than be parameters to the function itself.
+            // TODO For the time being the learning parameters are hardcoded here until a better solution is implemented.
+            const float learningRate = 0.05F;
+            const float momentum = 0.8F;
+
+            for (int i = 0; i < maximumIterations; ++i)
+            {
+                var trainingResult = lambda > 0
+                    ? CalculateCostAndGradientRegularized(trainingSet, lambda)
+                    : CalculateCostAndGradientUnregularized(trainingSet);
+
+                GradientDescend(trainingResult, previousDeltas, learningRate, momentum);
+            }
 
             throw new NotImplementedException("Parameter optimization is not yet implemented.");
         }
@@ -159,10 +173,11 @@ namespace Neural.Perceptron
         /// Updates the layer weights according to the <paramref name="trainingResult" />
         /// </summary>
         /// <param name="trainingResult">The training result.</param>
+        /// <param name="previousDeltas">The previous iteration deltas per layer.</param>
         /// <param name="learningRate">The learning rate.</param>
         /// <param name="momentum">The descent momentum.</param>
         /// <exception cref="System.NotImplementedException"></exception>
-        private void UpdateLayerWeights(TrainingResult trainingResult, float learningRate = 0.05F, float momentum = 0.8F)
+        private void GradientDescend(TrainingResult trainingResult, [NotNull] IReadOnlyDictionary<Layer, ErrorGradient> previousDeltas, float learningRate, float momentum)
         {
 
         }
