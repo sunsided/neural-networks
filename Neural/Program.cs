@@ -23,7 +23,8 @@ namespace Neural
             // The XOR problem, adapted from Clever Algorithms by Jason Brownlee
 
             // obtain a transfer function
-            var activation = new TanhTransfer();
+            var hiddenActivation = new TanhTransfer();
+            var outputActivation = new StepTransfer();
 
             // input layers with two neurons
             var inputLayer = LayerConfiguration.ForInput(2);
@@ -31,11 +32,11 @@ namespace Neural
             // single hidden layer with two neurons
             var hiddenLayers = new[]
                                {
-                                   LayerConfiguration.ForHidden(2, activation)
+                                   LayerConfiguration.ForHidden(2, hiddenActivation)
                                };
 
             // output layer with one neuron
-            var outputLayer = LayerConfiguration.ForOutput(1, activation);
+            var outputLayer = LayerConfiguration.ForOutput(1, outputActivation);
 
             // construct a network
             var factory = new NetworkFactory();
@@ -79,7 +80,7 @@ namespace Neural
                 var outputs = network.Calculate(example.Inputs);
 
                 Console.WriteLine("Obtained result from network:");
-                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine(String.Join(", ", outputs));
                 Console.ResetColor();
 
