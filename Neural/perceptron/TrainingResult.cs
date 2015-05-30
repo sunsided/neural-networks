@@ -8,7 +8,7 @@ namespace Neural.Perceptron
     /// Struct TrainingResult
     /// </summary>
     [DebuggerDisplay("cost: {Cost,nq}")]
-    struct TrainingResult
+    public struct TrainingResult
     {
         /// <summary>
         /// The training cost for evaluation in gradient descent.

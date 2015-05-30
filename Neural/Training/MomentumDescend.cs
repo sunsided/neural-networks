@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using JetBrains.Annotations;
+using Neural.Cost;
 using Neural.Perceptron;
 
 namespace Neural.Training
@@ -12,12 +13,22 @@ namespace Neural.Training
     /// </summary>
     sealed class MomentumDescend : ITraining
     {
+        private readonly ICostFunction _costFunction;
         private float _learningRate = DefaultLearningRate;
         private float _momentum = DefaultMomentum;
         private int _maximumIterationCount = DefaultMaximumIterationCount;
         private int _minimumIterationCount = DefaultMinimumIterationCount;
         private float _costEpsilon = DefaultEpsilon;
         private float _regularizationStrength = DefaultLambda;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MomentumDescend"/> class.
+        /// </summary>
+        /// <param name="costFunction">The cost function.</param>
+        public MomentumDescend([NotNull] ICostFunction costFunction)
+        {
+            _costFunction = costFunction;
+        }
 
         /// <summary>
         /// The default learning rate
@@ -176,13 +187,14 @@ namespace Neural.Training
             var epsilon = CostEpsilon;
             var minimumIterations = MinimumIterationCount;
             var maximumIterations = MaximumIterationCount;
+            var costFunction = _costFunction;
 
             // TODO: Regularization should be a learning parameter
 
             var lastCost = 0.0F;
             for (int i = 0; i < maximumIterations; ++i)
             {
-                var trainingResult = network.CalculateCostAndGradient(trainingSet, lambda);
+                var trainingResult = costFunction.CalculateCostAndGradient(network, trainingSet, lambda);
 
                 // determine cost delta and early-exit if it is smaller than epsilon
                 var costDelta = lastCost - trainingResult.Cost;

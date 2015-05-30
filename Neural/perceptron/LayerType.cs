@@ -3,7 +3,7 @@
     /// <summary>
     /// Enum LayerType
     /// </summary>
-    enum LayerType
+    public enum LayerType
     {
         /// <summary>
         /// The layer is the input layer, i.e.

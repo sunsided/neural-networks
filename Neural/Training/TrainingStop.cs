@@ -3,7 +3,7 @@
     /// <summary>
     /// Enum TrainingStop
     /// </summary>
-    enum TrainingStop
+    public enum TrainingStop
     {
         /// <summary>
         /// The maximum number of iterations has been reached

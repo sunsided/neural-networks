@@ -6,7 +6,7 @@ namespace Neural.Activations
     /// <summary>
     /// Interface to a differentiable transfer function.
     /// </summary>
-    interface ITransfer
+    public interface ITransfer
     {
         /// <summary>
         /// Applies the transfer function to the values of <paramref name="z" />.

@@ -61,8 +61,9 @@ namespace Neural.Activations
         public Vector<float> Derivative(Vector<float> z, Vector<float> activations)
         {
             throw new InvalidOperationException("Attempted to use the heaviside transfer function in a hidden neuron.");
-            var epsilon = _epsilon;
-            return z.Map(value => Math.Abs(value) < 0.000001F ? 1F - epsilon : epsilon); // that's just stupid.
+
+            // var epsilon = _epsilon;
+            // return z.Map(value => Math.Abs(value) < 0.000001F ? 1F - epsilon : epsilon); // that's just stupid.
         }
     }
 }
