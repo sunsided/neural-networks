@@ -181,7 +181,7 @@ namespace Neural.Perceptron
         }
 
         /// <summary>
-        /// Calculates the cost and the gradient given the training examples.
+        /// Calculates the cost and the gradient of the cost function given the training examples.
         /// </summary>
         /// <param name="trainingSet">The training set.</param>
         /// <param name="lambda">The regularization parameter.</param>
@@ -195,7 +195,7 @@ namespace Neural.Perceptron
         }
 
         /// <summary>
-        /// Calculates the cost given the training examples.
+        /// Calculates the cost and the gradient of the cost function given the training examples.
         /// </summary>
         /// <param name="trainingSet">The training set.</param>
         /// <param name="lambda">The regularization parameter.</param>
