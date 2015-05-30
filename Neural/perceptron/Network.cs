@@ -138,6 +138,7 @@ namespace Neural.Perceptron
         /// Trains the network using the given <paramref name="trainingSet" />.
         /// </summary>
         /// <param name="trainingSet">The training set.</param>
+        /// <param name="maximumIterations">The maximum iterations.</param>
         /// <param name="lambda">The regularization parameter; a value of <see literal="0" /> means no regularization.</param>
         /// <exception cref="System.ArgumentOutOfRangeException">Regularization parameter must be nonnegative</exception>
         /// <exception cref="System.NotFiniteNumberException">Regularization parameter must be a finite number</exception>
@@ -158,16 +159,19 @@ namespace Neural.Perceptron
             const float learningRate = 0.05F;
             const float momentum = 0.8F;
 
+            var lastCost = 0.0F;
             for (int i = 0; i < maximumIterations; ++i)
             {
+                // TODO: Add epsilon criterion: If the cost does not reduce more than an epsilon value, terminate the training.
                 var trainingResult = lambda > 0
                     ? CalculateCostAndGradientRegularized(trainingSet, lambda)
                     : CalculateCostAndGradientUnregularized(trainingSet);
+                lastCost = trainingResult.Cost;
 
                 GradientDescend(trainingResult, previousDeltas, learningRate, momentum);
             }
 
-            throw new NotImplementedException("Parameter optimization is not yet implemented.");
+            Debug.WriteLine("Training terminated at cost {0}", lastCost);
         }
 
         /// <summary>
@@ -191,10 +195,12 @@ namespace Neural.Perceptron
                 // calculate the descend step size and update
                 // the layer's weights accordingly
                 var weightDelta = learningRate*gradient.Weight + momentum*previousDelta.Weight;
-                var biasDelta = learningRate * gradient.Bias + momentum * previousDelta.Bias;
+                var biasDelta = learningRate*gradient.Bias + momentum*previousDelta.Bias;
 
-                layer.Weights.MapIndexedInplace((row, column, value) => value + weightDelta[row, column]);
-                layer.Bias.MapIndexedInplace((row, value) => value + biasDelta[row]);
+                // note that simply by definition of the error's sign we subtract the
+                // deltas from the weights instead of adding them.
+                layer.Weights.MapIndexedInplace((row, column, value) => value - weightDelta[row, column]);
+                layer.Bias.MapIndexedInplace((row, value) => value - biasDelta[row]);
 
                 // store the current delta
                 previousDeltas[layer] = new ErrorGradient(weightDelta, biasDelta);

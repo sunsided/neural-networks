@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using JetBrains.Annotations;
 
 namespace Neural.Perceptron
@@ -6,6 +7,7 @@ namespace Neural.Perceptron
     /// <summary>
     /// Struct TrainingResult
     /// </summary>
+    [DebuggerDisplay("cost: {Cost,nq}")]
     struct TrainingResult
     {
         /// <summary>
