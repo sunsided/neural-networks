@@ -65,6 +65,9 @@
     <Compile Include="Perceptron\TrainingResult.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Training\ITraining.cs" />
+    <Compile Include="Training\MomentumDescend.cs" />
+    <Compile Include="Training\TrainingStop.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
