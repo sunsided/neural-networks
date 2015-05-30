@@ -103,7 +103,7 @@ namespace Neural.Cost
         /// <param name="trainingSet">The training set.</param>
         /// <returns>System.Single.</returns>
         [Pure]
-        public virtual TrainingResult CalculateCostAndGradientUnregularized(Network network, IReadOnlyCollection<TrainingExample> trainingSet)
+        protected virtual TrainingResult CalculateCostAndGradientUnregularized(Network network, IReadOnlyCollection<TrainingExample> trainingSet)
         {
             // Map: Apply training method to each example
             var trainingResults = trainingSet.Select(example => CalculateCostAndGradientUnregularized(network, example));
@@ -157,7 +157,7 @@ namespace Neural.Cost
         /// <param name="example">The training example.</param>
         /// <returns>TrainingResult.</returns>
         [Pure]
-        public virtual TrainingResult CalculateCostAndGradientUnregularized(Network network, TrainingExample example)
+        protected virtual TrainingResult CalculateCostAndGradientUnregularized(Network network, TrainingExample example)
         {
             // prepare the output structures
             var gradients = new Dictionary<Layer, ErrorGradient>();
@@ -220,11 +220,12 @@ namespace Neural.Cost
         /// <summary>
         /// Calculates the cost and the gradient of the cost function given the training examples.
         /// </summary>
+        /// <param name="network">The network.</param>
         /// <param name="trainingSet">The training set.</param>
         /// <param name="lambda">The regularization parameter.</param>
         /// <returns>System.Single.</returns>
         [Pure]
-        public TrainingResult CalculateCostAndGradientRegularized([NotNull] Network network, [NotNull] IReadOnlyCollection<TrainingExample> trainingSet, float lambda)
+        private TrainingResult CalculateCostAndGradientRegularized([NotNull] Network network, [NotNull] IReadOnlyCollection<TrainingExample> trainingSet, float lambda)
         {
             var unregularizedResult = CalculateCostAndGradientUnregularized(network, trainingSet);
             var count = trainingSet.Count;
