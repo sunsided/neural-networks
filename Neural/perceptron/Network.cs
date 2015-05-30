@@ -144,6 +144,23 @@ namespace Neural.Perceptron
         }
 
         /// <summary>
+        /// Calculates the network's training cost.
+        /// </summary>
+        /// <param name="expectedOutput">The expected output, i.e. ground truth.</param>
+        /// <param name="networkOutput">The network output.</param>
+        /// <returns>System.Single.</returns>
+        private float CalculateCost(Vector<float> expectedOutput, Vector<float> networkOutput)
+        {
+            var logOutput = networkOutput.Map(v => (float)Math.Log(v));
+            var firstPart = expectedOutput*logOutput;
+
+            var logInvOutput = networkOutput.Map(v => (float)Math.Log(1 - v));
+            var secondPart = (1-expectedOutput) * logInvOutput;
+
+            return -firstPart - secondPart;
+        }
+
+        /// <summary>
         /// Calculates the cost given the training examples.
         /// </summary>
         /// <param name="trainingSet">The training set.</param>
@@ -174,6 +191,7 @@ namespace Neural.Perceptron
 
                 var networkOutput = feedforwardResults.Last.Value;
                 var hiddenOutput = feedforwardResults.Last.Previous.Value;
+                var inputOutput = feedforwardResults.First.Value;
 
                 // errors on the output layer can be calculated directly
                 var z3 = networkOutput.WeightedInputs;
@@ -202,6 +220,8 @@ namespace Neural.Perceptron
                 // TODO: Accumulate gradients over all training examples
                 // TODO: Scale gradients by the number of training examples
                 // TODO: Add regularization
+
+                var j = CalculateCost(expectedOutput, networkOutput.Output);
 
                 throw new NotImplementedException("gradient calculation from weight errors not implemented");
 
