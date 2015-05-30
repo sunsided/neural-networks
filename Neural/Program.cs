@@ -4,6 +4,7 @@ using System.Globalization;
 using System.Threading;
 using MathNet.Numerics.LinearAlgebra;
 using Neural.Activations;
+using Neural.Cost;
 using Neural.Perceptron;
 using Neural.Training;
 
@@ -23,11 +24,15 @@ namespace Neural
             // The XOR problem, adapted from Clever Algorithms by Jason Brownlee
 
             // obtain a transfer function
-            var hiddenActivation = new TanhTransfer();
-            var outputActivation = new StepTransfer
+            /*
+            ITransfer hiddenActivation = new TanhTransfer();
+            ITransfer outputActivation = new StepTransfer
                                    {
                                        Epsilon = 1E-7F
-                                   };
+                                   };*/
+
+            var hiddenActivation = new TanhTransfer();
+            var outputActivation = new SigmoidTransfer();
 
             // input layers with two neurons
             var inputLayer = LayerConfiguration.ForInput(2);
@@ -54,11 +59,14 @@ namespace Neural
                                new TrainingExample(Vector<float>.Build.DenseOfArray(new[] {1F, 1F}), Vector<float>.Build.DenseOfArray((new [] { 0F }))),
                            };
 
+            // select a cost function
+            var cost = new LogisticCost();
+
             // select a training strategy
-            var training = new MomentumDescend()
+            var training = new MomentumDescend(cost)
                            {
                                LearningRate = 0.3F,
-                               Momentum = 0.8F,
+                               Momentum = 0.7F,
                                MaximumIterationCount = 2000,
                                RegularizationStrength = 0
                            };

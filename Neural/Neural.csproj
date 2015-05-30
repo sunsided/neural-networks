@@ -55,6 +55,8 @@
     <Compile Include="Activations\SigmoidTransfer.cs" />
     <Compile Include="Activations\IdentityTransfer.cs" />
     <Compile Include="Activations\ITransfer.cs" />
+    <Compile Include="Cost\ICostFunction.cs" />
+    <Compile Include="Cost\LogisticCost.cs" />
     <Compile Include="Perceptron\BackpropagationResult.cs" />
     <Compile Include="Perceptron\ErrorGradient.cs" />
     <Compile Include="Perceptron\FeedforwardResult.cs" />
@@ -76,6 +78,7 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
