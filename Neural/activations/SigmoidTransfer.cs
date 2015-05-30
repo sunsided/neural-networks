@@ -6,6 +6,9 @@ namespace Neural.Activations
     /// <summary>
     /// Sigmoid transfer function.
     /// </summary>
+    /// <remarks>
+    /// The sigmoid function maps its outputs to the range of [0; 1]
+    /// </remarks>
     sealed class SigmoidTransfer : ITransfer
     {
         /// <summary>

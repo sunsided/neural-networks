@@ -6,6 +6,9 @@ namespace Neural.Activations
     /// <summary>
     /// tanh(x) function.
     /// </summary>
+    /// <remarks>
+    /// The tanh function maps its outputs to the range of [-1; 1]
+    /// </remarks>
     sealed class TanhTransfer : ITransfer
     {
         /// <summary>
