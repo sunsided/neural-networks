@@ -141,16 +141,30 @@ namespace Neural.Perceptron
         /// <param name="lambda">The regularization parameter; a value of <see literal="0" /> means no regularization.</param>
         /// <exception cref="System.ArgumentOutOfRangeException">Regularization parameter must be nonnegative</exception>
         /// <exception cref="System.NotFiniteNumberException">Regularization parameter must be a finite number</exception>
-        public void Train([NotNull] IReadOnlyCollection<TrainingExample> trainingSet, float lambda = 1.0F)
+        public void Train([NotNull] IReadOnlyCollection<TrainingExample> trainingSet, int maximumIterations = 1000, float lambda = 0.0F)
         {
             if (lambda < 0) throw new ArgumentOutOfRangeException("lambda", lambda, "Regularization parameter must be nonnegative");
             if (double.IsInfinity(lambda) || double.IsNaN(lambda)) throw new NotFiniteNumberException("Regularization parameter must be a finite number", lambda);
 
-            var result = lambda > 0
+            var trainingResult = lambda > 0
                 ? CalculateCostAndGradientRegularized(trainingSet, lambda)
                 : CalculateCostAndGradientUnregularized(trainingSet);
 
+            UpdateLayerWeights(trainingResult);
+
             throw new NotImplementedException("Parameter optimization is not yet implemented.");
+        }
+
+        /// <summary>
+        /// Updates the layer weights according to the <paramref name="trainingResult" />
+        /// </summary>
+        /// <param name="trainingResult">The training result.</param>
+        /// <param name="learningRate">The learning rate.</param>
+        /// <param name="momentum">The descent momentum.</param>
+        /// <exception cref="System.NotImplementedException"></exception>
+        private void UpdateLayerWeights(TrainingResult trainingResult, float learningRate = 0.05F, float momentum = 0.8F)
+        {
+
         }
 
         /// <summary>
