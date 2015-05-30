@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
+using MathNet.Numerics.Distributions;
 using MathNet.Numerics.LinearAlgebra;
 using Neural.Activations;
 
@@ -83,6 +84,9 @@ namespace Neural.Perceptron
             // for the first iteration we initialize the previous layer as the input layer
             Layer previousLayer = inputLayer;
 
+            // prepare a random distribution
+            var dist = new Normal(0, 0.5);
+
             // We now iterate over all configurations and create weight vectors
             // for each perceptron according to the number of input neurons, where
             // each weight is initialized with a random value.
@@ -98,9 +102,8 @@ namespace Neural.Perceptron
                 biasVector = layerConfiguration.Bias;
                 if (weightMatrix == null || biasVector == null)
                 {
-                    // TODO: These values should be rather small (e.g. -0.5 .. 0.5)
-                    biasVector = Vector<float>.Build.Random(layerNeurons);
-                    weightMatrix = Matrix<float>.Build.Random(layerNeurons, inputNeurons);
+                    biasVector = Vector<float>.Build.Random(layerNeurons, dist);
+                    weightMatrix = Matrix<float>.Build.Random(layerNeurons, inputNeurons, dist);
                 }
 
                 // we create a new weak reference to the following layer
