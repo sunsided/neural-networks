@@ -140,7 +140,7 @@ namespace Neural.Perceptron
         /// <param name="trainingSet">The training set.</param>
         public void Train([NotNull] IReadOnlyCollection<TrainingExample> trainingSet)
         {
-            CalculateCost(trainingSet);
+            CalculateCostAndGradient(trainingSet);
         }
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace Neural.Perceptron
         /// <param name="trainingSet">The training set.</param>
         /// <returns>System.Single.</returns>
         /// <exception cref="NotImplementedException"></exception>
-        private float CalculateCost([NotNull] IReadOnlyCollection<TrainingExample> trainingSet)
+        private float CalculateCostAndGradient([NotNull] IReadOnlyCollection<TrainingExample> trainingSet)
         {
             var layers = _layers;
             var layerCount = layers.Count;
@@ -184,11 +184,24 @@ namespace Neural.Perceptron
                 var z2 = hiddenOutput.WeightedInputs;
                 var a2 = hiddenOutput.Output;
                 var d2 = hiddenLayer.Backpropagate(
-                    weightedInputs:z2,
+                    layerResult: hiddenOutput,
                     outputErrors:d3);
+
+                // outputs on the input layer are required for gradient calculation
+                var a1 = inputOutput.Output; // i.e. the training inputs
 
                 // backpropagation stops at the first hidden layer, since the
                 // input layer cannot be changed
+
+                var outputLayerWeightGradient = d3.OuterProduct(a2);
+                var outputLayerBiasGradient = networkOutputError; // the bias always has linear influence on the error
+
+                var hiddenLayerWeightGradient = d2.WeightingErrors.OuterProduct(a1);
+                var hiddenLayerBiasGradient = d2.WeightingErrors; // the bias always has linear influence on the error
+
+                // TODO: Accumulate gradients over all training examples
+                // TODO: Scale gradients by the number of training examples
+                // TODO: Add regularization
 
                 throw new NotImplementedException("gradient calculation from weight errors not implemented");
 
