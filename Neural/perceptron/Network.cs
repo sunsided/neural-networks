@@ -149,6 +149,18 @@ namespace Neural.Perceptron
         /// <param name="expectedOutput">The expected output, i.e. ground truth.</param>
         /// <param name="networkOutput">The network output.</param>
         /// <returns>System.Single.</returns>
+        private float CalculateCost(Vector<float> expectedOutput, FeedforwardResult networkOutput)
+        {
+            Debug.Assert(networkOutput.LayerType == LayerType.Output, "networkOutput.LayerType == LayerType.Output");
+            return CalculateCost(expectedOutput, networkOutput.Output);
+        }
+
+        /// <summary>
+        /// Calculates the network's training cost.
+        /// </summary>
+        /// <param name="expectedOutput">The expected output, i.e. ground truth.</param>
+        /// <param name="networkOutput">The network output.</param>
+        /// <returns>System.Single.</returns>
         private float CalculateCost(Vector<float> expectedOutput, Vector<float> networkOutput)
         {
             var logOutput = networkOutput.Map(v => (float)Math.Log(v));
@@ -169,11 +181,11 @@ namespace Neural.Perceptron
         private float CalculateCostAndGradient([NotNull] IReadOnlyCollection<TrainingExample> trainingSet)
         {
             var layers = _layers;
-            var layerCount = layers.Count;
 
             var exampleCount = trainingSet.Count;
             foreach (var example in trainingSet)
             {
+                // fetch the training data
                 var input = Vector<float>.Build.SparseOfEnumerable(example.Inputs);
                 var expectedOutput = Vector<float>.Build.SparseOfEnumerable(example.Outputs);
 
@@ -181,89 +193,54 @@ namespace Neural.Perceptron
                 var feedforwardResults = CalculateInternal(input);
                 Debug.Assert(layers.Count == feedforwardResults.Count, "layers.Count == feedforwardResults.Count");
 
-                // calculate the error of the network output regarding the wanted training output
-                var networkOutputError = CalculateNetworkOutputError(feedforwardResults, expectedOutput);
-                var error = networkOutputError;
+                // we start with the output layer
+                var layer = OutputLayer;
+                var resultNode = feedforwardResults.Last;
 
-                // work it ... manually
+                // Calculate the error of the network output regarding the wanted training output,
+                // as well as the error gradient of the output layer.
+                // The calculated error will also serve as an input to the layer loop below.
+                var error = CalculateNetworkOutputError(feedforwardResults, expectedOutput);
+                var outputGradient = CalculateErrorGradient(resultNode, error);
+
+                // calculate the training cost
+                var j = CalculateCost(expectedOutput, resultNode.Value);
+
+                // TODO: Aggregate cost over all training examples
+                // TODO: Scale host over all training examples
+
+                // as long as we do not hit the input layer, iterate backwards
+                // through all hidden layers
+                Debug.Assert(layer.Previous != null, "layer.Previous != null");
+                while (layer.Previous.Type != LayerType.Input)
                 {
-                    var outputLayer = OutputLayer;
-                    var hiddenLayer = outputLayer.Previous;
+                    layer = layer.Previous;
+                    resultNode = resultNode.Previous;
 
-                    var networkOutput = feedforwardResults.Last.Value;
-                    var hiddenOutput = feedforwardResults.Last.Previous.Value;
-                    var inputOutput = feedforwardResults.First.Value;
+                    // I know it's true, you know it's true ...
+                    Debug.Assert(layer != null, "layer != null");
+                    Debug.Assert(resultNode != null, "resultNode != null");
 
-                    // errors on the output layer can be calculated directly
-                    var z3 = networkOutput.WeightedInputs;
-                    var a3 = networkOutput.Output;
-                    var d3 = networkOutputError;
+                    // obtain this layer's feedforward results
+                    var layerOutput = resultNode.Value;
 
                     // errors on the hidden layer must be obtained through backpropagation
-                    var z2 = hiddenOutput.WeightedInputs;
-                    var a2 = hiddenOutput.Output;
-                    var d2 = hiddenLayer.Backpropagate(
-                        layerResult: hiddenOutput,
-                        outputErrors: d3);
+                    var z = layerOutput.WeightedInputs;
+                    var a = layerOutput.Output;
+                    var d = layer.Backpropagate(
+                        layerResult: layerOutput,
+                        outputErrors: error);
 
-                    // outputs on the input layer are required for gradient calculation
-                    var a1 = inputOutput.Output; // i.e. the training inputs
+                    // store the error for the next iteration
+                    error = d.WeightingErrors;
 
-                    // backpropagation stops at the first hidden layer, since the
-                    // input layer cannot be changed
-
-                    var outputLayerWeightGradient = d3.OuterProduct(a2);
-                    var outputLayerBiasGradient = networkOutputError; // the bias always has linear influence on the error
-
-                    var hiddenLayerWeightGradient = d2.WeightingErrors.OuterProduct(a1);
-                    var hiddenLayerBiasGradient = d2.WeightingErrors; // the bias always has linear influence on the error
-
-                    // TODO: Accumulate gradients over all training examples
-                    // TODO: Scale gradients by the number of training examples
-                    // TODO: Add regularization
-
-                    var j = CalculateCost(expectedOutput, networkOutput.Output);
+                    // calculate the error gradient
+                    var hiddenGradient = CalculateErrorGradient(resultNode, error);
                 }
 
-
-                {
-                    // we start with the output layer
-                    var layer = OutputLayer;
-                    var resultNode = feedforwardResults.Last;
-                    // var error = networkOutputError;
-
-                    // calculate the gradient of the output layer
-                    var outputGradient = CalculateErrorGradient(resultNode, networkOutputError);
-
-                    // as long as we do not hit the input layer, iterate backwards
-                    // through all hidden layers
-                    Debug.Assert(layer.Previous != null, "layer.Previous != null");
-                    while (layer.Previous.Type != LayerType.Input)
-                    {
-                        layer = layer.Previous;
-                        resultNode = resultNode.Previous;
-
-                        // I know it's true, you know it's true ...
-                        Debug.Assert(layer != null, "layer != null");
-                        Debug.Assert(resultNode != null, "resultNode != null");
-
-                        // obtain this layer's feedforward results
-                        var layerOutput = resultNode.Value;
-
-                        // errors on the hidden layer must be obtained through backpropagation
-                        var z = layerOutput.WeightedInputs;
-                        var a = layerOutput.Output;
-                        var d = layer.Backpropagate(
-                            layerResult: layerOutput,
-                            outputErrors: error);
-
-                        // store the error for the next iteration
-                        error = d.WeightingErrors;
-
-                        // calculate the error gradient
-                        var hiddenGradient = CalculateErrorGradient(resultNode, error);
-                    }
-                }
+                // TODO: Accumulate gradients over all training examples
+                // TODO: Scale gradients by the number of training examples
+                // TODO: Add regularization
 
             } // for(examples)
 
