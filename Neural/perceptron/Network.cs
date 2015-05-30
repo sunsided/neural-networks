@@ -162,21 +162,6 @@ namespace Neural.Perceptron
         }
 
         /// <summary>
-        /// Calculates the network output error.
-        /// </summary>
-        /// <param name="feedforwardResults">The feedforward results.</param>
-        /// <param name="expectedOutput">The expected output.</param>
-        /// <returns>Vector&lt;System.Single&gt;.</returns>
-        [Pure, NotNull]
-        public Vector<float> CalculateNetworkOutputError([NotNull] LinkedList<FeedforwardResult> feedforwardResults, [NotNull] Vector<float> expectedOutput)
-        {
-            var outputLayer = feedforwardResults.Last.Value;
-            var networkOutput = outputLayer.Output;
-            var error = networkOutput - expectedOutput;
-            return error;
-        }
-
-        /// <summary>
         /// Returns an enumerator that iterates through the collection.
         /// </summary>
         /// <returns>A <see cref="T:System.Collections.Generic.IEnumerator`1" /> that can be used to iterate through the collection.</returns>

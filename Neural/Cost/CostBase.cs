@@ -140,6 +140,21 @@ namespace Neural.Cost
         #region Helper functions
 
         /// <summary>
+        /// Calculates the network output error.
+        /// </summary>
+        /// <param name="feedforwardResults">The feedforward results.</param>
+        /// <param name="expectedOutput">The expected output.</param>
+        /// <returns>Vector&lt;System.Single&gt;.</returns>
+        [Pure, NotNull]
+        protected static Vector<float> CalculateNetworkOutputError([NotNull] LinkedList<FeedforwardResult> feedforwardResults, [NotNull] Vector<float> expectedOutput)
+        {
+            var outputLayer = feedforwardResults.Last.Value;
+            var networkOutput = outputLayer.Output;
+            var error = networkOutput - expectedOutput;
+            return error;
+        }
+
+        /// <summary>
         /// Gets the input values of the <see cref="Layer"/> that belongs to the <paramref name="resultNode"/>.
         /// </summary>
         /// <param name="resultNode">The result node.</param>

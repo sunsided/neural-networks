@@ -45,8 +45,6 @@ namespace Neural.Cost
 
         #endregion Actual cost calculation (no gradients)
 
-        #region Gradient calculation
-
         /// <summary>
         /// Calculates the (unregularized) cost and gradient given a single training example.
         /// </summary>
@@ -74,7 +72,7 @@ namespace Neural.Cost
             // Calculate the error of the network output regarding the wanted training output,
             // as well as the error gradient of the output layer.
             // The calculated error will also serve as an input to the layer loop below.
-            var error = network.CalculateNetworkOutputError(feedforwardResults, expectedOutput);
+            var error = CalculateNetworkOutputError(feedforwardResults, expectedOutput);
             var outputGradient = CalculateErrorGradient(resultNode, error);
             gradients.Add(layer, outputGradient);
 
@@ -111,6 +109,8 @@ namespace Neural.Cost
 
             return new TrainingResult(j, gradients);
         }
+
+        #region Gradient calculation
 
         /// <summary>
         /// Calculates the error gradient of a given layer.
