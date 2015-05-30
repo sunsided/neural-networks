@@ -180,63 +180,13 @@ namespace Neural.Perceptron
         /// <exception cref="NotImplementedException"></exception>
         private float CalculateCostAndGradient([NotNull] IReadOnlyCollection<TrainingExample> trainingSet)
         {
-            var layers = _layers;
-
             var exampleCount = trainingSet.Count;
             foreach (var example in trainingSet)
             {
-                // fetch the training data
-                var input = Vector<float>.Build.SparseOfEnumerable(example.Inputs);
-                var expectedOutput = Vector<float>.Build.SparseOfEnumerable(example.Outputs);
+                CalculateCostAndGradientUnregularized(example);
 
-                // perform a feed-forward pass and retrieve the intermediate results
-                var feedforwardResults = CalculateInternal(input);
-                Debug.Assert(layers.Count == feedforwardResults.Count, "layers.Count == feedforwardResults.Count");
-
-                // we start with the output layer
-                var layer = OutputLayer;
-                var resultNode = feedforwardResults.Last;
-
-                // Calculate the error of the network output regarding the wanted training output,
-                // as well as the error gradient of the output layer.
-                // The calculated error will also serve as an input to the layer loop below.
-                var error = CalculateNetworkOutputError(feedforwardResults, expectedOutput);
-                var outputGradient = CalculateErrorGradient(resultNode, error);
-
-                // calculate the training cost
-                var j = CalculateCost(expectedOutput, resultNode.Value);
-
-                // TODO: Aggregate cost over all training examples
+                // TODO: Accumulate cost over all training examples
                 // TODO: Scale host over all training examples
-
-                // as long as we do not hit the input layer, iterate backwards
-                // through all hidden layers
-                Debug.Assert(layer.Previous != null, "layer.Previous != null");
-                while (layer.Previous.Type != LayerType.Input)
-                {
-                    layer = layer.Previous;
-                    resultNode = resultNode.Previous;
-
-                    // I know it's true, you know it's true ...
-                    Debug.Assert(layer != null, "layer != null");
-                    Debug.Assert(resultNode != null, "resultNode != null");
-
-                    // obtain this layer's feedforward results
-                    var layerOutput = resultNode.Value;
-
-                    // errors on the hidden layer must be obtained through backpropagation
-                    var z = layerOutput.WeightedInputs;
-                    var a = layerOutput.Output;
-                    var d = layer.Backpropagate(
-                        layerResult: layerOutput,
-                        outputErrors: error);
-
-                    // store the error for the next iteration
-                    error = d.WeightingErrors;
-
-                    // calculate the error gradient
-                    var hiddenGradient = CalculateErrorGradient(resultNode, error);
-                }
 
                 // TODO: Accumulate gradients over all training examples
                 // TODO: Scale gradients by the number of training examples
@@ -245,6 +195,65 @@ namespace Neural.Perceptron
             } // for(examples)
 
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Calculates the (unregularized) cost and gradient given a single training example.
+        /// </summary>
+        /// <param name="example">The training example.</param>
+        private void CalculateCostAndGradientUnregularized(TrainingExample example)
+        {
+            var layers = _layers;
+
+            // fetch the training data
+            var input = Vector<float>.Build.SparseOfEnumerable(example.Inputs);
+            var expectedOutput = Vector<float>.Build.SparseOfEnumerable(example.Outputs);
+
+            // perform a feed-forward pass and retrieve the intermediate results
+            var feedforwardResults = CalculateInternal(input);
+            Debug.Assert(layers.Count == feedforwardResults.Count, "layers.Count == feedforwardResults.Count");
+
+            // we start with the output layer
+            var layer = OutputLayer;
+            var resultNode = feedforwardResults.Last;
+
+            // Calculate the error of the network output regarding the wanted training output,
+            // as well as the error gradient of the output layer.
+            // The calculated error will also serve as an input to the layer loop below.
+            var error = CalculateNetworkOutputError(feedforwardResults, expectedOutput);
+            var outputGradient = CalculateErrorGradient(resultNode, error);
+
+            // calculate the training cost
+            var j = CalculateCost(expectedOutput, resultNode.Value);
+
+            // as long as we do not hit the input layer, iterate backwards
+            // through all hidden layers
+            Debug.Assert(layer.Previous != null, "layer.Previous != null");
+            while (layer.Previous.Type != LayerType.Input)
+            {
+                layer = layer.Previous;
+                resultNode = resultNode.Previous;
+
+                // I know it's true, you know it's true ...
+                Debug.Assert(layer != null, "layer != null");
+                Debug.Assert(resultNode != null, "resultNode != null");
+
+                // obtain this layer's feedforward results
+                var layerOutput = resultNode.Value;
+
+                // errors on the hidden layer must be obtained through backpropagation
+                var z = layerOutput.WeightedInputs;
+                var a = layerOutput.Output;
+                var d = layer.Backpropagate(
+                    layerResult: layerOutput,
+                    outputErrors: error);
+
+                // store the error for the next iteration
+                error = d.WeightingErrors;
+
+                // calculate the error gradient
+                var hiddenGradient = CalculateErrorGradient(resultNode, error);
+            }
         }
 
         /// <summary>
