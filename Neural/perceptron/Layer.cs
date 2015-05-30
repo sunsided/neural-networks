@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
 using Neural.Activations;
@@ -8,65 +9,206 @@ namespace Neural.Perceptron
     /// <summary>
     /// A perceptron layer.
     /// </summary>
-    sealed class Layer
+    [DebuggerDisplay("{Type,nq}: {_weightMatrix.ColumnCount,nq} --> {_weightMatrix.RowCount,nq}")]
+    internal sealed class Layer
     {
         /// <summary>
         /// The weight vector of the bias units
         /// </summary>
-        [NotNull]
-        private readonly Vector<float> _biasVector;
+        /// <seealso cref="_weightMatrix"/>
+        [NotNull] private readonly Vector<float> _biasVector;
 
         /// <summary>
-        /// The weight matrix
+        /// The weight matrix (Theta)
         /// </summary>
-        [NotNull]
-        private readonly Matrix<float> _weightMatrix;
+        /// <seealso cref="_biasVector"/>
+        [NotNull] private readonly Matrix<float> _weightMatrix;
 
         /// <summary>
-        /// The activation function
+        /// The transfer function
         /// </summary>
-        [NotNull]
-        private readonly Func<float, float> _activationFunction;
+        /// <seealso cref="_derivativeFunction"/>
+        [NotNull] private readonly Func<Vector<float>, Vector<float>> _transferFunction;
 
         /// <summary>
-        /// Gets the number of neurons in this layer.
+        /// The gradient function
         /// </summary>
-        /// <value>The number of neurons.</value>
-        public int NeuronCount
+        /// <seealso cref="_transferFunction"/>
+        [NotNull] private readonly Func<Vector<float>, Vector<float>> _derivativeFunction;
+
+        /// <summary>
+        /// The input layer
+        /// </summary>
+        /// <seealso cref="Previous"/>
+        [CanBeNull] private readonly Layer _previousLayer;
+
+        /// <summary>
+        /// The input layer
+        /// </summary>
+        /// <seealso cref="Next"/>
+        [NotNull] private readonly WeakReference<Layer> _nextLayer;
+
+        /// <summary>
+        /// Gets the input layer.
+        /// </summary>
+        /// <value>The input layer.</value>
+        /// <seealso cref="Next"/>
+        public Layer Previous
+        {
+            [CanBeNull] get { return _previousLayer; }
+        }
+
+        /// <summary>
+        /// Gets the output layer.
+        /// </summary>
+        /// <value>The output layer.</value>
+        /// <seealso cref="Previous"/>
+        public Layer Next
+        {
+            [CanBeNull]
+            get
+            {
+                Layer output;
+                return _nextLayer.TryGetTarget(out output) ? output : null;
+            }
+        }
+
+        /// <summary>
+        /// Gets the type.
+        /// </summary>
+        /// <value>The type.</value>
+        public LayerType Type
         {
             [Pure]
-            get { return _weightMatrix.RowCount; }
+            get
+            {
+                if (Previous == null) return LayerType.Input;
+                return (Next == null)
+                    ? LayerType.Output
+                    : LayerType.Hidden;
+            }
+        }
+
+        /// <summary>
+        /// Gets the number of output neurons in this layer.
+        /// </summary>
+        /// <value>The number of output neurons.</value>
+        public int NeuronCount
+        {
+            [Pure] get { return _weightMatrix.RowCount; }
+        }
+
+        /// <summary>
+        /// Gets the number of inputs to this layer.
+        /// </summary>
+        /// <value>The number of inputs.</value>
+        public int InputCount
+        {
+            [Pure] get { return _weightMatrix.ColumnCount; }
+        }
+
+        /// <summary>
+        /// Gets the weights.
+        /// </summary>
+        /// <value>The weights.</value>
+        [NotNull]
+        internal Matrix<float> Weights
+        {
+            [Pure] get {  return _weightMatrix; }
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="Layer" /> class.
         /// </summary>
-        /// <param name="biasVector"></param>
+        /// <param name="previousLayer">The previous layer.</param>
+        /// <param name="nextLayer">The next layer.</param>
+        /// <param name="biasVector">The bias vector.</param>
         /// <param name="weightMatrix">The weight matrix.</param>
-        /// <param name="activationFunction">The activation function.</param>
-        public Layer([NotNull]  Vector<float> biasVector, [NotNull] Matrix<float> weightMatrix, [NotNull] IActivation activationFunction)
+        /// <param name="transferFunction">The activation function.</param>
+        public Layer([CanBeNull] Layer previousLayer, [NotNull] WeakReference<Layer> nextLayer, [NotNull] Vector<float> biasVector, [NotNull] Matrix<float> weightMatrix, [NotNull] ITransfer transferFunction)
         {
+            _previousLayer = previousLayer;
+            _nextLayer = nextLayer;
             _biasVector = biasVector;
             _weightMatrix = weightMatrix;
-            _activationFunction = activationFunction.Activate;
+            _transferFunction = transferFunction.Transfer;
+            _derivativeFunction = transferFunction.Derivative;
         }
 
         /// <summary>
-        /// Performs a feed-forward step of the layer's <paramref name="activations"/>.
+        /// Performs a feed-forward step of the layer's <paramref name="input"/>.
         /// </summary>
-        /// <param name="activations">The row vector of activations.</param>
+        /// <param name="input">The row vector of inputs.</param>
         /// <returns>The activations of this layer's perceptrons.</returns>
-        [Pure, NotNull] 
-        public Vector<float> Feedforward([NotNull] Vector<float> activations)
+        [Pure]
+        public FeedforwardResult Feedforward([NotNull] Vector<float> input)
         {
-            var matrix = _weightMatrix;
-            var activationFunction = _activationFunction;
-
-            // calculate the sum of weighted activations for each neuron in the layer
-            var weightedActivations = matrix * activations + _biasVector;
+            // calculate activations for each neuron in the layer
+            var activation = _weightMatrix*input + _biasVector;
 
             // apply the activation function to each weighted activation
-            return weightedActivations.Map(activationFunction);
+            var output = _transferFunction(activation);
+
+            return new FeedforwardResult(this, activation, output);
+        }
+
+        /// <summary>
+        /// Performs a backpropagation step of the layer's <paramref name="outputErrors" />.
+        /// </summary>
+        /// <param name="feeforwardResult">The layer's feedforward result.</param>
+        /// <param name="outputErrors">The training errors.</param>
+        /// <returns>The activations of this layer's perceptrons.</returns>
+        /// <exception cref="System.InvalidOperationException">Attempted to backpropagate through the input layer.</exception>
+        [Pure]
+        public BackpropagationResult Backpropagate(FeedforwardResult feeforwardResult, [NotNull] Vector<float> outputErrors)
+        {
+            return Backpropagate(feeforwardResult.WeightedInputs, outputErrors);
+        }
+
+        /// <summary>
+        /// Performs a backpropagation step of the layer's <paramref name="outputErrors" />.
+        /// </summary>
+        /// <param name="weightedInputs">This layer's weighted input activations.</param>
+        /// <param name="outputErrors">The training errors.</param>
+        /// <returns>The activations of this layer's perceptrons.</returns>
+        /// <exception cref="System.InvalidOperationException">Attempted to backpropagate through the input layer.</exception>
+        [Pure, NotNull]
+        public BackpropagationResult Backpropagate([NotNull] Vector<float> weightedInputs, [NotNull] Vector<float> outputErrors)
+        {
+            if (Type != LayerType.Hidden) throw new InvalidOperationException("Backpropagation only allowed on hidden layers.");
+
+            // calculate the gradient of the transfer function.
+            // This function will fail on the input layer.
+            var gradient = _derivativeFunction(weightedInputs);
+
+            // In case of the output layer, the error is trivially
+            // the difference of expected and calculated outputs,
+            // so nothing needs to be done.
+            // On hidden layers, the error is the weighted sum
+            // of the errors to each originating neuron.
+
+            // sum errors weighted by connection weights
+            var transposedMatrix = Next._weightMatrix.Transpose();
+            var weightError = (transposedMatrix * outputErrors).PointwiseMultiply(gradient);
+
+            // calculate the bias error for the current layer
+            // in analogy to the weight error calculaction above; however, since
+            // the bias unit is not affected by the nonlinear transfer function,
+            // it has linear effect, hence the multiplication with b' = 1.
+            var biasError = (Next._biasVector * outputErrors) * 1.0F;
+
+            return new BackpropagationResult(weightError, biasError);
+        }
+
+        /// <summary>
+        /// Returns a <see cref="System.String" /> that represents this instance.
+        /// </summary>
+        /// <returns>A <see cref="System.String" /> that represents this instance.</returns>
+        public override string ToString()
+        {
+            var inputs = _weightMatrix.ColumnCount;
+            var outputs = _weightMatrix.RowCount;
+            return string.Format("{0}: {1} --> {2}", Type, inputs, outputs);
         }
     }
 }

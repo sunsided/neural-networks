@@ -48,14 +48,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Activations\InputLayerActivation.cs" />
-    <Compile Include="Activations\LinearActivation.cs" />
-    <Compile Include="Activations\IActivation.cs" />
+    <Compile Include="Activations\InputLayerTransfer.cs" />
+    <Compile Include="Activations\SigmoidTransfer.cs" />
+    <Compile Include="Activations\IdentityTransfer.cs" />
+    <Compile Include="Activations\ITransfer.cs" />
+    <Compile Include="Perceptron\BackpropagationResult.cs" />
+    <Compile Include="Perceptron\ErrorGradient.cs" />
+    <Compile Include="Perceptron\FeedforwardResult.cs" />
     <Compile Include="Perceptron\Layer.cs" />
     <Compile Include="Perceptron\LayerConfiguration.cs" />
+    <Compile Include="Perceptron\LayerType.cs" />
     <Compile Include="Perceptron\Network.cs" />
     <Compile Include="Perceptron\NetworkConfiguration.cs" />
     <Compile Include="Perceptron\NetworkFactory.cs" />
+    <Compile Include="Perceptron\TrainingExample.cs" />
+    <Compile Include="Perceptron\TrainingResult.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
