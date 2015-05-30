@@ -23,7 +23,7 @@ namespace Neural
             // The XOR problem, adapted from Clever Algorithms by Jason Brownlee
 
             // obtain a transfer function
-            var hiddenActivation = new TanhTransfer();
+            var hiddenActivation = new SigmoidTransfer();
             var outputActivation = new StepTransfer();
 
             // input layers with two neurons

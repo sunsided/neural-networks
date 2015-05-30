@@ -34,7 +34,7 @@ namespace Neural.Perceptron
         /// The gradient function
         /// </summary>
         /// <seealso cref="_transferFunction"/>
-        [NotNull] private readonly Func<Vector<float>, Vector<float>> _derivativeFunction;
+        [NotNull] private readonly Func<Vector<float>, Vector<float>, Vector<float>> _derivativeFunction;
 
         /// <summary>
         /// The input layer
@@ -195,27 +195,16 @@ namespace Neural.Perceptron
         /// <param name="outputErrors">The training errors.</param>
         /// <returns>The activations of this layer's perceptrons.</returns>
         /// <exception cref="System.InvalidOperationException">Attempted to backpropagate through the input layer.</exception>
-        [Pure]
-        public BackpropagationResult Backpropagate(FeedforwardResult feeforwardResult, [NotNull] Vector<float> outputErrors)
-        {
-            return Backpropagate(feeforwardResult.WeightedInputs, outputErrors);
-        }
-
-        /// <summary>
-        /// Performs a backpropagation step of the layer's <paramref name="outputErrors" />.
-        /// </summary>
-        /// <param name="weightedInputs">This layer's weighted input activations.</param>
-        /// <param name="outputErrors">The training errors.</param>
-        /// <returns>The activations of this layer's perceptrons.</returns>
-        /// <exception cref="System.InvalidOperationException">Attempted to backpropagate through the input layer.</exception>
         [Pure, NotNull]
-        public BackpropagationResult Backpropagate([NotNull] Vector<float> weightedInputs, [NotNull] Vector<float> outputErrors)
+        public BackpropagationResult Backpropagate(FeedforwardResult feeforwardResult, [NotNull] Vector<float> outputErrors)
         {
             if (Type != LayerType.Hidden) throw new InvalidOperationException("Backpropagation only allowed on hidden layers.");
 
             // calculate the gradient of the transfer function.
             // This function will fail on the input layer.
-            var gradient = _derivativeFunction(weightedInputs);
+            var weightedInputs = feeforwardResult.WeightedInputs;
+            var activations = feeforwardResult.Output;
+            var gradient = _derivativeFunction(weightedInputs, activations);
 
             // In case of the output layer, the error is trivially
             // the difference of expected and calculated outputs,

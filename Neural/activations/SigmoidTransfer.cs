@@ -22,11 +22,11 @@ namespace Neural.Activations
         /// Calculates the gradient of the transfer function evaluated at each value of <paramref name="z" />.
         /// </summary>
         /// <param name="z">The value at which to evaluate the gradients.</param>
+        /// <param name="activations">The original activations obtained in the feedforward pass.</param>
         /// <returns>Vector&lt;System.Single&gt;.</returns>
-        public Vector<float> Derivative(Vector<float> z)
+        public Vector<float> Derivative(Vector<float> z, Vector<float> activations)
         {
-            var s = Transfer(z);
-            return s.Map(value => value*(1 - value));
+            return activations.Map(value => value * (1 - value));
         }
     }
 }

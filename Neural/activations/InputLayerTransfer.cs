@@ -29,9 +29,11 @@ namespace Neural.Activations
         /// Always fails with a <see cref="InvalidOperationException" />.
         /// </summary>
         /// <param name="z">The value at which to evaluate the gradients.</param>
+        /// <param name="activations">The original activations obtained in the feedforward pass.</param>
         /// <returns>Vector&lt;System.Single&gt;.</returns>
+        /// <exception cref="System.InvalidOperationException">An activation function of the input layer has been used erroneously.</exception>
         /// <exception cref="InvalidOperationException">An activation function of the input layer has been used erroneously.</exception>
-        public Vector<float> Derivative(Vector<float> z)
+        public Vector<float> Derivative(Vector<float> z, Vector<float> activations)
         {
             throw new InvalidOperationException("An activation function of the input layer has been used erroneously.");
         }

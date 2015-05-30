@@ -27,9 +27,10 @@ namespace Neural.Activations
         /// Calculates the gradient of the transfer function evaluated at each value of <paramref name="z" />.
         /// </summary>
         /// <param name="z">The value at which to evaluate the gradients.</param>
+        /// <param name="activations">The original activations obtained in the feedforward pass.</param>
         /// <returns>Vector&lt;System.Single&gt;.</returns>
         /// <exception cref="System.InvalidOperationException">Attempted to use the heaviside transfer function in a hidden neuron.</exception>
-        public Vector<float> Derivative(Vector<float> z)
+        public Vector<float> Derivative(Vector<float> z, Vector<float> activations)
         {
             throw new InvalidOperationException("Attempted to use the heaviside transfer function in a hidden neuron.");
             return z.Map(value => Math.Abs(value) < 0.000001F ? 1F : 0F); // that's just stupid.

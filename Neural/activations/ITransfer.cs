@@ -20,8 +20,9 @@ namespace Neural.Activations
         /// Calculates the gradient of the transfer function evaluated at each value of <paramref name="z" />.
         /// </summary>
         /// <param name="z">The value at which to evaluate the gradients.</param>
+        /// <param name="activations">The original activations obtained in the feedforward pass.</param>
         /// <returns>Vector&lt;System.Single&gt;.</returns>
         [Pure, NotNull]
-        Vector<float> Derivative([NotNull] Vector<float> z); // TODO: Some derivatives are defined by means of the original transfer function; thus, the original activations should be passed in here
+        Vector<float> Derivative([NotNull] Vector<float> z, [NotNull] Vector<float> activations);
     }
 }
