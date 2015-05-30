@@ -18,7 +18,7 @@ namespace Neural.Perceptron
         /// <param name="inputLayerConfiguration">The input layer configuration.</param>
         /// <param name="outputLayerConfiguration">The output layer configuration.</param>
         /// <returns>PerceptronNetwork.</returns>
-        public PerceptronNetwork Create(LayerConfiguration inputLayerConfiguration, LayerConfiguration outputLayerConfiguration)
+        public Network Create(LayerConfiguration inputLayerConfiguration, LayerConfiguration outputLayerConfiguration)
         {
             var layerConfigurations = new[]
                                       {
@@ -36,7 +36,7 @@ namespace Neural.Perceptron
         /// <param name="hiddenLayerConfigurations">The hidden layer configurations.</param>
         /// <param name="outputLayerConfiguration">The output layer configuration.</param>
         /// <returns>PerceptronNetwork.</returns>
-        public PerceptronNetwork Create(LayerConfiguration inputLayerConfiguration, [NotNull] IReadOnlyList<LayerConfiguration> hiddenLayerConfigurations, LayerConfiguration outputLayerConfiguration)
+        public Network Create(LayerConfiguration inputLayerConfiguration, [NotNull] IReadOnlyList<LayerConfiguration> hiddenLayerConfigurations, LayerConfiguration outputLayerConfiguration)
         {
             var layerConfigurations = new List<LayerConfiguration>(hiddenLayerConfigurations.Count + 2);
             layerConfigurations.Add(inputLayerConfiguration);
@@ -51,7 +51,7 @@ namespace Neural.Perceptron
         /// </summary>
         /// <param name="layerConfigurations">The layer configurations.</param>
         /// <returns>PerceptronNetwork.</returns>
-        private PerceptronNetwork Create<T>([NotNull] T layerConfigurations)
+        private Network Create<T>([NotNull] T layerConfigurations)
             where T : IReadOnlyList<LayerConfiguration>
         {
             // Prepare a linked list of perceptron layers
@@ -124,7 +124,7 @@ namespace Neural.Perceptron
                 previousLayer = layer;
             }
 
-            return new PerceptronNetwork(layerList);
+            return new Network(layerList);
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Neural.Perceptron
     /// <summary>
     /// A perceptron network.
     /// </summary>
-    sealed class PerceptronNetwork
+    sealed class Network
     {
         /// <summary>
         /// The perceptron layers
@@ -67,10 +67,10 @@ namespace Neural.Perceptron
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PerceptronNetwork"/> class.
+        /// Initializes a new instance of the <see cref="Network"/> class.
         /// </summary>
         /// <param name="layers">The perceptron layers.</param>
-        public PerceptronNetwork([NotNull] LinkedList<Layer> layers)
+        public Network([NotNull] LinkedList<Layer> layers)
         {
             _layers = layers;
         }
@@ -164,9 +164,7 @@ namespace Neural.Perceptron
             var lastCost = 0.0F;
             for (int i = 0; i < maximumIterations; ++i)
             {
-                var trainingResult = lambda > 0
-                    ? CalculateCostAndGradientRegularized(trainingSet, lambda)
-                    : CalculateCostAndGradientUnregularized(trainingSet);
+                var trainingResult = CalculateCostAndGradient(trainingSet, lambda);
 
                 // determine cost delta and early-exit if it is smaller than epsilon
                 var costDelta = lastCost - trainingResult.Cost;
@@ -247,6 +245,21 @@ namespace Neural.Perceptron
             var secondPart = (1-expectedOutput) * logInvOutput;
 
             return -firstPart - secondPart;
+        }
+
+        /// <summary>
+        /// Calculates the cost and the gradient given the training examples.
+        /// </summary>
+        /// <param name="trainingSet">The training set.</param>
+        /// <param name="lambda">The regularization parameter.</param>
+        /// <returns>System.Single.</returns>
+        /// <exception cref="NotImplementedException"></exception>
+        [Pure]
+        internal TrainingResult CalculateCostAndGradient([NotNull] IReadOnlyCollection<TrainingExample> trainingSet, float lambda)
+        {
+            return lambda > 0
+                ? CalculateCostAndGradientRegularized(trainingSet, lambda)
+                : CalculateCostAndGradientUnregularized(trainingSet);
         }
 
         /// <summary>
