@@ -24,7 +24,10 @@ namespace Neural
 
             // obtain a transfer function
             var hiddenActivation = new TanhTransfer();
-            var outputActivation = new StepTransfer();
+            var outputActivation = new StepTransfer
+                                   {
+                                       Epsilon = 1E-7F
+                                   };
 
             // input layers with two neurons
             var inputLayer = LayerConfiguration.ForInput(2);
