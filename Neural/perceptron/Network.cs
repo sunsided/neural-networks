@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -51,7 +50,7 @@ namespace Neural.Perceptron
         /// Gets the input layer.
         /// </summary>
         /// <value>The input layer.</value>
-        protected Layer InputLayer
+        internal Layer InputLayer
         {
             [Pure, NotNull]
             get { return _layers.First.Value; }
@@ -61,7 +60,7 @@ namespace Neural.Perceptron
         /// Gets the output layer.
         /// </summary>
         /// <value>The output layer.</value>
-        protected Layer OutputLayer
+        internal Layer OutputLayer
         {
             [Pure, NotNull]
             get { return _layers.Last.Value; }
@@ -136,10 +135,12 @@ namespace Neural.Perceptron
         }
 
         /// <summary>
-        /// Trains the network using the given <paramref name="examples" />.
+        /// Trains the network using the given <paramref name="trainingSet" />.
         /// </summary>
         /// <param name="trainingSet">The training set.</param>
-        /// <param name="lambda">The regularization parameter; a value of <see literal="0"/> means no regularization.</param>
+        /// <param name="lambda">The regularization parameter; a value of <see literal="0" /> means no regularization.</param>
+        /// <exception cref="System.ArgumentOutOfRangeException">Regularization parameter must be nonnegative</exception>
+        /// <exception cref="System.NotFiniteNumberException">Regularization parameter must be a finite number</exception>
         public void Train([NotNull] IReadOnlyCollection<TrainingExample> trainingSet, float lambda = 1.0F)
         {
             if (lambda < 0) throw new ArgumentOutOfRangeException("lambda", lambda, "Regularization parameter must be nonnegative");
