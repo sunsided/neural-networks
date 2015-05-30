@@ -10,49 +10,43 @@ namespace Neural.Perceptron
     /// A perceptron layer.
     /// </summary>
     [DebuggerDisplay("{Type,nq}: {_weightMatrix.ColumnCount,nq} --> {_weightMatrix.RowCount,nq}")]
-    sealed class Layer
+    internal sealed class Layer
     {
         /// <summary>
         /// The weight vector of the bias units
         /// </summary>
         /// <seealso cref="_weightMatrix"/>
-        [NotNull]
-        private readonly Vector<float> _biasVector;
+        [NotNull] private readonly Vector<float> _biasVector;
 
         /// <summary>
         /// The weight matrix (Theta)
         /// </summary>
         /// <seealso cref="_biasVector"/>
-        [NotNull]
-        private readonly Matrix<float> _weightMatrix;
+        [NotNull] private readonly Matrix<float> _weightMatrix;
 
         /// <summary>
         /// The transfer function
         /// </summary>
         /// <seealso cref="_derivativeFunction"/>
-        [NotNull]
-        private readonly Func<Vector<float>, Vector<float>> _transferFunction;
+        [NotNull] private readonly Func<Vector<float>, Vector<float>> _transferFunction;
 
         /// <summary>
         /// The gradient function
         /// </summary>
         /// <seealso cref="_transferFunction"/>
-        [NotNull]
-        private readonly Func<Vector<float>, Vector<float>> _derivativeFunction;
+        [NotNull] private readonly Func<Vector<float>, Vector<float>> _derivativeFunction;
 
         /// <summary>
         /// The input layer
         /// </summary>
         /// <seealso cref="Previous"/>
-        [CanBeNull]
-        private readonly Layer _previousLayer;
+        [CanBeNull] private readonly Layer _previousLayer;
 
         /// <summary>
         /// The input layer
         /// </summary>
         /// <seealso cref="Next"/>
-        [NotNull]
-        private readonly WeakReference<Layer> _nextLayer;
+        [NotNull] private readonly WeakReference<Layer> _nextLayer;
 
         /// <summary>
         /// Gets the input layer.
@@ -61,8 +55,7 @@ namespace Neural.Perceptron
         /// <seealso cref="Next"/>
         public Layer Previous
         {
-            [CanBeNull]
-            get {  return _previousLayer; }
+            [CanBeNull] get { return _previousLayer; }
         }
 
         /// <summary>
@@ -102,8 +95,7 @@ namespace Neural.Perceptron
         /// <value>The number of neurons.</value>
         public int NeuronCount
         {
-            [Pure]
-            get { return _weightMatrix.RowCount; }
+            [Pure] get { return _weightMatrix.RowCount; }
         }
 
         /// <summary>
@@ -133,12 +125,25 @@ namespace Neural.Perceptron
         public FeedforwardResult Feedforward([NotNull] Vector<float> input)
         {
             // calculate activations for each neuron in the layer
-            var activation = _weightMatrix * input + _biasVector;
+            var activation = _weightMatrix*input + _biasVector;
 
             // apply the activation function to each weighted activation
             var output = _transferFunction(activation);
 
             return new FeedforwardResult(this, activation, output);
+        }
+
+        /// <summary>
+        /// Performs a backpropagation step of the layer's <paramref name="outputErrors" />.
+        /// </summary>
+        /// <param name="layerResult">The layer's feedforward result.</param>
+        /// <param name="outputErrors">The training errors.</param>
+        /// <returns>The activations of this layer's perceptrons.</returns>
+        /// <exception cref="System.InvalidOperationException">Attempted to backpropagate through the input layer.</exception>
+        [Pure]
+        public BackpropagationResult Backpropagate(FeedforwardResult layerResult, [NotNull] Vector<float> outputErrors)
+        {
+            return Backpropagate(layerResult.WeightedInputs, outputErrors);
         }
 
         /// <summary>
