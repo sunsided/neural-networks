@@ -114,7 +114,43 @@ namespace Neural.Perceptron
         [NotNull]
         internal Matrix<float> Weights
         {
-            [Pure] get {  return _weightMatrix; }
+            [Pure] get { return _weightMatrix; }
+        }
+
+        /// <summary>
+        /// Gets the bias.
+        /// </summary>
+        /// <value>The bias.</value>
+        [NotNull]
+        internal Vector<float> Bias
+        {
+            [Pure]
+            get { return _biasVector; }
+        }
+
+        /// <summary>
+        /// Creates an empty weight matrix from the given <paramref name="layer"/>
+        /// </summary>
+        /// <param name="layer">The layer.</param>
+        /// <returns>An empty weight matrix matching this layer.</returns>
+        [NotNull]
+        internal static Matrix<float> EmptyWeightFromLayer([NotNull] Layer layer)
+        {
+            var rows = layer.NeuronCount;
+            var cols = layer.InputCount;
+            return Matrix<float>.Build.Dense(rows, cols, Matrix<float>.Zero);
+        }
+
+        /// <summary>
+        /// Creates an empty bias vector from the given <paramref name="layer"/>
+        /// </summary>
+        /// <param name="layer">The layer.</param>
+        /// <returns>An empty bias vector matching this layer.</returns>
+        [NotNull]
+        internal static Vector<float> EmptyBiasFromLayer([NotNull] Layer layer)
+        {
+            var rows = layer.NeuronCount;
+            return Vector<float>.Build.Dense(rows, Matrix<float>.Zero);
         }
 
         /// <summary>

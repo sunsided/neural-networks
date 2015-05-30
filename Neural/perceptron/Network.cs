@@ -148,7 +148,8 @@ namespace Neural.Perceptron
 
             // for momentum-based gradient descent, we need to keep track of the
             // weight delta used in the previous iteration.
-            var previousDeltas = _layers.ToDictionary(layer => layer, ErrorGradient.EmptyFromLayer);
+            // The input layer is excluded from this, as there is nothing to update.
+            var previousDeltas = _layers.Skip(1).ToDictionary(layer => layer, ErrorGradient.EmptyFromLayer);
 
             // learning parameters.
             // Since these are strategy specific, they should be defined in a LearningStrategy passed to
@@ -177,9 +178,27 @@ namespace Neural.Perceptron
         /// <param name="learningRate">The learning rate.</param>
         /// <param name="momentum">The descent momentum.</param>
         /// <exception cref="System.NotImplementedException"></exception>
-        private void GradientDescend(TrainingResult trainingResult, [NotNull] IReadOnlyDictionary<Layer, ErrorGradient> previousDeltas, float learningRate, float momentum)
+        private static void GradientDescend(TrainingResult trainingResult, [NotNull] IDictionary<Layer, ErrorGradient> previousDeltas, float learningRate, float momentum)
         {
+            var gradientEntries = trainingResult.ErrorGradients;
+            // TODO: Since each gradient describes a single layer, this operation is fully data parallel
+            foreach (var entry in gradientEntries)
+            {
+                var layer = entry.Key;
+                var gradient = entry.Value;
+                var previousDelta = previousDeltas[layer];
 
+                // calculate the descend step size and update
+                // the layer's weights accordingly
+                var weightDelta = learningRate*gradient.Weight + momentum*previousDelta.Weight;
+                var biasDelta = learningRate * gradient.Bias + momentum * previousDelta.Bias;
+
+                layer.Weights.MapIndexedInplace((row, column, value) => value + weightDelta[row, column]);
+                layer.Bias.MapIndexedInplace((row, value) => value + biasDelta[row]);
+
+                // store the current delta
+                previousDeltas[layer] = new ErrorGradient(weightDelta, biasDelta);
+            }
         }
 
         /// <summary>
