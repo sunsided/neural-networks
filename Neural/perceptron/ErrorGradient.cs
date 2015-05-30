@@ -26,10 +26,8 @@ namespace Neural.Perceptron
         /// <returns>ErrorGradient.</returns>
         public static ErrorGradient EmptyFromLayer([NotNull] Layer layer)
         {
-            var rows = layer.NeuronCount;
-            var cols = layer.InputCount;
-            var weight = Matrix<float>.Build.Dense(rows, cols, Matrix<float>.Zero);
-            var bias = Vector<float>.Build.Dense(rows, Matrix<float>.Zero);
+            var weight = Layer.EmptyWeightFromLayer(layer);
+            var bias = Layer.EmptyBiasFromLayer(layer);
 
             return new ErrorGradient(weight, bias);
         }

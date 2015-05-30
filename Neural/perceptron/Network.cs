@@ -138,19 +138,86 @@ namespace Neural.Perceptron
         /// Trains the network using the given <paramref name="trainingSet" />.
         /// </summary>
         /// <param name="trainingSet">The training set.</param>
+        /// <param name="maximumIterations">The maximum iterations.</param>
         /// <param name="lambda">The regularization parameter; a value of <see literal="0" /> means no regularization.</param>
         /// <exception cref="System.ArgumentOutOfRangeException">Regularization parameter must be nonnegative</exception>
         /// <exception cref="System.NotFiniteNumberException">Regularization parameter must be a finite number</exception>
-        public void Train([NotNull] IReadOnlyCollection<TrainingExample> trainingSet, float lambda = 1.0F)
+        public void Train([NotNull] IReadOnlyCollection<TrainingExample> trainingSet, int maximumIterations = 1000, float lambda = 0.0F)
         {
             if (lambda < 0) throw new ArgumentOutOfRangeException("lambda", lambda, "Regularization parameter must be nonnegative");
             if (double.IsInfinity(lambda) || double.IsNaN(lambda)) throw new NotFiniteNumberException("Regularization parameter must be a finite number", lambda);
 
-            var result = lambda > 0
-                ? CalculateCostAndGradientRegularized(trainingSet, lambda)
-                : CalculateCostAndGradientUnregularized(trainingSet);
+            // for momentum-based gradient descent, we need to keep track of the
+            // weight delta used in the previous iteration.
+            // The input layer is excluded from this, as there is nothing to update.
+            var previousDeltas = _layers.Skip(1).ToDictionary(layer => layer, ErrorGradient.EmptyFromLayer);
 
-            throw new NotImplementedException("Parameter optimization is not yet implemented.");
+            // learning parameters.
+            // Since these are strategy specific, they should be defined in a LearningStrategy passed to
+            // the learning function, rather than be parameters to the function itself.
+            // TODO For the time being the learning parameters are hardcoded here until a better solution is implemented.
+            const float learningRate = 0.05F;
+            const float momentum = 0.8F;
+            const float epsilon = 5E-6F;
+            const int minimumIterations = 50;
+
+            var lastCost = 0.0F;
+            for (int i = 0; i < maximumIterations; ++i)
+            {
+                var trainingResult = lambda > 0
+                    ? CalculateCostAndGradientRegularized(trainingSet, lambda)
+                    : CalculateCostAndGradientUnregularized(trainingSet);
+
+                // determine cost delta and early-exit if it is smaller than epsilon
+                var costDelta = lastCost - trainingResult.Cost;
+                if (costDelta <= epsilon && i >= minimumIterations)
+                {
+                    Debug.WriteLine("Training stopped at iteration {0} because cost delta {1} <= {2}", i, costDelta, epsilon);
+                    break;
+                }
+
+                // store the cost for the next iteration
+                lastCost = trainingResult.Cost;
+                Debug.WriteLine("iteration {0}: cost {1}, cost delta {2}", i, trainingResult.Cost, costDelta);
+
+                // perform a single gradient descend step
+                GradientDescend(trainingResult, previousDeltas, learningRate, momentum);
+            }
+
+            Debug.WriteLine("Training terminated at cost {0}", lastCost);
+        }
+
+        /// <summary>
+        /// Updates the layer weights according to the <paramref name="trainingResult" />
+        /// </summary>
+        /// <param name="trainingResult">The training result.</param>
+        /// <param name="previousDeltas">The previous iteration deltas per layer.</param>
+        /// <param name="learningRate">The learning rate.</param>
+        /// <param name="momentum">The descent momentum.</param>
+        /// <exception cref="System.NotImplementedException"></exception>
+        private static void GradientDescend(TrainingResult trainingResult, [NotNull] IDictionary<Layer, ErrorGradient> previousDeltas, float learningRate, float momentum)
+        {
+            var gradientEntries = trainingResult.ErrorGradients;
+            // TODO: Since each gradient describes a single layer, this operation is fully data parallel
+            foreach (var entry in gradientEntries)
+            {
+                var layer = entry.Key;
+                var gradient = entry.Value;
+                var previousDelta = previousDeltas[layer];
+
+                // calculate the descend step size and update
+                // the layer's weights accordingly
+                var weightDelta = learningRate*gradient.Weight + momentum*previousDelta.Weight;
+                var biasDelta = learningRate*gradient.Bias + momentum*previousDelta.Bias;
+
+                // note that simply by definition of the error's sign we subtract the
+                // deltas from the weights instead of adding them.
+                layer.Weights.MapIndexedInplace((row, column, value) => value - weightDelta[row, column]);
+                layer.Bias.MapIndexedInplace((row, value) => value - biasDelta[row]);
+
+                // store the current delta
+                previousDeltas[layer] = new ErrorGradient(weightDelta, biasDelta);
+            }
         }
 
         /// <summary>
