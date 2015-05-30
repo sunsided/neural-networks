@@ -208,6 +208,11 @@ namespace Neural.Training
                 lastCost = trainingResult.Cost;
                 Debug.WriteLine("iteration {0}: cost {1}, cost delta {2}", i, trainingResult.Cost, costDelta);
 
+                if (float.IsNaN(lastCost))
+                {
+                    throw new InvalidOperationException("Cost evaluated to Single.NaN");
+                }
+
                 // perform a single gradient descend step
                 GradientDescend(trainingResult, previousDeltas, learningRate, momentum);
             }

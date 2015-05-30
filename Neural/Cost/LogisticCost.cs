@@ -6,6 +6,10 @@ namespace Neural.Cost
     /// <summary>
     /// Logistic regression-like multivariate cost function.
     /// </summary>
+    /// <remarks>
+    /// This cost function only works for transfer functions that
+    /// have an ]0..1[
+    /// </remarks>
     sealed class LogisticCost : CostGradientBase, ICostFunction
     {
         /// <summary>

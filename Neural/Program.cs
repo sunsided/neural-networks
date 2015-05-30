@@ -24,15 +24,8 @@ namespace Neural
             // The XOR problem, adapted from Clever Algorithms by Jason Brownlee
 
             // obtain a transfer function
-            /*
-            ITransfer hiddenActivation = new TanhTransfer();
-            ITransfer outputActivation = new StepTransfer
-                                   {
-                                       Epsilon = 1E-7F
-                                   };*/
-
-            var hiddenActivation = new TanhTransfer();
-            var outputActivation = new SigmoidTransfer();
+            ITransfer hiddenActivation = new SigmoidTransfer();
+            ITransfer outputActivation = new SigmoidTransfer();
 
             // input layers with two neurons
             var inputLayer = LayerConfiguration.ForInput(2);
@@ -40,7 +33,7 @@ namespace Neural
             // single hidden layer with two neurons
             var hiddenLayers = new[]
                                {
-                                   LayerConfiguration.ForHidden(2, hiddenActivation)
+                                   LayerConfiguration.ForHidden(4, hiddenActivation)
                                };
 
             // output layer with one neuron
@@ -66,7 +59,7 @@ namespace Neural
             var training = new MomentumDescend(cost)
                            {
                                LearningRate = 0.3F,
-                               Momentum = 0.7F,
+                               Momentum = 0.5F,
                                MaximumIterationCount = 2000,
                                RegularizationStrength = 0
                            };
