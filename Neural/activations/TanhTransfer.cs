@@ -26,11 +26,8 @@ namespace Neural.Activations
         /// <returns>Vector&lt;System.Single&gt;.</returns>
         public Vector<float> Derivative(Vector<float> z, Vector<float> activations)
         {
-            return z.Map(value =>
-                         {
-                             var tanh = (float)Math.Tanh(value);
-                             return 1F - (tanh * tanh);
-                         });
+            // derivative tanh'(x) = 1 - tanh²(x)
+            return activations.Map(value => 1F - (value * value));
         }
     }
 }
