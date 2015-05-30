@@ -22,100 +22,22 @@ namespace Neural
         /// <param name="args">The arguments.</param>
         private static void Main(string[] args)
         {
-            // The XOR problem
+            // The XOR problem, taken from Clever Algorithms by Jason Brownlee
 
             // obtain a transfer function
             var activation = new SigmoidTransfer();
 
             // input layers with two neurons
-            var inputLayer = LayerConfiguration.ForInput(3);
+            var inputLayer = LayerConfiguration.ForInput(2);
 
-            // one hidden layer with three neurons
-            var weights = Matrix<float>.Build.DenseOfColumnArrays(
-                new[]
-                {
-                    -0.0279415498198926F,
-                    0.0656986598718789F,
-                    0.0989358246623382F,
-                    0.0412118485241757F,
-                    -0.054402111088937F
-                },
-                new[]
-                {
-                    -0.0999990206550704F,
-                    -0.0536572918000435F,
-                    0.0420167036826641F,
-                    0.099060735569487F,
-                    0.0650287840157117F
-                },
-                new[]
-                {
-                    -0.0287903316665065F,
-                    -0.0961397491879557F,
-                    -0.0750987246771676F,
-                    0.0149877209662952F,
-                    0.0912945250727628F
-                }
-                );
-
-            var bias = Vector<float>.Build.DenseOfArray(
-                new[]
-                {
-                    0.0841470984807896F,
-                    0.0909297426825682F,
-                    0.0141120008059867F,
-                    -0.0756802495307928F,
-                    -0.0958924274663139F
-                });
-
+            // single hidden layer with four neurons
             var hiddenLayers = new[]
                                {
-                                   LayerConfiguration.ForHidden(activation, weights, bias)
+                                   LayerConfiguration.ForHidden(4, activation)
                                };
 
             // output layer with one neuron
-            weights = Matrix<float>.Build.DenseOfColumnArrays(
-                new[]
-                {
-                    -0.0756802495307928F,
-                    -0.0958924274663139F,
-                    -0.0279415498198926F
-                },
-                new[]
-                {
-                    0.0656986598718789F,
-                    0.0989358246623382F,
-                    0.0412118485241757F
-                },
-                new[]
-                {
-                    -0.054402111088937F,
-                    -0.0999990206550704F,
-                    -0.0536572918000435F
-                },
-                new[]
-                {
-                    0.0420167036826641F,
-                    0.099060735569487F,
-                    0.0650287840157117F
-                },
-                new[]
-                {
-                    -0.0287903316665065F,
-                    -0.0961397491879557F,
-                    -0.0750987246771676F
-                }
-                );
-
-            bias = Vector<float>.Build.DenseOfArray(
-                new[]
-                {
-                    0.0841470984807896F,
-                    0.0909297426825682F,
-                    0.0141120008059867F
-                });
-
-            var outputLayer = LayerConfiguration.ForOutput(activation, weights, bias);
+            var outputLayer = LayerConfiguration.ForOutput(1, activation);
 
             // construct a network
             var factory = new NetworkFactory();
@@ -124,30 +46,48 @@ namespace Neural
             // train the network
             var examples = new[]
                            {
-                               new TrainingExample(Vector<float>.Build.DenseOfArray(new[] {0.0841470984807896F, -0.0279415498198926F, -0.0999990206550704F}), Vector<float>.Build.DenseOfArray(new [] { 0F, 1F, 0F })),
-                               new TrainingExample(Vector<float>.Build.DenseOfArray(new[] {0.0909297426825682F, 0.0656986598718789F, -0.0536572918000435F}), Vector<float>.Build.DenseOfArray((new [] { 0F, 0F, 1F }))),
-                               new TrainingExample(Vector<float>.Build.DenseOfArray(new[] {0.0141120008059867F, 0.0989358246623382F, 0.0420167036826641F}), Vector<float>.Build.DenseOfArray((new [] { 1F, 0F, 0F }))),
-                               new TrainingExample(Vector<float>.Build.DenseOfArray(new[] {-0.0756802495307928F, 0.0412118485241757F, 0.099060735569487F}), Vector<float>.Build.DenseOfArray((new [] { 0F, 1F, 0F }))),
-                               new TrainingExample(Vector<float>.Build.DenseOfArray(new[] {-0.0958924274663139F, -0.054402111088937F, 0.0650287840157117F}), Vector<float>.Build.DenseOfArray((new [] { 0F, 0F, 1F })))
+                               new TrainingExample(Vector<float>.Build.DenseOfArray(new[] {0F, 0F}), Vector<float>.Build.DenseOfArray(new [] { 0F })),
+                               new TrainingExample(Vector<float>.Build.DenseOfArray(new[] {0F, 1F}), Vector<float>.Build.DenseOfArray((new [] { 1F }))),
+                               new TrainingExample(Vector<float>.Build.DenseOfArray(new[] {1F, 0F}), Vector<float>.Build.DenseOfArray((new [] { 1F }))),
+                               new TrainingExample(Vector<float>.Build.DenseOfArray(new[] {1F, 1F}), Vector<float>.Build.DenseOfArray((new [] { 0F }))),
                            };
 
             // select a training strategy
-            var training = new MomentumDescend();
+            var training = new MomentumDescend()
+                           {
+                               LearningRate = 0.3F,
+                               Momentum = 0.8F,
+                               MinimumIterationCount = 2000,
+                               MaximumIterationCount = 2000,
+                               RegularizationStrength = 0
+                           };
 
             network.Train(training, examples);
 
             // evaluate the network
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
-            Console.WriteLine("Evaluating network for input:");
-            Console.WriteLine(String.Join(", ", examples[0].Inputs));
 
-            var outputs = network.Calculate(examples[0].Inputs);
+            foreach (var example in examples)
+            {
+                Console.WriteLine("Evaluating network for input:");
+                Console.ForegroundColor = ConsoleColor.White;
+                Console.WriteLine(String.Join(", ", example.Inputs));
+                Console.ResetColor();
 
-            Console.WriteLine("Obtained result from network:");
-            Console.WriteLine(String.Join(", ", outputs));
+                Console.WriteLine("Expected result from network:");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine(String.Join(", ", example.Outputs));
+                Console.ResetColor();
 
-            Console.WriteLine("Expected result from network:");
-            Console.WriteLine(String.Join(", ", examples[0].Outputs));
+                var outputs = network.Calculate(example.Inputs);
+
+                Console.WriteLine("Obtained result from network:");
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine(String.Join(", ", outputs));
+                Console.ResetColor();
+
+                Console.WriteLine();
+            }
 
             if (Debugger.IsAttached) Console.ReadKey(true);
         }
