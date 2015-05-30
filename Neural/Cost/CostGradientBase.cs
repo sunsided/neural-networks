@@ -20,7 +20,7 @@ namespace Neural.Cost
         /// <param name="expectedOutput">The expected output, i.e. ground truth.</param>
         /// <param name="networkOutput">The network output.</param>
         /// <returns>System.Single.</returns>
-        protected abstract float CalculateCost(Vector<float> expectedOutput, Vector<float> networkOutput);
+        public abstract float CalculateCost(Vector<float> expectedOutput, Vector<float> networkOutput);
 
         /// <summary>
         /// Calculates the network's training cost.
