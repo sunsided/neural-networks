@@ -139,9 +139,15 @@ namespace Neural.Perceptron
         /// Trains the network using the given <paramref name="examples" />.
         /// </summary>
         /// <param name="trainingSet">The training set.</param>
-        public void Train([NotNull] IReadOnlyCollection<TrainingExample> trainingSet)
+        /// <param name="lambda">The regularization parameter; a value of <see literal="0"/> means no regularization.</param>
+        public void Train([NotNull] IReadOnlyCollection<TrainingExample> trainingSet, float lambda = 0.0F)
         {
-            CalculateCostAndGradientUnregularized(trainingSet);
+            if (lambda < 0) throw new ArgumentOutOfRangeException("lambda", lambda, "Regularization parameter must be nonnegative");
+            if (double.IsInfinity(lambda) || double.IsNaN(lambda)) throw new NotFiniteNumberException("Regularization parameter must be a finite number", lambda);
+
+            var result = lambda > 0
+                ? CalculateCostAndGradientRegularized(trainingSet, lambda)
+                : CalculateCostAndGradientUnregularized(trainingSet);
         }
 
         /// <summary>
@@ -171,6 +177,24 @@ namespace Neural.Perceptron
             var secondPart = (1-expectedOutput) * logInvOutput;
 
             return -firstPart - secondPart;
+        }
+
+        /// <summary>
+        /// Calculates the cost given the training examples.
+        /// </summary>
+        /// <param name="trainingSet">The training set.</param>
+        /// <param name="lambda">The regularization parameter.</param>
+        /// <returns>System.Single.</returns>
+        /// <exception cref="NotImplementedException"></exception>
+        [Pure]
+        private TrainingResult CalculateCostAndGradientRegularized([NotNull] IReadOnlyCollection<TrainingExample> trainingSet, float lambda)
+        {
+            var unregularizedResult = CalculateCostAndGradientUnregularized(trainingSet);
+
+            // TODO: Add regularization of cost
+            // TODO: Add regularization of gradients
+
+            return unregularizedResult;
         }
 
         /// <summary>
@@ -223,9 +247,6 @@ namespace Neural.Perceptron
             cost *= inverseExampleCount;
             gradientDictionary = gradientDictionary.AsParallel()
                 .ToDictionary(item => item.Key, item => item.Value*inverseExampleCount);
-
-            // TODO: Add regularization of cost
-            // TODO: Add regularization of gradients
 
             return new TrainingResult(cost, gradientDictionary);
         }
