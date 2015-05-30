@@ -33,7 +33,7 @@ namespace Neural
             // single hidden layer with two neurons
             var hiddenLayers = new[]
                                {
-                                   LayerConfiguration.ForHidden(4, hiddenActivation)
+                                   LayerConfiguration.ForHidden(2, hiddenActivation)
                                };
 
             // output layer with one neuron
@@ -58,9 +58,10 @@ namespace Neural
             // select a training strategy
             var training = new MomentumDescend(cost)
                            {
-                               LearningRate = 0.3F,
-                               Momentum = 0.5F,
+                               LearningRate = 0.5F,
+                               Momentum = 0.8F,
                                MaximumIterationCount = 2000,
+                               MinimumIterationCount = 1000,
                                RegularizationStrength = 0
                            };
 
