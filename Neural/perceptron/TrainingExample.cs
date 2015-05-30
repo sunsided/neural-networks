@@ -41,5 +41,25 @@ namespace Neural.Perceptron
             : this(inputs.ToArray(), outputs.ToArray())
         {
         }
+
+        /// <summary>
+        /// Obtains the inputs as a <see cref="Vector{T}"/>
+        /// </summary>
+        /// <returns>Vector&lt;System.Single&gt;.</returns>
+        [NotNull]
+        internal Vector<float> GetInputs()
+        {
+            return Vector<float>.Build.SparseOfEnumerable(Inputs);
+        }
+
+        /// <summary>
+        /// Obtains the outputs as a <see cref="Vector{T}"/>
+        /// </summary>
+        /// <returns>Vector&lt;System.Single&gt;.</returns>
+        [NotNull]
+        internal Vector<float> GetOutputs()
+        {
+            return Vector<float>.Build.SparseOfEnumerable(Outputs);
+        }
     }
 }

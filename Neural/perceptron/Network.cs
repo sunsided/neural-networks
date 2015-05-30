@@ -206,8 +206,8 @@ namespace Neural.Perceptron
             var layers = _layers;
 
             // fetch the training data
-            var input = Vector<float>.Build.SparseOfEnumerable(example.Inputs);
-            var expectedOutput = Vector<float>.Build.SparseOfEnumerable(example.Outputs);
+            var input = example.GetInputs();
+            var expectedOutput = example.GetOutputs();
 
             // perform a feed-forward pass and retrieve the intermediate results
             var feedforwardResults = CalculateInternal(input);
