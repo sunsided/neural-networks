@@ -225,10 +225,51 @@ namespace Neural.Perceptron
                     var j = CalculateCost(expectedOutput, networkOutput.Output);
                 }
 
-            throw new NotImplementedException("gradient calculation from weight errors not implemented");
+
+                {
+                    // we start with the output layer
+                    var layer = OutputLayer;
+                    var resultNode = feedforwardResults.Last;
+                    // var error = networkOutputError;
+
+                    // calculate the gradient of the output layer
+                    var outputGradient = CalculateErrorGradient(resultNode, networkOutputError);
+
+                    // as long as we do not hit the input layer, iterate backwards
+                    // through all hidden layers
+                    Debug.Assert(layer.Previous != null, "layer.Previous != null");
+                    while (layer.Previous.Type != LayerType.Input)
+                    {
+                        layer = layer.Previous;
+                        resultNode = resultNode.Previous;
+
+                        // I know it's true, you know it's true ...
+                        Debug.Assert(layer != null, "layer != null");
+                        Debug.Assert(resultNode != null, "resultNode != null");
+
+                        // obtain this layer's feedforward results
+                        var layerOutput = resultNode.Value;
+
+                        // errors on the hidden layer must be obtained through backpropagation
+                        var z = layerOutput.WeightedInputs;
+                        var a = layerOutput.Output;
+                        var d = layer.Backpropagate(
+                            layerResult: layerOutput,
+                            outputErrors: error);
+
+                        // store the error for the next iteration
+                        error = d.WeightingErrors;
+
+                        // calculate the error gradient
+                        var hiddenGradient = CalculateErrorGradient(resultNode, error);
+                    }
+                }
 
 
 
+
+
+                throw new NotImplementedException("gradient calculation from weight errors not implemented");
 
                 // run the backward propagation steps
                 // we start with the last node and iterate until we reach the first
@@ -260,6 +301,49 @@ namespace Neural.Perceptron
             }
 
             throw new NotImplementedException();
+        }
+
+        /// <summary>
+        /// Calculates the error gradient of a given layer.
+        /// </summary>
+        /// <remarks>
+        /// This assumes a single training pass. If the gradients are aggregated over multiple training examples,
+        /// the result needs to be scaled accordingly.
+        /// </remarks>
+        /// <param name="resultNode">The layer's feedforward result node.</param>
+        /// <param name="error">The layer's output error.</param>
+        /// <returns>ErrorGradient.</returns>
+        private static ErrorGradient CalculateErrorGradient([NotNull] LinkedListNode<FeedforwardResult> resultNode, [NotNull] Vector<float> error)
+        {
+            // in order to calculate the gradient, we require the
+            // output activations of the previous layer. In case the previous
+            // layer happens to be the input layer, this will be the raw inputs.
+            var layerInput = GetLayerInput(resultNode);
+
+            // calculate the gradient
+            var weightGradient = error.OuterProduct(layerInput);
+            var biasGradient = error; // the bias input is always 1, so this is trivial
+
+            return new ErrorGradient(weightGradient, biasGradient);
+        }
+
+        /// <summary>
+        /// Gets the input values of the <see cref="Layer"/> that belongs to the <paramref name="resultNode"/>.
+        /// </summary>
+        /// <param name="resultNode">The result node.</param>
+        /// <returns>Vector&lt;System.Single&gt;.</returns>
+        [NotNull]
+        private static Vector<float> GetLayerInput([NotNull] LinkedListNode<FeedforwardResult> resultNode)
+        {
+            Debug.Assert(resultNode.Value.LayerType != LayerType.Input, "resultNode.Value.LayerType != LayerType.Input");
+
+            // obtain the previous node
+            var previousLayerNode = resultNode.Previous;
+            Debug.Assert(previousLayerNode != null, "previousLayerNode != null");
+
+            // the previous layer's output are the inputs of the layer given to this function
+            var previousLayer = previousLayerNode.Value;
+            return previousLayer.Output;
         }
 
         /// <summary>

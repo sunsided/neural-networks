@@ -9,6 +9,15 @@ namespace Neural.Perceptron
     struct FeedforwardResult
     {
         /// <summary>
+        /// Gets the type of the layer.
+        /// </summary>
+        /// <value>The type of the layer.</value>
+        public LayerType LayerType
+        {
+            get { return Layer.Type; }
+        }
+
+        /// <summary>
         /// The layer this result belongs to.
         /// </summary>
         [NotNull]

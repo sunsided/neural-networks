@@ -53,6 +53,7 @@
     <Compile Include="Activations\IdentityTransfer.cs" />
     <Compile Include="Activations\ITransfer.cs" />
     <Compile Include="Perceptron\BackpropagationResult.cs" />
+    <Compile Include="Perceptron\ErrorGradient.cs" />
     <Compile Include="Perceptron\FeedforwardResult.cs" />
     <Compile Include="Perceptron\Layer.cs" />
     <Compile Include="Perceptron\LayerConfiguration.cs" />
