@@ -57,7 +57,6 @@ namespace Neural
                            {
                                LearningRate = 0.3F,
                                Momentum = 0.8F,
-                               MinimumIterationCount = 2000,
                                MaximumIterationCount = 2000,
                                RegularizationStrength = 0
                            };
