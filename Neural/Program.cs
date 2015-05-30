@@ -7,6 +7,7 @@ using MathNet.Numerics.LinearAlgebra;
 using MathNet.Numerics.LinearAlgebra.Single;
 using Neural.Activations;
 using Neural.Perceptron;
+using Neural.Training;
 
 namespace Neural
 {
@@ -130,7 +131,10 @@ namespace Neural
                                new TrainingExample(Vector<float>.Build.DenseOfArray(new[] {-0.0958924274663139F, -0.054402111088937F, 0.0650287840157117F}), Vector<float>.Build.DenseOfArray((new [] { 0F, 0F, 1F })))
                            };
 
-            network.Train(examples);
+            // select a training strategy
+            var training = new MomentumDescend();
+
+            network.Train(training, examples);
 
             // evaluate the network
             Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
@@ -141,6 +145,9 @@ namespace Neural
 
             Console.WriteLine("Obtained result from network:");
             Console.WriteLine(String.Join(", ", outputs));
+
+            Console.WriteLine("Expected result from network:");
+            Console.WriteLine(String.Join(", ", examples[0].Outputs));
 
             if (Debugger.IsAttached) Console.ReadKey(true);
         }
