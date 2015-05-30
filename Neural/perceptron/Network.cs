@@ -174,7 +174,7 @@ namespace Neural.Perceptron
             var logOutput = networkOutput.Map(v => (float)Math.Log(v));
             var firstPart = expectedOutput*logOutput;
 
-            var logInvOutput = networkOutput.Map(v => (float)Math.Log(1 - v));
+            var logInvOutput = networkOutput.Map(v => (float)Math.Log(1 - v)); // BUG: this will blow up if the network output is actually 1 (or larger)
             var secondPart = (1-expectedOutput) * logInvOutput;
 
             return -firstPart - secondPart;

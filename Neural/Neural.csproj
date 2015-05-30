@@ -49,6 +49,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Activations\InputLayerTransfer.cs" />
+    <Compile Include="Activations\StepTransfer.cs" />
+    <Compile Include="Activations\TanhTransfer.cs" />
+    <Compile Include="Activations\RectifiedTransfer.cs" />
     <Compile Include="Activations\SigmoidTransfer.cs" />
     <Compile Include="Activations\IdentityTransfer.cs" />
     <Compile Include="Activations\ITransfer.cs" />
