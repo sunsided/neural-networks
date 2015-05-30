@@ -140,7 +140,7 @@ namespace Neural.Perceptron
         /// </summary>
         /// <param name="trainingSet">The training set.</param>
         /// <param name="lambda">The regularization parameter; a value of <see literal="0"/> means no regularization.</param>
-        public void Train([NotNull] IReadOnlyCollection<TrainingExample> trainingSet, float lambda = 0.0F)
+        public TrainingResult Train([NotNull] IReadOnlyCollection<TrainingExample> trainingSet, float lambda = 1.0F)
         {
             if (lambda < 0) throw new ArgumentOutOfRangeException("lambda", lambda, "Regularization parameter must be nonnegative");
             if (double.IsInfinity(lambda) || double.IsNaN(lambda)) throw new NotFiniteNumberException("Regularization parameter must be a finite number", lambda);
@@ -148,6 +148,8 @@ namespace Neural.Perceptron
             var result = lambda > 0
                 ? CalculateCostAndGradientRegularized(trainingSet, lambda)
                 : CalculateCostAndGradientUnregularized(trainingSet);
+
+            return result;
         }
 
         /// <summary>
@@ -190,11 +192,37 @@ namespace Neural.Perceptron
         private TrainingResult CalculateCostAndGradientRegularized([NotNull] IReadOnlyCollection<TrainingExample> trainingSet, float lambda)
         {
             var unregularizedResult = CalculateCostAndGradientUnregularized(trainingSet);
+            var count = trainingSet.Count;
 
-            // TODO: Add regularization of cost
-            // TODO: Add regularization of gradients
+            // regularize the training cost
+            var layers = _layers.Skip(1);
+            var sumOfSquaredWeights = layers.AsParallel().Sum(layer => layer.Weights.Map(v => v*v).RowSums().Sum());
+            var costRegularization = lambda/(2*count)*sumOfSquaredWeights;
+            var regularizedCost = unregularizedResult.Cost + costRegularization;
 
-            return unregularizedResult;
+            // regularization of gradients is obtained by simply adding
+            // the scaled weights to the gradient
+            var unregularizedGradients = unregularizedResult.ErrorGradients;
+            var regularizationFactor = lambda/count;
+            var regularizedGradient = unregularizedGradients.AsParallel().ToDictionary(
+                entry => entry.Key,
+                entry => RegularizeErrorGradient(entry.Key, entry.Value, regularizationFactor));
+
+            // return the regularized result
+            return new TrainingResult(regularizedCost, regularizedGradient);
+        }
+
+        /// <summary>
+        /// Regularizes the error gradient.
+        /// </summary>
+        /// <param name="layer">The layer.</param>
+        /// <param name="unregularizedGradient">The unregularized gradient.</param>
+        /// <param name="regularizationFactor">The regularization factor (lambda/no. of training examples).</param>
+        /// <returns>ErrorGradient.</returns>
+        private static ErrorGradient RegularizeErrorGradient([NotNull] Layer layer, ErrorGradient unregularizedGradient, float regularizationFactor)
+        {
+            var regularizedWeightGradient = unregularizedGradient.Weight + regularizationFactor * layer.Weights;
+            return new ErrorGradient(regularizedWeightGradient, unregularizedGradient.Bias);
         }
 
         /// <summary>

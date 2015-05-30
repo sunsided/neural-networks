@@ -104,8 +104,17 @@ namespace Neural.Perceptron
         /// <value>The number of inputs.</value>
         public int InputCount
         {
-            [Pure]
-            get { return _weightMatrix.ColumnCount; }
+            [Pure] get { return _weightMatrix.ColumnCount; }
+        }
+
+        /// <summary>
+        /// Gets the weights.
+        /// </summary>
+        /// <value>The weights.</value>
+        [NotNull]
+        internal Matrix<float> Weights
+        {
+            [Pure] get {  return _weightMatrix; }
         }
 
         /// <summary>
