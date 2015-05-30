@@ -10,7 +10,7 @@ namespace Neural.Cost
     /// <summary>
     /// Class CostBase.
     /// </summary>
-    public abstract class CostBase : ICostFunction
+    public abstract class CostGradientBase : ICostGradientFunction
     {
         #region Cost Calculation
 

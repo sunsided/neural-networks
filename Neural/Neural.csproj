@@ -55,8 +55,8 @@
     <Compile Include="Activations\SigmoidTransfer.cs" />
     <Compile Include="Activations\IdentityTransfer.cs" />
     <Compile Include="Activations\ITransfer.cs" />
-    <Compile Include="Cost\CostBase.cs" />
-    <Compile Include="Cost\ICostFunction.cs" />
+    <Compile Include="Cost\CostGradientBase.cs" />
+    <Compile Include="Cost\ICostGradientFunction.cs" />
     <Compile Include="Cost\LogisticCost.cs" />
     <Compile Include="Perceptron\BackpropagationResult.cs" />
     <Compile Include="Perceptron\ErrorGradient.cs" />

@@ -1,15 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
-using Neural.Perceptron;
 
 namespace Neural.Cost
 {
     /// <summary>
     /// Logistic regression-like multivariate cost function.
     /// </summary>
-    sealed class LogisticCost : CostBase
+    sealed class LogisticCost : CostGradientBase
     {
         /// <summary>
         /// Calculates the network's training cost.

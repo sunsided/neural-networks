@@ -4,7 +4,7 @@ using Neural.Perceptron;
 
 namespace Neural.Cost
 {
-    internal interface ICostFunction
+    internal interface ICostGradientFunction
     {
         /// <summary>
         /// Calculates the cost and the gradient of the cost function given the training examples.
