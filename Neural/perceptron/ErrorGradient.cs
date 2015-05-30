@@ -1,4 +1,5 @@
 ﻿using System;
+using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
 
 namespace Neural.Perceptron
@@ -17,6 +18,21 @@ namespace Neural.Perceptron
         /// The bias error gradient
         /// </summary>
         public readonly Vector<float> Bias;
+
+        /// <summary>
+        /// Creates a new empty error gradient from the given <paramref name="layer"/>.
+        /// </summary>
+        /// <param name="layer">The layer.</param>
+        /// <returns>ErrorGradient.</returns>
+        public static ErrorGradient EmptyFromLayer([NotNull] Layer layer)
+        {
+            var rows = layer.NeuronCount;
+            var cols = layer.InputCount;
+            var weight = Matrix<float>.Build.Dense(rows, cols, Matrix<float>.Zero);
+            var bias = Vector<float>.Build.Dense(rows, Matrix<float>.Zero);
+
+            return new ErrorGradient(weight, bias);
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ErrorGradient"/> struct.

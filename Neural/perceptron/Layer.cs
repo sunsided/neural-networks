@@ -90,12 +90,22 @@ namespace Neural.Perceptron
         }
 
         /// <summary>
-        /// Gets the number of neurons in this layer.
+        /// Gets the number of output neurons in this layer.
         /// </summary>
-        /// <value>The number of neurons.</value>
+        /// <value>The number of output neurons.</value>
         public int NeuronCount
         {
             [Pure] get { return _weightMatrix.RowCount; }
+        }
+
+        /// <summary>
+        /// Gets the number of inputs to this layer.
+        /// </summary>
+        /// <value>The number of inputs.</value>
+        public int InputCount
+        {
+            [Pure]
+            get { return _weightMatrix.ColumnCount; }
         }
 
         /// <summary>
