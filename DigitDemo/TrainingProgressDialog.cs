@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Drawing;
 using System.Globalization;
 using System.Windows.Forms;
 using Widemeadows.MachineLearning.Neural.Training;
+using ZedGraph;
 
 namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
 {
@@ -14,6 +16,11 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
         /// The maximum number of iterations
         /// </summary>
         private readonly int _maxIterations;
+
+        /// <summary>
+        /// The graph's point pair list
+        /// </summary>
+        private readonly PointPairList _list;
 
         /// <summary>
         /// Occurs when the training has been canceled.
@@ -35,6 +42,54 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
         private TrainingProgressDialog()
         {
             InitializeComponent();
+
+            var graph = costGraphControl;
+            graph.BorderStyle = BorderStyle.None;
+            graph.BackColor = Color.Transparent;
+
+            var pane = graph.GraphPane;
+
+            pane.Title.IsVisible = false;
+            pane.XAxis.Title.IsVisible = false;
+            pane.YAxis.Title.IsVisible = false;
+            pane.TitleGap = 0;
+            pane.Legend.IsVisible = false;
+            pane.Border.IsVisible = false;
+            pane.Fill.Color = BackColor;
+            pane.Chart.Fill.Color = Color.White;
+
+            pane.YAxis.MajorGrid.IsVisible = true;
+            pane.YAxis.MinorGrid.IsVisible = true;
+
+            pane.XAxis.Scale.Min = 0;
+            pane.XAxis.Scale.MinorStep = 1;
+            pane.XAxis.Scale.MajorStepAuto = true;
+            pane.XAxis.Scale.Mag = 0;
+            pane.YAxis.Type = AxisType.Log;
+
+            var list = new PointPairList();
+            _list = list;
+
+            var pointsCurve = pane.AddCurve("Cost", list, Color.DarkRed);
+            pointsCurve.Line.IsVisible = true;
+            pointsCurve.Line.Width = 2;
+
+            pane.AxisChange();
+            graph.Refresh();
+        }
+
+        /// <summary>
+        /// Adds the point to the plot.
+        /// </summary>
+        /// <param name="iteration">The iteration.</param>
+        /// <param name="cost">The cost.</param>
+        private void AddPoint(int iteration, float cost)
+        {
+            _list.Add(new PointPair(iteration, cost));
+
+            var graph = costGraphControl;
+            graph.GraphPane.AxisChange();
+            graph.Refresh();
         }
 
         /// <summary>
@@ -46,6 +101,8 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
             var amount = progress.Iteration*100/_maxIterations;
             progressBar1.Value = amount;
             labelTrainingCost.Text = progress.Cost.ToString(CultureInfo.CurrentUICulture);
+
+            AddPoint(progress.Iteration, progress.Cost);
         }
 
         /// <summary>
