@@ -83,11 +83,11 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
             // select a training strategy
             return new MomentumDescent(cost)
             {
-                LearningRate = 0.5F,
-                Momentum = 0.9F,
+                LearningRate = 0.3F,
+                Momentum = 0.8F,
                 MaximumIterationCount = 400,
-                MinimumIterationCount = 100,
-                RegularizationStrength = 0.05F
+                MinimumIterationCount = 10,
+                RegularizationStrength = 0.02F
             };
         }
 
