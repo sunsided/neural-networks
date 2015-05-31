@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neural", "Neural\Neural.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XorDemo", "XorDemo\XorDemo.csproj", "{1F423359-1EC2-46D1-8551-2FD9EB22B020}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DigitDemo", "DigitDemo\DigitDemo.csproj", "{E00725BF-C479-4C03-8D1F-443418EE54DD}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{1F423359-1EC2-46D1-8551-2FD9EB22B020}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1F423359-1EC2-46D1-8551-2FD9EB22B020}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1F423359-1EC2-46D1-8551-2FD9EB22B020}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E00725BF-C479-4C03-8D1F-443418EE54DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E00725BF-C479-4C03-8D1F-443418EE54DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E00725BF-C479-4C03-8D1F-443418EE54DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E00725BF-C479-4C03-8D1F-443418EE54DD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
