@@ -12,7 +12,7 @@ namespace Widemeadows.MachineLearning.Neural.Perceptron
     /// <summary>
     /// A perceptron network.
     /// </summary>
-    public sealed class Network : IEnumerable<Layer>
+    public sealed class Network : IEnumerable<Layer>, INetwork, IFeedforward
     {
         /// <summary>
         /// The perceptron layers
@@ -92,7 +92,7 @@ namespace Widemeadows.MachineLearning.Neural.Perceptron
         /// <param name="inputs">The inputs.</param>
         /// <returns>Vector&lt;System.Single&gt;.</returns>
         [Pure, NotNull]
-        public IReadOnlyList<float> Calculate([NotNull] IReadOnlyList<float> inputs)
+        public IReadOnlyList<float> Evaluate([NotNull] IReadOnlyList<float> inputs)
         {
             var inputVector = Vector<float>.Build.SparseOfEnumerable(inputs);
             var outputVector = CalculateInternalFast(inputVector);

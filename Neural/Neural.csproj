@@ -53,6 +53,8 @@
     <Compile Include="Activations\SigmoidTransfer.cs" />
     <Compile Include="Activations\IdentityTransfer.cs" />
     <Compile Include="Activations\ITransfer.cs" />
+    <Compile Include="Perceptron\IFeedforward.cs" />
+    <Compile Include="Perceptron\INetwork.cs" />
     <Compile Include="Training\DefaultCostGradient.cs" />
     <Compile Include="Cost\ICostFunction.cs" />
     <Compile Include="Training\ICostGradient.cs" />
