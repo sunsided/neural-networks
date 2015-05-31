@@ -8,7 +8,7 @@ namespace Neural.Perceptron
     /// <summary>
     /// Configuration of a single perceptron layer.
     /// </summary>
-    struct LayerConfiguration
+    public struct LayerConfiguration
     {
         /// <summary>
         /// Creates a configuration for the input layer.

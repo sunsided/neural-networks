@@ -11,7 +11,7 @@ namespace Neural.Training
     /// <summary>
     /// Momentum-based gradient descend
     /// </summary>
-    sealed class MomentumDescend : ITraining
+    public sealed class MomentumDescend : ITraining
     {
         private readonly ICostGradient _cost;
         private float _learningRate = DefaultLearningRate;
