@@ -32,7 +32,7 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
         /// The network training
         /// </summary>
         [NotNull]
-        private MomentumDescend _networkTraining;
+        private MomentumDescent _networkTraining;
 
         /// <summary>
         /// The randomizer
@@ -75,13 +75,13 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
         /// </summary>
         /// <returns>ITraining.</returns>
         [NotNull]
-        private MomentumDescend GenerateNetworkTraining()
+        private MomentumDescent GenerateNetworkTraining()
         {
             // select a cost function
             var cost = new SumSquaredErrorCost();
 
             // select a training strategy
-            return new MomentumDescend(cost)
+            return new MomentumDescent(cost)
             {
                 LearningRate = 0.5F,
                 Momentum = 0.9F,

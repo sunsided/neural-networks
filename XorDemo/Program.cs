@@ -59,7 +59,7 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Xor
             var cost = new SumSquaredErrorCost();
 
             // select a training strategy
-            var training = new MomentumDescend(cost)
+            var training = new MomentumDescent(cost)
                            {
                                LearningRate = 0.5F,
                                Momentum = 0.8F,

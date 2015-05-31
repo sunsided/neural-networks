@@ -10,9 +10,9 @@ using Widemeadows.MachineLearning.Neural.Perceptron;
 namespace Widemeadows.MachineLearning.Neural.Training
 {
     /// <summary>
-    /// Momentum-based gradient descend
+    /// Momentum-based gradient descent
     /// </summary>
-    public sealed class MomentumDescend : ITraining
+    public sealed class MomentumDescent : ITraining
     {
         private readonly ICostGradient _cost;
         private float _learningRate = DefaultLearningRate;
@@ -23,19 +23,19 @@ namespace Widemeadows.MachineLearning.Neural.Training
         private float _regularizationStrength = DefaultLambda;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MomentumDescend"/> class.
+        /// Initializes a new instance of the <see cref="MomentumDescent"/> class.
         /// </summary>
         /// <param name="cost">The cost function.</param>
-        public MomentumDescend([NotNull] ICostFunction cost)
+        public MomentumDescent([NotNull] ICostFunction cost)
         {
             _cost = new DefaultCostGradient(cost);
         }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MomentumDescend"/> class.
+        /// Initializes a new instance of the <see cref="MomentumDescent"/> class.
         /// </summary>
         /// <param name="cost">The cost function.</param>
-        public MomentumDescend([NotNull] ICostGradient cost)
+        public MomentumDescent([NotNull] ICostGradient cost)
         {
             _cost = cost;
         }
@@ -226,7 +226,7 @@ namespace Widemeadows.MachineLearning.Neural.Training
                     throw new InvalidOperationException("Cost evaluated to Single.NaN");
                 }
 
-                // perform a single gradient descend step
+                // perform a single gradient descent step
                 GradientDescend(trainingResult, previousDeltas, learningRate, momentum);
 
                 // progress!
