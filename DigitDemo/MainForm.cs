@@ -405,7 +405,7 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
                 Momentum = 0.9F,
                 MaximumIterationCount = 400,
                 MinimumIterationCount = 100,
-                RegularizationStrength = 0.01F
+                RegularizationStrength = 0.1F
             };
         }
 
