@@ -5,6 +5,8 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
@@ -59,8 +61,42 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
         {
             InitializeComponent();
 
-            _network = GenerateNetwork();
+            ResetNetwork();
             _networkTraining = GenerateNetworkTraining();
+        }
+
+        /// <summary>
+        /// Resets the network.
+        /// </summary>
+        private async void ResetNetwork()
+        {
+            _network = GenerateNetwork();
+
+            var example = _currentExample;
+            if (example != null)
+            {
+                EvaluateAndPresentExample(example.Value);
+            }
+
+            EvaluateNetworkPerformance();
+        }
+
+        /// <summary>
+        /// Evaluates the network performance.
+        /// </summary>
+        /// <returns>Task.</returns>
+        private async void EvaluateNetworkPerformance()
+        {
+            labelCrossValidationPerformance.Text = "-";
+            labelTrainingDataPerformance.Text = "-";
+
+            if (_testSet == null) return;
+            var performance = await EvaluateNetworkPerformanceOnTestSet();
+            labelCrossValidationPerformance.Text = performance.ToString("P");
+
+            if (_trainingSet == null) return;
+            performance = await EvaluateNetworkPerformanceOnTrainingSet();
+            labelTrainingDataPerformance.Text = performance.ToString("P");
         }
 
         /// <summary>
@@ -104,6 +140,7 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
             _testSet = shuffled.Skip(trainingSetSize).ToList();
 
             EvaluateAndPresentRandomExampleFromTestSet();
+            EvaluateNetworkPerformance();
         }
 
         /// <summary>
@@ -283,11 +320,7 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void toolStripMenuItemResetNetwork_Click(object sender, EventArgs e)
         {
-            _network = GenerateNetwork();
-
-            var example = _currentExample;
-            if (example == null) throw new InvalidOperationException("One example should be set");
-            EvaluateAndPresentExample(example.Value);
+            ResetNetwork();
         }
 
         #region Network evaluation
@@ -370,6 +403,43 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
         private void toolStripButtonRandomExample_Click(object sender, EventArgs e)
         {
             EvaluateAndPresentRandomExampleFromTestSet();
+        }
+
+        /// <summary>
+        /// Evaluates the network performance on the test set.
+        /// </summary>
+        /// <returns>System.Single.</returns>
+        private Task<float> EvaluateNetworkPerformanceOnTestSet()
+        {
+            var set = _testSet;
+            return Task.Run(() => EvaluateNetworkPerformance(set));
+        }
+
+        /// <summary>
+        /// Evaluates the network performance on the test set.
+        /// </summary>
+        /// <returns>System.Single.</returns>
+        private Task<float> EvaluateNetworkPerformanceOnTrainingSet()
+        {
+            var set = _trainingSet;
+            return Task.Run(() => EvaluateNetworkPerformance(set));
+        }
+
+        /// <summary>
+        /// Evaluates the network performance on the given set.
+        /// </summary>
+        /// <param name="set">The set.</param>
+        /// <returns>System.Single.</returns>
+        private float EvaluateNetworkPerformance(IReadOnlyCollection<TrainingExample> set)
+        {
+            var correctMatches = (from example in set.AsParallel()
+                let result = EvaluateNetwork(example)
+                let output = result.Last.Value.Output
+                let label = output.MaximumIndex()
+                select label == example.Label ? 1 : 0)
+                .Sum();
+
+            return correctMatches/(float)set.Count;
         }
     }
 }
