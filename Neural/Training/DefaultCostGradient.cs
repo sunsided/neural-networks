@@ -36,6 +36,7 @@ namespace Neural.Training
         /// <param name="expectedOutput">The expected output, i.e. ground truth.</param>
         /// <param name="networkOutput">The network output.</param>
         /// <returns>System.Single.</returns>
+        [DebuggerStepThrough]
         protected virtual float CalculateCost(Vector<float> expectedOutput, Vector<float> networkOutput)
         {
             return _costFunction.CalculateCost(expectedOutput, networkOutput);
@@ -47,6 +48,7 @@ namespace Neural.Training
         /// <param name="expectedOutput">The expected output, i.e. ground truth.</param>
         /// <param name="networkOutput">The network output.</param>
         /// <returns>System.Single.</returns>
+        [DebuggerStepThrough]
         protected float CalculateCost(Vector<float> expectedOutput, FeedforwardResult networkOutput)
         {
             Debug.Assert(networkOutput.LayerType == LayerType.Output, "networkOutput.LayerType == LayerType.Output");
@@ -67,7 +69,7 @@ namespace Neural.Training
         /// <param name="resultNode">The layer's feedforward result node.</param>
         /// <param name="error">The layer's output error.</param>
         /// <returns>ErrorGradient.</returns>
-        [Pure]
+        [Pure, DebuggerStepThrough]
         private ErrorGradient CalculateErrorGradient([NotNull] LinkedListNode<FeedforwardResult> resultNode, BackpropagationResult error)
         {
             return CalculateErrorGradient(resultNode, error.WeightErrors);
@@ -107,7 +109,7 @@ namespace Neural.Training
         /// <param name="trainingSet">The training set.</param>
         /// <param name="lambda">The regularization parameter.</param>
         /// <returns>System.Single.</returns>
-        [Pure]
+        [Pure, DebuggerStepThrough]
         public TrainingResult CalculateCostAndGradient(Network network, IReadOnlyCollection<TrainingExample> trainingSet, float lambda)
         {
             return lambda > 0

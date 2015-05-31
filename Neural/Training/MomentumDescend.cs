@@ -198,8 +198,6 @@ namespace Neural.Training
             var maximumIterations = MaximumIterationCount;
             var costFunction = _cost;
 
-            // TODO: Regularization should be a learning parameter
-
             var lastCost = 0.0F;
             for (int i = 0; i < maximumIterations; ++i)
             {
