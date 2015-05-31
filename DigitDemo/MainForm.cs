@@ -180,14 +180,14 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
 
             PresentTrainingInput(example);
             PresentFirstHiddenInput(result);
-            PresentOutput(result);
+            PresentOutput(example, result);
         }
 
         /// <summary>
         /// Presents the network's output.
         /// </summary>
         /// <param name="result">The result.</param>
-        private void PresentOutput(LinkedList<FeedforwardResult> result)
+        private int PresentOutput(LinkedList<FeedforwardResult> result)
         {
             var layerOutput = result.Last.Value;
             var outputs = layerOutput.Output;
@@ -197,6 +197,19 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
 
             labelNetworkOutput.Text = label.ToString();
             labelLikelihood.Text = likelihood.ToString("P");
+
+            return label;
+        }
+
+        /// <summary>
+        /// Presents the network's output.
+        /// </summary>
+        /// <param name="example">The example.</param>
+        /// <param name="result">The result.</param>
+        private void PresentOutput(TrainingExample example, LinkedList<FeedforwardResult> result)
+        {
+            var label = PresentOutput(result);
+            labelNetworkOutput.ForeColor = label == example.Label ? Color.DarkGreen : Color.DarkRed;
         }
 
         /// <summary>

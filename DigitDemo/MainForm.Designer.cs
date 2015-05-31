@@ -34,37 +34,37 @@
             this.labelClass = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.toolStripContainerMain = new System.Windows.Forms.ToolStripContainer();
+            this.groupBox4 = new System.Windows.Forms.GroupBox();
+            this.labelTrainingDataPerformance = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
+            this.labelCrossValidationPerformance = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.labelLikelihood = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.labelNetworkOutput = new System.Windows.Forms.Label();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.pictureBoxHidden = new System.Windows.Forms.PictureBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.toolStripNetworkTraining = new System.Windows.Forms.ToolStrip();
             this.toolStripSplitButtonNetwork = new System.Windows.Forms.ToolStripSplitButton();
             this.toolStripMenuItemResetNetwork = new System.Windows.Forms.ToolStripMenuItem();
-            this.pictureBoxHidden = new System.Windows.Forms.PictureBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.labelNetworkOutput = new System.Windows.Forms.Label();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.labelLikelihood = new System.Windows.Forms.Label();
-            this.label5 = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButtonRandomExample = new System.Windows.Forms.ToolStripButton();
-            this.groupBox4 = new System.Windows.Forms.GroupBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.labelCrossValidationPerformance = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.labelTrainingDataPerformance = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDigit)).BeginInit();
             this.toolStripContainerMain.ContentPanel.SuspendLayout();
             this.toolStripContainerMain.TopToolStripPanel.SuspendLayout();
             this.toolStripContainerMain.SuspendLayout();
-            this.toolStripNetworkTraining.SuspendLayout();
+            this.groupBox4.SuspendLayout();
+            this.groupBox3.SuspendLayout();
+            this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxHidden)).BeginInit();
             this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.groupBox3.SuspendLayout();
+            this.toolStripNetworkTraining.SuspendLayout();
             this.toolStrip1.SuspendLayout();
-            this.groupBox4.SuspendLayout();
             this.SuspendLayout();
             // 
             // pictureBoxDigit
@@ -126,6 +126,159 @@
             this.toolStripContainerMain.TopToolStripPanel.Controls.Add(this.toolStripNetworkTraining);
             this.toolStripContainerMain.TopToolStripPanel.Controls.Add(this.toolStrip1);
             // 
+            // groupBox4
+            // 
+            this.groupBox4.Controls.Add(this.labelTrainingDataPerformance);
+            this.groupBox4.Controls.Add(this.label7);
+            this.groupBox4.Controls.Add(this.labelCrossValidationPerformance);
+            this.groupBox4.Controls.Add(this.label6);
+            this.groupBox4.Location = new System.Drawing.Point(12, 8);
+            this.groupBox4.Name = "groupBox4";
+            this.groupBox4.Size = new System.Drawing.Size(226, 52);
+            this.groupBox4.TabIndex = 12;
+            this.groupBox4.TabStop = false;
+            this.groupBox4.Text = "Network performance";
+            // 
+            // labelTrainingDataPerformance
+            // 
+            this.labelTrainingDataPerformance.AutoSize = true;
+            this.labelTrainingDataPerformance.Location = new System.Drawing.Point(111, 29);
+            this.labelTrainingDataPerformance.Name = "labelTrainingDataPerformance";
+            this.labelTrainingDataPerformance.Size = new System.Drawing.Size(10, 13);
+            this.labelTrainingDataPerformance.TabIndex = 14;
+            this.labelTrainingDataPerformance.Text = "-";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label7.Location = new System.Drawing.Point(8, 29);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(86, 13);
+            this.label7.TabIndex = 13;
+            this.label7.Text = "Training data:";
+            // 
+            // labelCrossValidationPerformance
+            // 
+            this.labelCrossValidationPerformance.AutoSize = true;
+            this.labelCrossValidationPerformance.Location = new System.Drawing.Point(111, 16);
+            this.labelCrossValidationPerformance.Name = "labelCrossValidationPerformance";
+            this.labelCrossValidationPerformance.Size = new System.Drawing.Size(10, 13);
+            this.labelCrossValidationPerformance.TabIndex = 12;
+            this.labelCrossValidationPerformance.Text = "-";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Location = new System.Drawing.Point(8, 16);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(101, 13);
+            this.label6.TabIndex = 11;
+            this.label6.Text = "Cross-validation:";
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Controls.Add(this.label5);
+            this.groupBox3.Controls.Add(this.labelLikelihood);
+            this.groupBox3.Controls.Add(this.label4);
+            this.groupBox3.Controls.Add(this.labelNetworkOutput);
+            this.groupBox3.Location = new System.Drawing.Point(244, 66);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(110, 132);
+            this.groupBox3.TabIndex = 11;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Output activation";
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label5.Location = new System.Drawing.Point(6, 99);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(69, 13);
+            this.label5.TabIndex = 10;
+            this.label5.Text = "Likelihood:";
+            // 
+            // labelLikelihood
+            // 
+            this.labelLikelihood.AutoSize = true;
+            this.labelLikelihood.Location = new System.Drawing.Point(8, 112);
+            this.labelLikelihood.Name = "labelLikelihood";
+            this.labelLikelihood.Size = new System.Drawing.Size(10, 13);
+            this.labelLikelihood.TabIndex = 9;
+            this.labelLikelihood.Text = "-";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(6, 16);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(49, 13);
+            this.label4.TabIndex = 7;
+            this.label4.Text = "1 neuron";
+            // 
+            // labelNetworkOutput
+            // 
+            this.labelNetworkOutput.AutoSize = true;
+            this.labelNetworkOutput.Font = new System.Drawing.Font("Microsoft Sans Serif", 36F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.labelNetworkOutput.Location = new System.Drawing.Point(6, 32);
+            this.labelNetworkOutput.Name = "labelNetworkOutput";
+            this.labelNetworkOutput.Size = new System.Drawing.Size(51, 55);
+            this.labelNetworkOutput.TabIndex = 8;
+            this.labelNetworkOutput.Text = "0";
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this.pictureBoxHidden);
+            this.groupBox2.Controls.Add(this.label3);
+            this.groupBox2.Location = new System.Drawing.Point(128, 66);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(110, 132);
+            this.groupBox2.TabIndex = 10;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Hidden activation";
+            // 
+            // pictureBoxHidden
+            // 
+            this.pictureBoxHidden.Location = new System.Drawing.Point(9, 32);
+            this.pictureBoxHidden.Name = "pictureBoxHidden";
+            this.pictureBoxHidden.Size = new System.Drawing.Size(64, 64);
+            this.pictureBoxHidden.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBoxHidden.TabIndex = 4;
+            this.pictureBoxHidden.TabStop = false;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 16);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(44, 13);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "5 x 5 px";
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.Controls.Add(this.pictureBoxDigit);
+            this.groupBox1.Controls.Add(this.label2);
+            this.groupBox1.Controls.Add(this.labelClassLabel);
+            this.groupBox1.Controls.Add(this.labelClass);
+            this.groupBox1.Location = new System.Drawing.Point(12, 66);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(110, 132);
+            this.groupBox1.TabIndex = 9;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Input activation";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(6, 16);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(56, 13);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "20 x 20 px";
+            // 
             // toolStripNetworkTraining
             // 
             this.toolStripNetworkTraining.Dock = System.Windows.Forms.DockStyle.None;
@@ -152,111 +305,9 @@
             // toolStripMenuItemResetNetwork
             // 
             this.toolStripMenuItemResetNetwork.Name = "toolStripMenuItemResetNetwork";
-            this.toolStripMenuItemResetNetwork.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItemResetNetwork.Size = new System.Drawing.Size(148, 22);
             this.toolStripMenuItemResetNetwork.Text = "&Reset network";
             this.toolStripMenuItemResetNetwork.Click += new System.EventHandler(this.toolStripMenuItemResetNetwork_Click);
-            // 
-            // pictureBoxHidden
-            // 
-            this.pictureBoxHidden.Location = new System.Drawing.Point(9, 32);
-            this.pictureBoxHidden.Name = "pictureBoxHidden";
-            this.pictureBoxHidden.Size = new System.Drawing.Size(64, 64);
-            this.pictureBoxHidden.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBoxHidden.TabIndex = 4;
-            this.pictureBoxHidden.TabStop = false;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 16);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(56, 13);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "20 x 20 px";
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 16);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(44, 13);
-            this.label3.TabIndex = 6;
-            this.label3.Text = "5 x 5 px";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 16);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(49, 13);
-            this.label4.TabIndex = 7;
-            this.label4.Text = "1 neuron";
-            // 
-            // labelNetworkOutput
-            // 
-            this.labelNetworkOutput.AutoSize = true;
-            this.labelNetworkOutput.Font = new System.Drawing.Font("Microsoft Sans Serif", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.labelNetworkOutput.Location = new System.Drawing.Point(6, 32);
-            this.labelNetworkOutput.Name = "labelNetworkOutput";
-            this.labelNetworkOutput.Size = new System.Drawing.Size(24, 25);
-            this.labelNetworkOutput.TabIndex = 8;
-            this.labelNetworkOutput.Text = "0";
-            // 
-            // groupBox1
-            // 
-            this.groupBox1.Controls.Add(this.pictureBoxDigit);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.labelClassLabel);
-            this.groupBox1.Controls.Add(this.labelClass);
-            this.groupBox1.Location = new System.Drawing.Point(12, 66);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(110, 132);
-            this.groupBox1.TabIndex = 9;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Input activation";
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this.pictureBoxHidden);
-            this.groupBox2.Controls.Add(this.label3);
-            this.groupBox2.Location = new System.Drawing.Point(128, 66);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(110, 132);
-            this.groupBox2.TabIndex = 10;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Hidden activation";
-            // 
-            // groupBox3
-            // 
-            this.groupBox3.Controls.Add(this.label5);
-            this.groupBox3.Controls.Add(this.labelLikelihood);
-            this.groupBox3.Controls.Add(this.label4);
-            this.groupBox3.Controls.Add(this.labelNetworkOutput);
-            this.groupBox3.Location = new System.Drawing.Point(244, 66);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(110, 132);
-            this.groupBox3.TabIndex = 11;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "Output activation";
-            // 
-            // labelLikelihood
-            // 
-            this.labelLikelihood.AutoSize = true;
-            this.labelLikelihood.Location = new System.Drawing.Point(8, 112);
-            this.labelLikelihood.Name = "labelLikelihood";
-            this.labelLikelihood.Size = new System.Drawing.Size(10, 13);
-            this.labelLikelihood.TabIndex = 9;
-            this.labelLikelihood.Text = "-";
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(6, 99);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(69, 13);
-            this.label5.TabIndex = 10;
-            this.label5.Text = "Likelihood:";
             // 
             // toolStrip1
             // 
@@ -278,57 +329,6 @@
             this.toolStripButtonRandomExample.Text = "&Random example";
             this.toolStripButtonRandomExample.Click += new System.EventHandler(this.toolStripButtonRandomExample_Click);
             // 
-            // groupBox4
-            // 
-            this.groupBox4.Controls.Add(this.labelTrainingDataPerformance);
-            this.groupBox4.Controls.Add(this.label7);
-            this.groupBox4.Controls.Add(this.labelCrossValidationPerformance);
-            this.groupBox4.Controls.Add(this.label6);
-            this.groupBox4.Location = new System.Drawing.Point(12, 8);
-            this.groupBox4.Name = "groupBox4";
-            this.groupBox4.Size = new System.Drawing.Size(226, 52);
-            this.groupBox4.TabIndex = 12;
-            this.groupBox4.TabStop = false;
-            this.groupBox4.Text = "Network performance";
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(8, 16);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(101, 13);
-            this.label6.TabIndex = 11;
-            this.label6.Text = "Cross-validation:";
-            // 
-            // labelCrossValidationPerformance
-            // 
-            this.labelCrossValidationPerformance.AutoSize = true;
-            this.labelCrossValidationPerformance.Location = new System.Drawing.Point(111, 16);
-            this.labelCrossValidationPerformance.Name = "labelCrossValidationPerformance";
-            this.labelCrossValidationPerformance.Size = new System.Drawing.Size(10, 13);
-            this.labelCrossValidationPerformance.TabIndex = 12;
-            this.labelCrossValidationPerformance.Text = "-";
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.Location = new System.Drawing.Point(8, 29);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(86, 13);
-            this.label7.TabIndex = 13;
-            this.label7.Text = "Training data:";
-            // 
-            // labelTrainingDataPerformance
-            // 
-            this.labelTrainingDataPerformance.AutoSize = true;
-            this.labelTrainingDataPerformance.Location = new System.Drawing.Point(111, 29);
-            this.labelTrainingDataPerformance.Name = "labelTrainingDataPerformance";
-            this.labelTrainingDataPerformance.Size = new System.Drawing.Size(10, 13);
-            this.labelTrainingDataPerformance.TabIndex = 14;
-            this.labelTrainingDataPerformance.Text = "-";
-            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -344,19 +344,19 @@
             this.toolStripContainerMain.TopToolStripPanel.PerformLayout();
             this.toolStripContainerMain.ResumeLayout(false);
             this.toolStripContainerMain.PerformLayout();
-            this.toolStripNetworkTraining.ResumeLayout(false);
-            this.toolStripNetworkTraining.PerformLayout();
+            this.groupBox4.ResumeLayout(false);
+            this.groupBox4.PerformLayout();
+            this.groupBox3.ResumeLayout(false);
+            this.groupBox3.PerformLayout();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox2.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxHidden)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
+            this.toolStripNetworkTraining.ResumeLayout(false);
+            this.toolStripNetworkTraining.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
-            this.groupBox4.ResumeLayout(false);
-            this.groupBox4.PerformLayout();
             this.ResumeLayout(false);
 
         }
