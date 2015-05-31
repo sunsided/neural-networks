@@ -112,7 +112,7 @@ namespace Widemeadows.MachineLearning.Neural.Perceptron
         /// </summary>
         /// <value>The weights.</value>
         [NotNull]
-        internal Matrix<float> Weights
+        public Matrix<float> Weights
         {
             [Pure] get { return _weightMatrix; }
         }
@@ -122,7 +122,7 @@ namespace Widemeadows.MachineLearning.Neural.Perceptron
         /// </summary>
         /// <value>The bias.</value>
         [NotNull]
-        internal Vector<float> Bias
+        public Vector<float> Bias
         {
             [Pure]
             get { return _biasVector; }

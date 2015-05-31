@@ -4,12 +4,15 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
+using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
+using Newtonsoft.Json;
 using Widemeadows.MachineLearning.Neural.Activations;
 using Widemeadows.MachineLearning.Neural.Cost;
 using Widemeadows.MachineLearning.Neural.Perceptron;
@@ -68,7 +71,7 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
         /// <summary>
         /// Resets the network.
         /// </summary>
-        private async void ResetNetwork()
+        private void ResetNetwork()
         {
             _network = GenerateNetwork();
 
@@ -496,6 +499,52 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
                 .Sum();
 
             return correctMatches/(float)set.Count;
+        }
+
+        /// <summary>
+        /// Handles the Click event of the loadNetworkToolStripMenuItem control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        private void loadNetworkToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// Handles the Click event of the saveNetworkToolStripMenuItem control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        private async void saveNetworkToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var dialog = new SaveFileDialog
+                         {
+                             AddExtension = true,
+                             AutoUpgradeEnabled = true,
+                             CheckFileExists = false,
+                             CheckPathExists = true,
+                             CreatePrompt = false,
+                             DefaultExt = ".mlp.json",
+                             DereferenceLinks = true,
+                             Filter = "Network files (*.mlp.json)|*.mlp.json|Alle Dateien|*.*",
+                             OverwritePrompt = true,
+                             RestoreDirectory = true,
+                             SupportMultiDottedExtensions = true,
+                             Title = "Save network"
+                         };
+            if (dialog.ShowDialog(this) != DialogResult.OK) return;
+
+            var architecture = await Task.Run(() => NetworkArchitecture.FromNetwork(_network));
+            architecture.Name = "Handwritten Digits Classification";
+
+            var json = JsonConvert.SerializeObject(architecture, Formatting.Indented);
+
+            using (var stream = File.Open(dialog.FileName, FileMode.Create, FileAccess.Write, FileShare.Read))
+            using (var writer = new StreamWriter(stream, Encoding.UTF8))
+            {
+                await writer.WriteAsync(json);
+            }
         }
     }
 }

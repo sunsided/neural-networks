@@ -28,7 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
             this.pictureBoxDigit = new System.Windows.Forms.PictureBox();
             this.labelClassLabel = new System.Windows.Forms.Label();
             this.labelClass = new System.Windows.Forms.Label();
@@ -54,6 +53,9 @@
             this.toolStripMenuItemResetNetwork = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripButtonRandomExample = new System.Windows.Forms.ToolStripButton();
+            this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+            this.loadNetworkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.saveNetworkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDigit)).BeginInit();
             this.toolStripContainerMain.ContentPanel.SuspendLayout();
             this.toolStripContainerMain.TopToolStripPanel.SuspendLayout();
@@ -286,26 +288,28 @@
             this.toolStripSplitButtonNetwork});
             this.toolStripNetworkTraining.Location = new System.Drawing.Point(3, 0);
             this.toolStripNetworkTraining.Name = "toolStripNetworkTraining";
-            this.toolStripNetworkTraining.Size = new System.Drawing.Size(110, 25);
+            this.toolStripNetworkTraining.Size = new System.Drawing.Size(108, 25);
             this.toolStripNetworkTraining.TabIndex = 0;
             // 
             // toolStripSplitButtonNetwork
             // 
             this.toolStripSplitButtonNetwork.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
             this.toolStripSplitButtonNetwork.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripMenuItemResetNetwork});
-            this.toolStripSplitButtonNetwork.Image = ((System.Drawing.Image)(resources.GetObject("toolStripSplitButtonNetwork.Image")));
+            this.toolStripMenuItemResetNetwork,
+            this.toolStripSeparator1,
+            this.loadNetworkToolStripMenuItem,
+            this.saveNetworkToolStripMenuItem});
             this.toolStripSplitButtonNetwork.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripSplitButtonNetwork.Name = "toolStripSplitButtonNetwork";
-            this.toolStripSplitButtonNetwork.Size = new System.Drawing.Size(98, 22);
-            this.toolStripSplitButtonNetwork.Text = "&Train Network";
+            this.toolStripSplitButtonNetwork.Size = new System.Drawing.Size(96, 22);
+            this.toolStripSplitButtonNetwork.Text = "&Train network";
             this.toolStripSplitButtonNetwork.ToolTipText = "&Network";
             this.toolStripSplitButtonNetwork.ButtonClick += new System.EventHandler(this.toolStripSplitButtonNetwork_ButtonClick);
             // 
             // toolStripMenuItemResetNetwork
             // 
             this.toolStripMenuItemResetNetwork.Name = "toolStripMenuItemResetNetwork";
-            this.toolStripMenuItemResetNetwork.Size = new System.Drawing.Size(148, 22);
+            this.toolStripMenuItemResetNetwork.Size = new System.Drawing.Size(152, 22);
             this.toolStripMenuItemResetNetwork.Text = "&Reset network";
             this.toolStripMenuItemResetNetwork.Click += new System.EventHandler(this.toolStripMenuItemResetNetwork_Click);
             // 
@@ -314,7 +318,7 @@
             this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripButtonRandomExample});
-            this.toolStrip1.Location = new System.Drawing.Point(113, 0);
+            this.toolStrip1.Location = new System.Drawing.Point(111, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(115, 25);
             this.toolStrip1.TabIndex = 1;
@@ -322,12 +326,30 @@
             // toolStripButtonRandomExample
             // 
             this.toolStripButtonRandomExample.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButtonRandomExample.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonRandomExample.Image")));
             this.toolStripButtonRandomExample.ImageTransparentColor = System.Drawing.Color.Magenta;
             this.toolStripButtonRandomExample.Name = "toolStripButtonRandomExample";
             this.toolStripButtonRandomExample.Size = new System.Drawing.Size(103, 22);
             this.toolStripButtonRandomExample.Text = "&Random example";
             this.toolStripButtonRandomExample.Click += new System.EventHandler(this.toolStripButtonRandomExample_Click);
+            // 
+            // toolStripSeparator1
+            // 
+            this.toolStripSeparator1.Name = "toolStripSeparator1";
+            this.toolStripSeparator1.Size = new System.Drawing.Size(155, 6);
+            // 
+            // loadNetworkToolStripMenuItem
+            // 
+            this.loadNetworkToolStripMenuItem.Name = "loadNetworkToolStripMenuItem";
+            this.loadNetworkToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.loadNetworkToolStripMenuItem.Text = "&Load network ...";
+            this.loadNetworkToolStripMenuItem.Click += new System.EventHandler(this.loadNetworkToolStripMenuItem_Click);
+            // 
+            // saveNetworkToolStripMenuItem
+            // 
+            this.saveNetworkToolStripMenuItem.Name = "saveNetworkToolStripMenuItem";
+            this.saveNetworkToolStripMenuItem.Size = new System.Drawing.Size(158, 22);
+            this.saveNetworkToolStripMenuItem.Text = "&Save network ...";
+            this.saveNetworkToolStripMenuItem.Click += new System.EventHandler(this.saveNetworkToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -388,6 +410,9 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label labelTrainingDataPerformance;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
+        private System.Windows.Forms.ToolStripMenuItem loadNetworkToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem saveNetworkToolStripMenuItem;
     }
 }
 
