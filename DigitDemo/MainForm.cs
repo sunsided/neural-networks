@@ -322,7 +322,7 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
                                       var set = _trainingSet.Shuffle();
                                       var examples = set.AsParallel().Select(MakeTrainingExample).ToList();
 
-                                      var stop = network.Train(_networkTraining, examples);
+                                      var stop = await Task.Run(() => network.Train(_networkTraining, examples));
                                       dialog.Close();
                                   };
             dialog.ShowDialog(this);
