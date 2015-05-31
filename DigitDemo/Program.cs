@@ -118,45 +118,6 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
         [STAThread]
         static void Main()
         {
-#if false
-            var input = new FileInfo("data.csv");
-            var output = new FileInfo("images.dat.gz");
-
-            using (var stream = File.Open(input.FullName, FileMode.Open, FileAccess.Read, FileShare.Read))
-            using (var outstream = File.Open(output.FullName, FileMode.Create, FileAccess.Write, FileShare.Read))
-            using (var compressedStream = new GZipStream(outstream, CompressionLevel.Optimal))
-            using (var reader = new StreamReader(stream, Encoding.UTF8))
-            using (var writer = new BinaryWriter(compressedStream, Encoding.UTF8))
-            {
-                string line;
-                while (null != (line = reader.ReadLine()))
-                {
-                    var elements = line.Split(new[] {' ', '\t'}, StringSplitOptions.RemoveEmptyEntries);
-                    Debug.Assert(elements.Length == 401, "elements.Length == 401");
-
-                    // read in the data
-                    var label = (int) Double.Parse(elements.First(), CultureInfo.InvariantCulture);
-                    var values = elements.Skip(1).Select(value => Double.Parse(value, CultureInfo.InvariantCulture)).ToList();
-                    var minMax = values.Aggregate(new Tuple<double, double>(float.PositiveInfinity, float.NegativeInfinity),
-                        (minmax, value) => new Tuple<double, double>(minmax.Item1 > value ? value : minmax.Item1, minmax.Item2 < value ? value : minmax.Item2));
-                    // double mean = values.Average();
-                    // double std = values.WholePopulationStdDev(mean);
-
-                    // write out the data
-                    writer.Write(label); // label
-                    writer.Write((float)minMax.Item1); // min
-                    writer.Write((float)minMax.Item2); // max
-                    // writer.Write((float)mean); // mean
-                    // writer.Write((float)std); // standard deviation
-                    foreach (var value in values)
-                    {
-                        writer.Write((float)value);
-                    }
-                    writer.Flush();
-                }
-            }
-#endif
-
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainForm());
