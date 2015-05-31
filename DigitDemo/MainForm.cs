@@ -30,6 +30,29 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
         private ITraining _networkTraining;
 
         /// <summary>
+        /// The randomizer
+        /// </summary>
+        readonly Random _rand = new Random();
+
+        /// <summary>
+        /// The training set
+        /// </summary>
+        [CanBeNull]
+        private IReadOnlyCollection<TrainingExample> _trainingSet;
+
+        /// <summary>
+        /// The test set
+        /// </summary>
+        [CanBeNull]
+        private IReadOnlyCollection<TrainingExample> _testSet;
+
+        /// <summary>
+        /// The currently selected example
+        /// </summary>
+        [CanBeNull]
+        private TrainingExample? _currentExample;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="MainForm"/> class.
         /// </summary>
         public MainForm()
@@ -70,13 +93,42 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
         /// Presents the training data.
         /// </summary>
         /// <param name="data">The data.</param>
-        private void RegisterTrainingData(IReadOnlyCollection<TrainingExample> data)
+        private void RegisterTrainingData(IReadOnlyCollection<TrainingExample> input)
         {
-            var rand = new Random();
-            var toSkip = rand.Next(0, data.Count);
-            var example = data.Skip(toSkip).Take(1).Single();
+            var count = input.Count;
+            var trainingSetSize = count*80/100;
+            var testSetSize = count - trainingSetSize;
+
+            var shuffled = input.Shuffle();
+            _trainingSet = shuffled.Take(trainingSetSize).ToList();
+            _testSet = shuffled.Skip(trainingSetSize).ToList();
+
+            EvaluateAndPresentRandomExampleFromTestSet();
+        }
+
+        /// <summary>
+        /// Evaluates and present a random example from the test set.
+        /// </summary>
+        private void EvaluateAndPresentRandomExampleFromTestSet()
+        {
+            var example = SelectRandomFromTestSet();
+            _currentExample = example;
 
             EvaluateAndPresentExample(example);
+        }
+
+        /// <summary>
+        /// Selects a random training example from the test set.
+        /// </summary>
+        /// <returns>TrainingExample.</returns>
+        private TrainingExample SelectRandomFromTestSet()
+        {
+            var set = _testSet;
+            if (set == null) throw new InvalidOperationException("Test set was null");
+
+            var toSkip = _rand.Next(0, set.Count);
+            var example = set.Skip(toSkip).Take(1).Single();
+            return example;
         }
 
         /// <summary>
@@ -231,7 +283,11 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void toolStripMenuItemResetNetwork_Click(object sender, EventArgs e)
         {
+            _network = GenerateNetwork();
 
+            var example = _currentExample;
+            if (example == null) throw new InvalidOperationException("One example should be set");
+            EvaluateAndPresentExample(example.Value);
         }
 
         #region Network evaluation
@@ -305,5 +361,15 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
         }
 
         #endregion Network Generation
+
+        /// <summary>
+        /// Handles the Click event of the toolStripButtonRandomExample control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        private void toolStripButtonRandomExample_Click(object sender, EventArgs e)
+        {
+            EvaluateAndPresentRandomExampleFromTestSet();
+        }
     }
 }

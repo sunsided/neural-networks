@@ -47,6 +47,8 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.labelLikelihood = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolStripButtonRandomExample = new System.Windows.Forms.ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDigit)).BeginInit();
             this.toolStripContainerMain.ContentPanel.SuspendLayout();
             this.toolStripContainerMain.TopToolStripPanel.SuspendLayout();
@@ -56,6 +58,7 @@
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.groupBox3.SuspendLayout();
+            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // pictureBoxDigit
@@ -114,6 +117,7 @@
             // toolStripContainerMain.TopToolStripPanel
             // 
             this.toolStripContainerMain.TopToolStripPanel.Controls.Add(this.toolStripNetworkTraining);
+            this.toolStripContainerMain.TopToolStripPanel.Controls.Add(this.toolStrip1);
             // 
             // toolStripNetworkTraining
             // 
@@ -247,6 +251,26 @@
             this.label5.TabIndex = 10;
             this.label5.Text = "Likelihood:";
             // 
+            // toolStrip1
+            // 
+            this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripButtonRandomExample});
+            this.toolStrip1.Location = new System.Drawing.Point(113, 0);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(146, 25);
+            this.toolStrip1.TabIndex = 1;
+            // 
+            // toolStripButtonRandomExample
+            // 
+            this.toolStripButtonRandomExample.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButtonRandomExample.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButtonRandomExample.Image")));
+            this.toolStripButtonRandomExample.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonRandomExample.Name = "toolStripButtonRandomExample";
+            this.toolStripButtonRandomExample.Size = new System.Drawing.Size(103, 22);
+            this.toolStripButtonRandomExample.Text = "&Random example";
+            this.toolStripButtonRandomExample.Click += new System.EventHandler(this.toolStripButtonRandomExample_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -271,6 +295,8 @@
             this.groupBox2.PerformLayout();
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
+            this.toolStrip1.ResumeLayout(false);
+            this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -295,6 +321,8 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label labelLikelihood;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.ToolStrip toolStrip1;
+        private System.Windows.Forms.ToolStripButton toolStripButtonRandomExample;
     }
 }
 
