@@ -68,6 +68,106 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
             _networkTraining = GenerateNetworkTraining();
         }
 
+        #region Network Generation
+
+        /// <summary>
+        /// Generates the network trainer.
+        /// </summary>
+        /// <returns>ITraining.</returns>
+        [NotNull]
+        private MomentumDescend GenerateNetworkTraining()
+        {
+            // select a cost function
+            var cost = new SumSquaredErrorCost();
+
+            // select a training strategy
+            return new MomentumDescend(cost)
+            {
+                LearningRate = 0.5F,
+                Momentum = 0.9F,
+                MaximumIterationCount = 400,
+                MinimumIterationCount = 100,
+                RegularizationStrength = 0.05F
+            };
+        }
+
+        /// <summary>
+        /// Generates the network.
+        /// </summary>
+        [NotNull]
+        private Network GenerateNetwork()
+        {
+            // obtain a transfer function
+            ITransfer hiddenActivation = new SigmoidTransfer();
+            ITransfer outputActivation = new SigmoidTransfer();
+
+            // input layers with 400 (20x20) neurons
+            var inputLayer = LayerConfiguration.ForInput(400);
+
+            // one hidden layer with 25 (5x5) neurons
+            var hiddenLayers = new[]
+                               {
+                                   LayerConfiguration.ForHidden(25, hiddenActivation)
+                               };
+
+            // output layer with one neuron
+            var outputLayer = LayerConfiguration.ForOutput(10, outputActivation);
+
+            // construct a network
+            var factory = new NetworkFactory();
+            return factory.Create(inputLayer, hiddenLayers, outputLayer);
+        }
+
+        /// <summary>
+        /// Generates the network.
+        /// </summary>
+        [NotNull]
+        private Network GenerateNetwork(NetworkArchitecture architecture)
+        {
+            if (architecture.NeuronCount[0] != 400) throw new ArgumentException("Network input neuron count must be 400");
+            if (architecture.NeuronCount[1] != 25) throw new ArgumentException("First hidden layer input neuron count must be 25");
+            if (architecture.NeuronCount.Last() != 10) throw new ArgumentException("Network output neuron count must be 10");
+
+            // obtain a transfer function
+            ITransfer hiddenActivation = new SigmoidTransfer();
+            ITransfer outputActivation = new SigmoidTransfer();
+
+            // input layers with 400 (20x20) neurons
+            var inputLayer = LayerConfiguration.ForInput(architecture.NeuronCount[0]);
+
+            // one hidden layer with 25 (5x5) neurons
+            var hiddenLayers = new List<LayerConfiguration>();
+            if (architecture.HiddenLayers != null)
+            {
+                for (int i = 0; i < architecture.HiddenLayers.Count; ++i)
+                {
+                    var layer = architecture.HiddenLayers[i];
+                    var cols = layer.Inputs;
+                    var rows = layer.Outputs;
+
+                    var weights = Matrix<float>.Build.Dense(rows, cols, layer.Weights.ToArray());
+                    var bias = Vector<float>.Build.DenseOfArray(layer.Bias.ToArray());
+                    var conf = LayerConfiguration.ForHidden(hiddenActivation, weights, bias);
+                    hiddenLayers.Add(conf);
+                }
+            }
+
+            // output layer with one neuron
+            var outLayer = architecture.OutputLayer;
+            var outCols = outLayer.Inputs;
+            var outRows = outLayer.Outputs;
+
+            var outWeights = Matrix<float>.Build.Dense(outRows, outCols, outLayer.Weights.ToArray());
+            var outBias = Vector<float>.Build.DenseOfArray(outLayer.Bias.ToArray());
+            var outputLayer = LayerConfiguration.ForHidden(outputActivation, outWeights, outBias);
+
+            // construct a network
+            var factory = new NetworkFactory();
+            return factory.Create(inputLayer, hiddenLayers, outputLayer);
+        }
+
+        #endregion Network Generation
+
         /// <summary>
         /// Resets the network.
         /// </summary>
@@ -408,106 +508,6 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
         }
 
         #endregion Network evaluation
-
-        #region Network Generation
-
-        /// <summary>
-        /// Generates the network trainer.
-        /// </summary>
-        /// <returns>ITraining.</returns>
-        [NotNull]
-        private MomentumDescend GenerateNetworkTraining()
-        {
-            // select a cost function
-            var cost = new SumSquaredErrorCost();
-
-            // select a training strategy
-            return new MomentumDescend(cost)
-            {
-                LearningRate = 0.5F,
-                Momentum = 0.9F,
-                MaximumIterationCount = 400,
-                MinimumIterationCount = 100,
-                RegularizationStrength = 0.1F
-            };
-        }
-
-        /// <summary>
-        /// Generates the network.
-        /// </summary>
-        [NotNull]
-        private Network GenerateNetwork()
-        {
-            // obtain a transfer function
-            ITransfer hiddenActivation = new SigmoidTransfer();
-            ITransfer outputActivation = new SigmoidTransfer();
-
-            // input layers with 400 (20x20) neurons
-            var inputLayer = LayerConfiguration.ForInput(400);
-
-            // one hidden layer with 25 (5x5) neurons
-            var hiddenLayers = new[]
-                               {
-                                   LayerConfiguration.ForHidden(25, hiddenActivation)
-                               };
-
-            // output layer with one neuron
-            var outputLayer = LayerConfiguration.ForOutput(10, outputActivation);
-
-            // construct a network
-            var factory = new NetworkFactory();
-            return factory.Create(inputLayer, hiddenLayers, outputLayer);
-        }
-
-        /// <summary>
-        /// Generates the network.
-        /// </summary>
-        [NotNull]
-        private Network GenerateNetwork(NetworkArchitecture architecture)
-        {
-            if (architecture.NeuronCount[0] != 400) throw new ArgumentException("Network input neuron count must be 400");
-            if (architecture.NeuronCount[1] != 25) throw new ArgumentException("First hidden layer input neuron count must be 25");
-            if (architecture.NeuronCount.Last() != 10) throw new ArgumentException("Network output neuron count must be 10");
-
-            // obtain a transfer function
-            ITransfer hiddenActivation = new SigmoidTransfer();
-            ITransfer outputActivation = new SigmoidTransfer();
-
-            // input layers with 400 (20x20) neurons
-            var inputLayer = LayerConfiguration.ForInput(architecture.NeuronCount[0]);
-
-            // one hidden layer with 25 (5x5) neurons
-            var hiddenLayers = new List<LayerConfiguration>();
-            if (architecture.HiddenLayers != null)
-            {
-                for (int i = 0; i < architecture.HiddenLayers.Count; ++i)
-                {
-                    var layer = architecture.HiddenLayers[i];
-                    var cols = layer.Inputs;
-                    var rows = layer.Outputs;
-
-                    var weights = Matrix<float>.Build.Dense(rows, cols, layer.Weights.ToArray());
-                    var bias = Vector<float>.Build.DenseOfArray(layer.Bias.ToArray());
-                    var conf = LayerConfiguration.ForHidden(hiddenActivation, weights, bias);
-                    hiddenLayers.Add(conf);
-                }
-            }
-
-            // output layer with one neuron
-            var outLayer = architecture.OutputLayer;
-            var outCols = outLayer.Inputs;
-            var outRows = outLayer.Outputs;
-
-            var outWeights = Matrix<float>.Build.Dense(outRows, outCols, outLayer.Weights.ToArray());
-            var outBias = Vector<float>.Build.DenseOfArray(outLayer.Bias.ToArray());
-            var outputLayer = LayerConfiguration.ForHidden(outputActivation, outWeights, outBias);
-
-            // construct a network
-            var factory = new NetworkFactory();
-            return factory.Create(inputLayer, hiddenLayers, outputLayer);
-        }
-
-        #endregion Network Generation
 
         /// <summary>
         /// Handles the Click event of the toolStripButtonRandomExample control.
