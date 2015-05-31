@@ -357,6 +357,9 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
 
                                       // evaluatify!
                                       EvaluateNetworkPerformance();
+
+                                      var example = _currentExample;
+                                      if (example != null) EvaluateAndPresentExample(example.Value);
                                   };
             dialog.ShowDialog(this);
         }
