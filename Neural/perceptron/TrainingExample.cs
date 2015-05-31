@@ -37,7 +37,7 @@ namespace Neural.Perceptron
         /// </summary>
         /// <param name="inputs">The inputs.</param>
         /// <param name="outputs">The outputs.</param>
-        internal TrainingExample(Vector<float> inputs, Vector<float> outputs)
+        public TrainingExample(Vector<float> inputs, Vector<float> outputs)
             : this(inputs.ToArray(), outputs.ToArray())
         {
         }

@@ -20,7 +20,7 @@ namespace Neural.Activations
     /// </para>
     /// </remarks>
     /// </summary>
-    sealed class StepTransfer : ITransfer
+    public sealed class StepTransfer : ITransfer
     {
         /// <summary>
         /// The epsilon value

@@ -11,7 +11,7 @@ namespace Neural.Perceptron
     /// <summary>
     /// Class PerceptronNetworkFactory. This class cannot be inherited.
     /// </summary>
-    sealed class NetworkFactory
+    public sealed class NetworkFactory
     {
         /// <summary>
         /// Creates the specified input layer configuration.

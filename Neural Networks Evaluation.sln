@@ -5,6 +5,8 @@ VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Neural", "Neural\Neural.csproj", "{BD8F4120-B9FD-460E-B7B6-6FC1A5CC5278}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XorDemo", "XorDemo\XorDemo.csproj", "{1F423359-1EC2-46D1-8551-2FD9EB22B020}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{BD8F4120-B9FD-460E-B7B6-6FC1A5CC5278}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BD8F4120-B9FD-460E-B7B6-6FC1A5CC5278}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BD8F4120-B9FD-460E-B7B6-6FC1A5CC5278}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1F423359-1EC2-46D1-8551-2FD9EB22B020}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1F423359-1EC2-46D1-8551-2FD9EB22B020}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1F423359-1EC2-46D1-8551-2FD9EB22B020}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1F423359-1EC2-46D1-8551-2FD9EB22B020}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

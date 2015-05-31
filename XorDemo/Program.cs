@@ -8,7 +8,7 @@ using Neural.Cost;
 using Neural.Perceptron;
 using Neural.Training;
 
-namespace Neural
+namespace Demonstration
 {
     /// <summary>
     /// Class Program.

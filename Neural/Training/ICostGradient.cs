@@ -7,7 +7,7 @@ namespace Neural.Training
     /// <summary>
     /// Interface ICostGradientFunction
     /// </summary>
-    internal interface ICostGradient
+    public interface ICostGradient
     {
         /// <summary>
         /// Calculates the cost and the gradient of the cost function given the training examples.
