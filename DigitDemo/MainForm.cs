@@ -108,7 +108,9 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
             base.OnLoad(e);
 
             Show();
+            Update();
             var dialog = new ProgressDialog();
+            dialog.Text = "Loading data ...";
 
             IReadOnlyCollection<TrainingExample> data = null;
             dialog.Shown += async (sender, args) =>
@@ -310,7 +312,35 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void toolStripSplitButtonNetwork_ButtonClick(object sender, EventArgs e)
         {
+            var dialog = new ProgressDialog();
+            dialog.Text = "Training network ...";
 
+            dialog.Shown += async (s, args) =>
+                                  {
+                                      var network = _network;
+                                      var trainer = _networkTraining;
+                                      var set = _trainingSet.Shuffle();
+                                      var examples = set.AsParallel().Select(MakeTrainingExample).ToList();
+
+                                      var stop = network.Train(_networkTraining, examples);
+                                      dialog.Close();
+                                  };
+            dialog.ShowDialog(this);
+        }
+
+        /// <summary>
+        /// Makes the training example.
+        /// </summary>
+        /// <param name="trainingExample">The training example.</param>
+        /// <returns>Widemeadows.MachineLearning.Neural.Perceptron.TrainingExample.</returns>
+        [Pure]
+        private Perceptron.TrainingExample MakeTrainingExample(TrainingExample trainingExample)
+        {
+            var inputs = Vector<float>.Build.DenseOfEnumerable(trainingExample.Pixels.Enumerate());
+            var outputs = Vector<float>.Build.Dense(10, Vector<float>.Zero);
+            outputs[trainingExample.Label] = 1.0F;
+
+            return new Perceptron.TrainingExample(inputs, outputs);
         }
 
         /// <summary>
