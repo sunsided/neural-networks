@@ -32,6 +32,7 @@
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.labelClassLabel = new System.Windows.Forms.Label();
             this.labelClass = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDigit)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -76,11 +77,21 @@
             this.labelClass.TabIndex = 3;
             this.labelClass.Text = "-";
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(74, 163);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(256, 13);
+            this.label1.TabIndex = 2;
+            this.label1.Text = "add training / cross validation error graphs per epoch";
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(382, 240);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.groupBox1);
             this.Name = "MainForm";
             this.Text = "Handwritten Digital Classification";
@@ -88,6 +99,7 @@
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
@@ -97,6 +109,7 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label labelClass;
         private System.Windows.Forms.Label labelClassLabel;
+        private System.Windows.Forms.Label label1;
     }
 }
 
