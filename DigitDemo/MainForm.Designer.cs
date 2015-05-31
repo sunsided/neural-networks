@@ -94,7 +94,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.groupBox1);
             this.Name = "MainForm";
-            this.Text = "Handwritten Digital Classification";
+            this.Text = "Handwritten Digit Classification";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDigit)).EndInit();
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
