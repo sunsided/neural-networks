@@ -29,7 +29,7 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
         /// The network training
         /// </summary>
         [NotNull]
-        private ITraining _networkTraining;
+        private MomentumDescend _networkTraining;
 
         /// <summary>
         /// The randomizer
@@ -312,18 +312,31 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
         private void toolStripSplitButtonNetwork_ButtonClick(object sender, EventArgs e)
         {
-            var dialog = new ProgressDialog();
+            var network = _network;
+            var trainer = _networkTraining;
+
+            var dialog = new TrainingProgressDialog(trainer.MaximumIterationCount);
             dialog.Text = "Training network ...";
+
+            var cts = new CancellationTokenSource();
+            dialog.TrainingCanceled += (s, a) => cts.Cancel();
 
             dialog.Shown += async (s, args) =>
                                   {
-                                      var network = _network;
-                                      var trainer = _networkTraining;
+                                      // shuffle the set and create training examples
                                       var set = _trainingSet.Shuffle();
                                       var examples = set.AsParallel().Select(MakeTrainingExample).ToList();
 
-                                      var stop = await Task.Run(() => network.Train(_networkTraining, examples));
+                                      // prepare progress reporting
+                                      var progress = new Progress<TrainingProgress>();
+                                      progress.ProgressChanged += (_, p) => dialog.UpdateProgress(p);
+
+                                      // trainify!
+                                      var stop = await Task.Run(() => network.Train(trainer, examples, progress, cts.Token), cts.Token);
                                       dialog.Close();
+
+                                      // evaluatify!
+                                      EvaluateNetworkPerformance();
                                   };
             dialog.ShowDialog(this);
         }
@@ -380,7 +393,7 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
         /// </summary>
         /// <returns>ITraining.</returns>
         [NotNull]
-        private ITraining GenerateNetworkTraining()
+        private MomentumDescend GenerateNetworkTraining()
         {
             // select a cost function
             var cost = new SumSquaredErrorCost();
@@ -389,10 +402,10 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
             return new MomentumDescend(cost)
             {
                 LearningRate = 0.5F,
-                Momentum = 0.8F,
-                MaximumIterationCount = 2000,
-                MinimumIterationCount = 1000,
-                RegularizationStrength = 0
+                Momentum = 0.9F,
+                MaximumIterationCount = 400,
+                MinimumIterationCount = 100,
+                RegularizationStrength = 0.01F
             };
         }
 

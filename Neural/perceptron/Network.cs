@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
 using Widemeadows.MachineLearning.Neural.Training;
@@ -152,12 +153,24 @@ namespace Widemeadows.MachineLearning.Neural.Perceptron
         /// <param name="trainingSet">The training set.</param>
         /// <returns>TrainingStop.</returns>
         /// <exception cref="System.ArgumentNullException">Either <paramref name="training" /> or <paramref name="trainingSet" /> was null.</exception>
-        public TrainingStop Train([NotNull] ITraining training, [NotNull] IReadOnlyCollection<TrainingExample> trainingSet)
+        public TrainingStop Train([NotNull] ITraining training, [NotNull] IReadOnlyCollection<TrainingExample> trainingSet, IProgress<TrainingProgress> progress = null)
+        {
+            return Train(training, trainingSet, progress, CancellationToken.None);
+        }
+
+        /// <summary>
+        /// Trains the network using the given <paramref name="trainingSet" />.
+        /// </summary>
+        /// <param name="training">The training instance.</param>
+        /// <param name="trainingSet">The training set.</param>
+        /// <returns>TrainingStop.</returns>
+        /// <exception cref="System.ArgumentNullException">Either <paramref name="training" /> or <paramref name="trainingSet" /> was null.</exception>
+        public TrainingStop Train([NotNull] ITraining training, [NotNull] IReadOnlyCollection<TrainingExample> trainingSet, IProgress<TrainingProgress> progress, CancellationToken cancellationToken)
         {
             if (training == null) throw new ArgumentNullException("training", "The training instance must not be null");
             if (trainingSet == null) throw new ArgumentNullException("trainingSet", "The training set must not be null");
 
-            return training.Train(this, trainingSet);
+            return training.Train(this, trainingSet, progress, cancellationToken);
         }
 
         /// <summary>

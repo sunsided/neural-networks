@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using JetBrains.Annotations;
 using Widemeadows.MachineLearning.Neural.Cost;
 using Widemeadows.MachineLearning.Neural.Perceptron;
@@ -172,14 +173,16 @@ namespace Widemeadows.MachineLearning.Neural.Training
         }
 
         /// <summary>
-        /// Trains the specified <paramref name="network"/> using the <paramref name="trainingSet"/>.
+        /// Trains the specified <paramref name="network" /> using the <paramref name="trainingSet" />.
         /// </summary>
         /// <param name="network">The network.</param>
         /// <param name="trainingSet">The training set.</param>
-        /// <exception cref="System.ArgumentNullException">
-        /// Either <paramref name="network"/> or <paramref name="trainingSet"/> was null.
-        /// </exception>
-        public TrainingStop Train(Network network, IReadOnlyCollection<TrainingExample> trainingSet)
+        /// <param name="progress">The progress.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>TrainingStop.</returns>
+        /// <exception cref="System.ArgumentNullException">Either <paramref name="network" /> or <paramref name="trainingSet" /> was null.</exception>
+        /// <exception cref="System.InvalidOperationException">Cost evaluated to Single.NaN</exception>
+        public TrainingStop Train(Network network, IReadOnlyCollection<TrainingExample> trainingSet, IProgress<TrainingProgress> progress, CancellationToken cancellationToken)
         {
             if (network == null) throw new ArgumentNullException("network", "The network reference must not be null");
             if (trainingSet == null) throw new ArgumentNullException("trainingSet", "The training set must not be null");
@@ -201,6 +204,9 @@ namespace Widemeadows.MachineLearning.Neural.Training
             var lastCost = 0.0F;
             for (int i = 0; i < maximumIterations; ++i)
             {
+                if (cancellationToken.IsCancellationRequested) break;
+
+                // perform the training magic
                 var trainingResult = costFunction.CalculateCostAndGradient(network, trainingSet, lambda);
 
                 // determine cost delta and early-exit if it is smaller than epsilon
@@ -222,6 +228,12 @@ namespace Widemeadows.MachineLearning.Neural.Training
 
                 // perform a single gradient descend step
                 GradientDescend(trainingResult, previousDeltas, learningRate, momentum);
+
+                // progress!
+                if (progress != null)
+                {
+                    progress.Report(new TrainingProgress(i, lastCost));
+                }
             }
 
             Debug.WriteLine("Training terminated at cost {0}", lastCost);
