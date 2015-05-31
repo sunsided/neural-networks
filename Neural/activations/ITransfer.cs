@@ -1,7 +1,7 @@
 ﻿using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
 
-namespace Neural.Activations
+namespace Widemeadows.MachineLearning.Neural.Activations
 {
     /// <summary>
     /// Interface to a differentiable transfer function.

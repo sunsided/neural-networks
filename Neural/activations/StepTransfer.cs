@@ -1,8 +1,8 @@
 ﻿using System;
 using MathNet.Numerics.LinearAlgebra;
-using Neural.Cost;
+using Widemeadows.MachineLearning.Neural.Cost;
 
-namespace Neural.Activations
+namespace Widemeadows.MachineLearning.Neural.Activations
 {
     /// <summary>
     /// Heaviside step function.

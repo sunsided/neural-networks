@@ -1,7 +1,7 @@
 ﻿using System;
 using MathNet.Numerics.LinearAlgebra;
 
-namespace Neural.Cost
+namespace Widemeadows.MachineLearning.Neural.Cost
 {
     /// <summary>
     /// Logistic regression-like multivariate cost function.

@@ -7,7 +7,7 @@
     <ProjectGuid>{1F423359-1EC2-46D1-8551-2FD9EB22B020}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Demonstration</RootNamespace>
+    <RootNamespace>Widemeadows.MachineLearning.Neural.Demonstration.Xor</RootNamespace>
     <AssemblyName>Demonstration</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

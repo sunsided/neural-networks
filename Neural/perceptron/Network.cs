@@ -5,10 +5,9 @@ using System.Diagnostics;
 using System.Linq;
 using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
-using Neural.Cost;
-using Neural.Training;
+using Widemeadows.MachineLearning.Neural.Training;
 
-namespace Neural.Perceptron
+namespace Widemeadows.MachineLearning.Neural.Perceptron
 {
     /// <summary>
     /// A perceptron network.

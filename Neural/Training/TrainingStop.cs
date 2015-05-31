@@ -1,4 +1,4 @@
-﻿namespace Neural.Training
+﻿namespace Widemeadows.MachineLearning.Neural.Training
 {
     /// <summary>
     /// Enum TrainingStop

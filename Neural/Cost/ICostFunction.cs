@@ -1,6 +1,6 @@
 using MathNet.Numerics.LinearAlgebra;
 
-namespace Neural.Cost
+namespace Widemeadows.MachineLearning.Neural.Cost
 {
     public interface ICostFunction
     {

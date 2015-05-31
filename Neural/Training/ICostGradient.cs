@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using JetBrains.Annotations;
-using Neural.Perceptron;
+using Widemeadows.MachineLearning.Neural.Perceptron;
 
-namespace Neural.Training
+namespace Widemeadows.MachineLearning.Neural.Training
 {
     /// <summary>
     /// Interface ICostGradientFunction

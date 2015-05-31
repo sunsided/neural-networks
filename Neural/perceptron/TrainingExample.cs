@@ -2,7 +2,7 @@
 using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
 
-namespace Neural.Perceptron
+namespace Widemeadows.MachineLearning.Neural.Perceptron
 {
     /// <summary>
     /// Defines a training example

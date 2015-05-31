@@ -3,10 +3,10 @@ using System.Diagnostics;
 using System.Linq;
 using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
-using Neural.Cost;
-using Neural.Perceptron;
+using Widemeadows.MachineLearning.Neural.Cost;
+using Widemeadows.MachineLearning.Neural.Perceptron;
 
-namespace Neural.Training
+namespace Widemeadows.MachineLearning.Neural.Training
 {
     /// <summary>
     /// Class CostBase.

@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using JetBrains.Annotations;
 
-namespace Neural.Perceptron
+namespace Widemeadows.MachineLearning.Neural.Perceptron
 {
     /// <summary>
     /// Configuration of the perceptron network.

@@ -2,9 +2,9 @@
 using System.Diagnostics;
 using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
-using Neural.Activations;
+using Widemeadows.MachineLearning.Neural.Activations;
 
-namespace Neural.Perceptron
+namespace Widemeadows.MachineLearning.Neural.Perceptron
 {
     /// <summary>
     /// A perceptron layer.

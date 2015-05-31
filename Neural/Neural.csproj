@@ -7,7 +7,7 @@
     <ProjectGuid>{BD8F4120-B9FD-460E-B7B6-6FC1A5CC5278}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Neural</RootNamespace>
+    <RootNamespace>Widemeadows.MachineLearning.Neural</RootNamespace>
     <AssemblyName>Neural</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

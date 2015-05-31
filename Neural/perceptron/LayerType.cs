@@ -1,4 +1,4 @@
-﻿namespace Neural.Perceptron
+﻿namespace Widemeadows.MachineLearning.Neural.Perceptron
 {
     /// <summary>
     /// Enum LayerType

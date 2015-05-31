@@ -1,9 +1,9 @@
 ﻿using System;
 using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
-using Neural.Activations;
+using Widemeadows.MachineLearning.Neural.Activations;
 
-namespace Neural.Perceptron
+namespace Widemeadows.MachineLearning.Neural.Perceptron
 {
     /// <summary>
     /// Configuration of a single perceptron layer.

@@ -2,7 +2,7 @@
 using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
 
-namespace Neural.Activations
+namespace Widemeadows.MachineLearning.Neural.Activations
 {
     /// <summary>
     /// Invalid activation function that acts as a placeholder in the

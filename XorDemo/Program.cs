@@ -3,12 +3,12 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Threading;
 using MathNet.Numerics.LinearAlgebra;
-using Neural.Activations;
-using Neural.Cost;
-using Neural.Perceptron;
-using Neural.Training;
+using Widemeadows.MachineLearning.Neural.Activations;
+using Widemeadows.MachineLearning.Neural.Cost;
+using Widemeadows.MachineLearning.Neural.Perceptron;
+using Widemeadows.MachineLearning.Neural.Training;
 
-namespace Demonstration
+namespace Widemeadows.MachineLearning.Neural.Demonstration.Xor
 {
     /// <summary>
     /// Class Program.

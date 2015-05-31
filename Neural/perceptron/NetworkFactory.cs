@@ -4,9 +4,9 @@ using System.Linq;
 using JetBrains.Annotations;
 using MathNet.Numerics.Distributions;
 using MathNet.Numerics.LinearAlgebra;
-using Neural.Activations;
+using Widemeadows.MachineLearning.Neural.Activations;
 
-namespace Neural.Perceptron
+namespace Widemeadows.MachineLearning.Neural.Perceptron
 {
     /// <summary>
     /// Class PerceptronNetworkFactory. This class cannot be inherited.
