@@ -2,7 +2,7 @@ using MathNet.Numerics.LinearAlgebra;
 
 namespace Neural.Cost
 {
-    internal interface ICostFunction
+    public interface ICostFunction
     {
         /// <summary>
         /// Calculates the network's training cost.

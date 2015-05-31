@@ -2,9 +2,12 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using Neural.Perceptron;
 
-namespace Neural.Cost
+namespace Neural.Training
 {
-    internal interface ICostGradientFunction
+    /// <summary>
+    /// Interface ICostGradientFunction
+    /// </summary>
+    internal interface ICostGradient
     {
         /// <summary>
         /// Calculates the cost and the gradient of the cost function given the training examples.

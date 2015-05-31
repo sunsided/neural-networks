@@ -3,15 +3,31 @@ using System.Diagnostics;
 using System.Linq;
 using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
+using Neural.Cost;
 using Neural.Perceptron;
 
-namespace Neural.Cost
+namespace Neural.Training
 {
     /// <summary>
     /// Class CostBase.
     /// </summary>
-    public abstract class CostGradientBase : ICostGradientFunction
+    public class DefaultCostGradient : ICostGradient
     {
+        /// <summary>
+        /// The cost function
+        /// </summary>
+        [NotNull]
+        private readonly ICostFunction _costFunction;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DefaultCostGradient"/> class.
+        /// </summary>
+        /// <param name="costFunction">The cost function.</param>
+        public DefaultCostGradient([NotNull] ICostFunction costFunction)
+        {
+            _costFunction = costFunction;
+        }
+
         #region Cost Calculation
 
         /// <summary>
@@ -20,7 +36,10 @@ namespace Neural.Cost
         /// <param name="expectedOutput">The expected output, i.e. ground truth.</param>
         /// <param name="networkOutput">The network output.</param>
         /// <returns>System.Single.</returns>
-        public abstract float CalculateCost(Vector<float> expectedOutput, Vector<float> networkOutput);
+        protected virtual float CalculateCost(Vector<float> expectedOutput, Vector<float> networkOutput)
+        {
+            return _costFunction.CalculateCost(expectedOutput, networkOutput);
+        }
 
         /// <summary>
         /// Calculates the network's training cost.

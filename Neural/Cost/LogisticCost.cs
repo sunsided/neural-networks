@@ -10,7 +10,7 @@ namespace Neural.Cost
     /// This cost function only works for transfer functions that
     /// have an ]0..1[
     /// </remarks>
-    sealed class LogisticCost : CostGradientBase, ICostFunction
+    public sealed class LogisticCost : ICostFunction
     {
         /// <summary>
         /// Calculates the network's training cost.
@@ -18,7 +18,7 @@ namespace Neural.Cost
         /// <param name="expectedOutput">The expected output, i.e. ground truth.</param>
         /// <param name="networkOutput">The network output.</param>
         /// <returns>System.Single.</returns>
-        public override float CalculateCost(Vector<float> expectedOutput, Vector<float> networkOutput)
+        public float CalculateCost(Vector<float> expectedOutput, Vector<float> networkOutput)
         {
             var logOutput = networkOutput.Map(v => (float)Math.Log(v));
             var firstPart = expectedOutput * logOutput;

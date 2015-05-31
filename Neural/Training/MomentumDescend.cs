@@ -13,7 +13,7 @@ namespace Neural.Training
     /// </summary>
     sealed class MomentumDescend : ITraining
     {
-        private readonly ICostGradientFunction _costFunction;
+        private readonly ICostGradient _cost;
         private float _learningRate = DefaultLearningRate;
         private float _momentum = DefaultMomentum;
         private int _maximumIterationCount = DefaultMaximumIterationCount;
@@ -24,10 +24,19 @@ namespace Neural.Training
         /// <summary>
         /// Initializes a new instance of the <see cref="MomentumDescend"/> class.
         /// </summary>
-        /// <param name="costFunction">The cost function.</param>
-        public MomentumDescend([NotNull] ICostGradientFunction costFunction)
+        /// <param name="cost">The cost function.</param>
+        public MomentumDescend([NotNull] ICostFunction cost)
         {
-            _costFunction = costFunction;
+            _cost = new DefaultCostGradient(cost);
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MomentumDescend"/> class.
+        /// </summary>
+        /// <param name="cost">The cost function.</param>
+        public MomentumDescend([NotNull] ICostGradient cost)
+        {
+            _cost = cost;
         }
 
         /// <summary>
@@ -187,7 +196,7 @@ namespace Neural.Training
             var epsilon = CostEpsilon;
             var minimumIterations = MinimumIterationCount;
             var maximumIterations = MaximumIterationCount;
-            var costFunction = _costFunction;
+            var costFunction = _cost;
 
             // TODO: Regularization should be a learning parameter
 
