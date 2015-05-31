@@ -51,11 +51,11 @@
             this.toolStripNetworkTraining = new System.Windows.Forms.ToolStrip();
             this.toolStripSplitButtonNetwork = new System.Windows.Forms.ToolStripSplitButton();
             this.toolStripMenuItemResetNetwork = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.toolStripButtonRandomExample = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.loadNetworkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.saveNetworkToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
+            this.toolStripButtonRandomExample = new System.Windows.Forms.ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDigit)).BeginInit();
             this.toolStripContainerMain.ContentPanel.SuspendLayout();
             this.toolStripContainerMain.TopToolStripPanel.SuspendLayout();
@@ -100,7 +100,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(29, 227);
+            this.label1.Location = new System.Drawing.Point(12, 221);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(256, 13);
             this.label1.TabIndex = 2;
@@ -116,11 +116,11 @@
             this.toolStripContainerMain.ContentPanel.Controls.Add(this.groupBox2);
             this.toolStripContainerMain.ContentPanel.Controls.Add(this.groupBox1);
             this.toolStripContainerMain.ContentPanel.Controls.Add(this.label1);
-            this.toolStripContainerMain.ContentPanel.Size = new System.Drawing.Size(449, 253);
+            this.toolStripContainerMain.ContentPanel.Size = new System.Drawing.Size(371, 241);
             this.toolStripContainerMain.Dock = System.Windows.Forms.DockStyle.Fill;
             this.toolStripContainerMain.Location = new System.Drawing.Point(0, 0);
             this.toolStripContainerMain.Name = "toolStripContainerMain";
-            this.toolStripContainerMain.Size = new System.Drawing.Size(449, 278);
+            this.toolStripContainerMain.Size = new System.Drawing.Size(371, 266);
             this.toolStripContainerMain.TabIndex = 3;
             // 
             // toolStripContainerMain.TopToolStripPanel
@@ -309,28 +309,9 @@
             // toolStripMenuItemResetNetwork
             // 
             this.toolStripMenuItemResetNetwork.Name = "toolStripMenuItemResetNetwork";
-            this.toolStripMenuItemResetNetwork.Size = new System.Drawing.Size(152, 22);
+            this.toolStripMenuItemResetNetwork.Size = new System.Drawing.Size(158, 22);
             this.toolStripMenuItemResetNetwork.Text = "&Reset network";
             this.toolStripMenuItemResetNetwork.Click += new System.EventHandler(this.toolStripMenuItemResetNetwork_Click);
-            // 
-            // toolStrip1
-            // 
-            this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButtonRandomExample});
-            this.toolStrip1.Location = new System.Drawing.Point(111, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(115, 25);
-            this.toolStrip1.TabIndex = 1;
-            // 
-            // toolStripButtonRandomExample
-            // 
-            this.toolStripButtonRandomExample.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButtonRandomExample.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButtonRandomExample.Name = "toolStripButtonRandomExample";
-            this.toolStripButtonRandomExample.Size = new System.Drawing.Size(103, 22);
-            this.toolStripButtonRandomExample.Text = "&Random example";
-            this.toolStripButtonRandomExample.Click += new System.EventHandler(this.toolStripButtonRandomExample_Click);
             // 
             // toolStripSeparator1
             // 
@@ -351,13 +332,35 @@
             this.saveNetworkToolStripMenuItem.Text = "&Save network ...";
             this.saveNetworkToolStripMenuItem.Click += new System.EventHandler(this.saveNetworkToolStripMenuItem_Click);
             // 
+            // toolStrip1
+            // 
+            this.toolStrip1.Dock = System.Windows.Forms.DockStyle.None;
+            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.toolStripButtonRandomExample});
+            this.toolStrip1.Location = new System.Drawing.Point(111, 0);
+            this.toolStrip1.Name = "toolStrip1";
+            this.toolStrip1.Size = new System.Drawing.Size(115, 25);
+            this.toolStrip1.TabIndex = 1;
+            // 
+            // toolStripButtonRandomExample
+            // 
+            this.toolStripButtonRandomExample.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripButtonRandomExample.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripButtonRandomExample.Name = "toolStripButtonRandomExample";
+            this.toolStripButtonRandomExample.Size = new System.Drawing.Size(103, 22);
+            this.toolStripButtonRandomExample.Text = "&Random example";
+            this.toolStripButtonRandomExample.Click += new System.EventHandler(this.toolStripButtonRandomExample_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(449, 278);
+            this.ClientSize = new System.Drawing.Size(371, 266);
             this.Controls.Add(this.toolStripContainerMain);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
             this.Name = "MainForm";
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.Text = "Handwritten Digit Classification";
             ((System.ComponentModel.ISupportInitialize)(this.pictureBoxDigit)).EndInit();
             this.toolStripContainerMain.ContentPanel.ResumeLayout(false);
