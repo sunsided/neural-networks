@@ -4,6 +4,14 @@ This is an implementation of the handwritten digit classification as it is given
 
 Learning parameters are hardcoded for the time being.
 
+### Screenshots
+
+![main screen](presentation/main.png)
+
+During training, the curve of the network's training cost is displayed.
+
+![network training](presentation/training.png)
+
 ## Network structure
 
 The network contains of 400 input units (*20x20 pixels*), 25 hidden units (*5x5 pixels*) and 10 output units (*10 possible digits*). The outputs are interpreted as zero-indexed categorical one-hot, i.e. an output of ``[0 0 1 0 0 0 0 0 0 0]`` means that the image was classified as label ``2``. 
