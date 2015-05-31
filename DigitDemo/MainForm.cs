@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 using JetBrains.Annotations;
@@ -52,8 +53,18 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
         private void PresentTrainingData(IReadOnlyCollection<TrainingExample> data)
         {
             var example = data.First();
+            PresentEntry(example);
+        }
+
+        /// <summary>
+        /// Presents the entry.
+        /// </summary>
+        /// <param name="example">The example.</param>
+        private void PresentEntry(TrainingExample example)
+        {
             var bitmap = CreateBitmap(example);
 
+            labelClass.Text = example.Label.ToString();
             pictureBoxDigit.Image = bitmap;
         }
 
