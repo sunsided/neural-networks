@@ -85,7 +85,7 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Xor
                 Console.WriteLine(String.Join(", ", example.Outputs));
                 Console.ResetColor();
 
-                var outputs = network.Calculate(example.Inputs);
+                var outputs = network.Evaluate(example.Inputs);
 
                 Console.WriteLine("Obtained result from network:");
                 Console.ForegroundColor = ConsoleColor.Yellow;

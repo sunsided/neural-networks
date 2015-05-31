@@ -2,22 +2,42 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Drawing.Imaging;
-using System.Globalization;
 using System.Linq;
 using System.Windows.Forms;
 using JetBrains.Annotations;
+using MathNet.Numerics.LinearAlgebra;
+using Widemeadows.MachineLearning.Neural.Activations;
+using Widemeadows.MachineLearning.Neural.Cost;
+using Widemeadows.MachineLearning.Neural.Perceptron;
+using Widemeadows.MachineLearning.Neural.Training;
 
 namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
 {
     public partial class MainForm : Form
     {
         /// <summary>
+        /// The MLP network
+        /// </summary>
+        [NotNull]
+        private Network _network;
+
+        /// <summary>
+        /// The network training
+        /// </summary>
+        [NotNull]
+        private ITraining _networkTraining;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="MainForm"/> class.
         /// </summary>
         public MainForm()
         {
             InitializeComponent();
+
+            _network = GenerateNetwork();
+            _networkTraining = GenerateNetworkTraining();
         }
 
         /// <summary>
@@ -43,29 +63,101 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
             dialog.ShowDialog(this);
             Debug.Assert(data != null, "data != null");
 
-            PresentTrainingData(data);
+            RegisterTrainingData(data);
         }
 
         /// <summary>
         /// Presents the training data.
         /// </summary>
         /// <param name="data">The data.</param>
-        private void PresentTrainingData(IReadOnlyCollection<TrainingExample> data)
+        private void RegisterTrainingData(IReadOnlyCollection<TrainingExample> data)
         {
-            var example = data.First();
-            PresentEntry(example);
+            var rand = new Random();
+            var toSkip = rand.Next(0, data.Count);
+            var example = data.Skip(toSkip).Take(1).Single();
+
+            EvaluateAndPresentExample(example);
+        }
+
+        /// <summary>
+        /// Evaluates and presents a single example.
+        /// </summary>
+        /// <param name="example">The example.</param>
+        private void EvaluateAndPresentExample(TrainingExample example)
+        {
+            var result = EvaluateNetwork(example);
+
+            PresentTrainingInput(example);
+            PresentFirstHiddenInput(result);
+            PresentOutput(result);
+        }
+
+        /// <summary>
+        /// Presents the network's output.
+        /// </summary>
+        /// <param name="result">The result.</param>
+        private void PresentOutput(LinkedList<FeedforwardResult> result)
+        {
+            var layerOutput = result.Last.Value;
+            var outputs = layerOutput.Output;
+
+            var label = outputs.MaximumIndex();
+            var likelihood = outputs[label];
+
+            labelNetworkOutput.Text = label.ToString();
+            labelLikelihood.Text = likelihood.ToString("P");
+        }
+
+        /// <summary>
+        /// Presents the inputs of the first hidden layer.
+        /// </summary>
+        /// <param name="result">The result.</param>
+        private void PresentFirstHiddenInput([NotNull] LinkedList<FeedforwardResult> result)
+        {
+            var layerResult = result.First.Next.Value;
+            var inputs = layerResult.WeightedInputs;
+
+            var bitmap = CreateBitmap(inputs, 5, 5);
+            bitmap = NearestNeighborExtrapolate(bitmap, 32, 32);
+
+            pictureBoxHidden.Image = bitmap;
         }
 
         /// <summary>
         /// Presents the entry.
         /// </summary>
         /// <param name="example">The example.</param>
-        private void PresentEntry(TrainingExample example)
+        private void PresentTrainingInput(TrainingExample example)
         {
             var bitmap = CreateBitmap(example);
+            bitmap = NearestNeighborExtrapolate(bitmap, pictureBoxDigit.Width, pictureBoxDigit.Height);
 
             labelClass.Text = example.Label.ToString();
             pictureBoxDigit.Image = bitmap;
+        }
+
+        /// <summary>
+        /// Performs a nearest-neighbor extrapolation
+        /// </summary>
+        /// <param name="input">The input.</param>
+        /// <param name="width">The width.</param>
+        /// <param name="height">The height.</param>
+        /// <returns>Bitmap.</returns>
+        private Bitmap NearestNeighborExtrapolate(Bitmap input, int width, int height)
+        {
+            var scaled = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+            using (var gr = Graphics.FromImage(scaled))
+            {
+                gr.CompositingQuality = CompositingQuality.HighSpeed;
+                gr.InterpolationMode = InterpolationMode.NearestNeighbor;
+                gr.SmoothingMode = SmoothingMode.None;
+
+                var destRect = new Rectangle(0, 0, width, height);
+                var srcRect = new Rectangle(0, 0, input.Width, input.Height);
+                gr.DrawImage(input, destRect, srcRect, GraphicsUnit.Pixel);
+            }
+
+            return scaled;
         }
 
         /// <summary>
@@ -93,5 +185,125 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
 
             return bitmap;
         }
+
+        /// <summary>
+        /// Creates the bitmap.
+        /// </summary>
+        /// <param name="inputActivations">The example.</param>
+        /// <returns>Bitmap.</returns>
+        [NotNull]
+        private Bitmap CreateBitmap(Vector<float> inputActivations, int width, int height)
+        {
+            Debug.Assert(width * height == inputActivations.Count, "width * height == example.Count");
+            var bitmap = new Bitmap(width, height, PixelFormat.Format32bppArgb);
+
+            var min = inputActivations.Minimum();
+            var max = inputActivations.Maximum();
+            var pixels = inputActivations.Map(v => (float)(255 * (v - min) / (max - min)));
+
+            foreach (var pixel in pixels.EnumerateIndexed())
+            {
+                var x = pixel.Item1 % width;
+                var y = pixel.Item1 / width;
+                var valueFloat = pixel.Item2;
+                var value = (int)Math.Floor(valueFloat);
+
+                bitmap.SetPixel(x, y, Color.FromArgb(value, value, value));
+            }
+
+            return bitmap;
+        }
+
+        /// <summary>
+        /// Handles the ButtonClick event of the toolStripSplitButtonNetwork control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        private void toolStripSplitButtonNetwork_ButtonClick(object sender, EventArgs e)
+        {
+
+        }
+
+        /// <summary>
+        /// Handles the Click event of the toolStripMenuItemResetNetwork control.
+        /// </summary>
+        /// <param name="sender">The source of the event.</param>
+        /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
+        private void toolStripMenuItemResetNetwork_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        #region Network evaluation
+
+        /// <summary>
+        /// Runs a single training example through the network.
+        /// </summary>
+        /// <param name="example">The example.</param>
+        /// <returns>LinkedList&lt;FeedforwardResult&gt;.</returns>
+        [NotNull]
+        private LinkedList<FeedforwardResult> EvaluateNetwork(TrainingExample example)
+        {
+            var net = _network;
+
+            var pixels = example.Pixels;
+            var vector = Vector<float>.Build.DenseOfEnumerable(pixels.Enumerate(Zeros.Include));
+
+            return net.Feedforward(vector);
+        }
+
+        #endregion Network evaluation
+
+        #region Network Generation
+
+        /// <summary>
+        /// Generates the network trainer.
+        /// </summary>
+        /// <returns>ITraining.</returns>
+        [NotNull]
+        private ITraining GenerateNetworkTraining()
+        {
+            // select a cost function
+            var cost = new SumSquaredErrorCost();
+
+            // select a training strategy
+            return new MomentumDescend(cost)
+            {
+                LearningRate = 0.5F,
+                Momentum = 0.8F,
+                MaximumIterationCount = 2000,
+                MinimumIterationCount = 1000,
+                RegularizationStrength = 0
+            };
+        }
+
+        /// <summary>
+        /// Generates the network.
+        /// </summary>
+        [NotNull]
+        private Network GenerateNetwork()
+        {
+            // obtain a transfer function
+            ITransfer hiddenActivation = new SigmoidTransfer();
+            ITransfer outputActivation = new SigmoidTransfer();
+
+            // input layers with 400 (20x20) neurons
+            var inputLayer = LayerConfiguration.ForInput(400);
+
+            // one hidden layer with 25 (5x5) neurons
+            var hiddenLayers = new[]
+                               {
+                                   LayerConfiguration.ForHidden(25, hiddenActivation)
+                               };
+
+            // output layer with one neuron
+            var outputLayer = LayerConfiguration.ForOutput(10, outputActivation);
+
+            // construct a network
+            var factory = new NetworkFactory();
+            return factory.Create(inputLayer, hiddenLayers, outputLayer);
+        }
+
+        #endregion Network Generation
     }
 }
