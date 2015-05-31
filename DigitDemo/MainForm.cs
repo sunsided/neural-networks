@@ -74,7 +74,11 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
         private void ResetNetwork()
         {
             _network = GenerateNetwork();
+            ActivateNetwork();
+        }
 
+        private void ActivateNetwork()
+        {
             var example = _currentExample;
             if (example != null)
             {
@@ -452,6 +456,54 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
             return factory.Create(inputLayer, hiddenLayers, outputLayer);
         }
 
+        /// <summary>
+        /// Generates the network.
+        /// </summary>
+        [NotNull]
+        private Network GenerateNetwork(NetworkArchitecture architecture)
+        {
+            if (architecture.NeuronCount[0] != 400) throw new ArgumentException("Network input neuron count must be 400");
+            if (architecture.NeuronCount[1] != 25) throw new ArgumentException("First hidden layer input neuron count must be 25");
+            if (architecture.NeuronCount.Last() != 10) throw new ArgumentException("Network output neuron count must be 10");
+
+            // obtain a transfer function
+            ITransfer hiddenActivation = new SigmoidTransfer();
+            ITransfer outputActivation = new SigmoidTransfer();
+
+            // input layers with 400 (20x20) neurons
+            var inputLayer = LayerConfiguration.ForInput(architecture.NeuronCount[0]);
+
+            // one hidden layer with 25 (5x5) neurons
+            var hiddenLayers = new List<LayerConfiguration>();
+            if (architecture.HiddenLayers != null)
+            {
+                for (int i = 0; i < architecture.HiddenLayers.Count; ++i)
+                {
+                    var layer = architecture.HiddenLayers[i];
+                    var cols = layer.Inputs;
+                    var rows = layer.Outputs;
+
+                    var weights = Matrix<float>.Build.Dense(rows, cols, layer.Weights.ToArray());
+                    var bias = Vector<float>.Build.DenseOfArray(layer.Bias.ToArray());
+                    var conf = LayerConfiguration.ForHidden(hiddenActivation, weights, bias);
+                    hiddenLayers.Add(conf);
+                }
+            }
+
+            // output layer with one neuron
+            var outLayer = architecture.OutputLayer;
+            var outCols = outLayer.Inputs;
+            var outRows = outLayer.Outputs;
+
+            var outWeights = Matrix<float>.Build.Dense(outRows, outCols, outLayer.Weights.ToArray());
+            var outBias = Vector<float>.Build.DenseOfArray(outLayer.Bias.ToArray());
+            var outputLayer = LayerConfiguration.ForHidden(outputActivation, outWeights, outBias);
+
+            // construct a network
+            var factory = new NetworkFactory();
+            return factory.Create(inputLayer, hiddenLayers, outputLayer);
+        }
+
         #endregion Network Generation
 
         /// <summary>
@@ -506,9 +558,51 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
         /// </summary>
         /// <param name="sender">The source of the event.</param>
         /// <param name="e">The <see cref="EventArgs"/> instance containing the event data.</param>
-        private void loadNetworkToolStripMenuItem_Click(object sender, EventArgs e)
+        private async void loadNetworkToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            var dialog = new OpenFileDialog
+            {
+                AddExtension = true,
+                AutoUpgradeEnabled = true,
+                CheckFileExists = false,
+                CheckPathExists = true,
+                DefaultExt = ".mlp.json",
+                DereferenceLinks = true,
+                Filter = "Network files (*.mlp.json)|*.mlp.json|Alle Dateien|*.*",
+                RestoreDirectory = true,
+                SupportMultiDottedExtensions = true,
+                Title = "Save network"
+            };
 
+            do
+            {
+                if (dialog.ShowDialog(this) != DialogResult.OK) return;
+
+                string json;
+                using (var stream = File.Open(dialog.FileName, FileMode.Open, FileAccess.Read, FileShare.Read))
+                using (var reader = new StreamReader(stream, Encoding.UTF8))
+                {
+                    json = await reader.ReadToEndAsync();
+                }
+
+                var architecture = JsonConvert.DeserializeObject<NetworkArchitecture>(json);
+
+                // check the network and load again
+                if (architecture.NeuronCount[0] != 400 ||
+                    architecture.NeuronCount[1] != 25 ||
+                    architecture.NeuronCount.Last() != 10)
+                {
+                    var result = MessageBox.Show("The loaded network architecture is incompatible with this demonstration software.", "Incompatible Network", MessageBoxButtons.RetryCancel, MessageBoxIcon.Error, MessageBoxDefaultButton.Button2);
+                    if (result == DialogResult.Cancel) return;
+                    continue;
+                }
+
+                // construct the network
+                _network = GenerateNetwork(architecture);
+                ActivateNetwork();
+                break;
+
+            } while (true);
         }
 
         /// <summary>

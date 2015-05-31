@@ -11,6 +11,10 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
     /// </summary>
     sealed class NetworkArchitecture
     {
+
+        // TODO: At the moment, no transfer function is stored. Each neuron is assumed to have sigmoidal activation!
+        // TODO: Encode all transfer functions with GUIDs and reference them per Neuron!
+
         /// <summary>
         /// Froms the network.
         /// </summary>
@@ -30,7 +34,7 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
                 if (layer.Type == LayerType.Input) continue;
 
                 var bias = layer.Bias.ToArray();
-                var weights = layer.Weights.ToRowWiseArray();
+                var weights = layer.Weights.ToColumnWiseArray();
 
                 // register the layer
                 var storedLayer = new Layer(layer.InputCount, layer.NeuronCount, bias, weights);

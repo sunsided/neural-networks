@@ -103,7 +103,7 @@ namespace Widemeadows.MachineLearning.Neural.Perceptron
         {
             if (neuronCount <= 0) throw new ArgumentOutOfRangeException("neuronCount", neuronCount, "The number of neurons must be positive.");
             if (weights != null && weights.RowCount != neuronCount) throw new ArgumentException("The weight matrix row count must match the layer's neuron count");
-            if (bias != null && bias.Count != neuronCount) throw new ArgumentException("The bias vector size must match the layer's neuron count");
+            if (bias != null && bias.Count != weights.RowCount) throw new ArgumentException("The bias vector size must match the layer's neuron count");
 
             NeuronCount = neuronCount;
             ActivationFunction = activationFunction;
