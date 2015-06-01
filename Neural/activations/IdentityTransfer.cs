@@ -5,7 +5,7 @@ namespace Widemeadows.MachineLearning.Neural.Activations
     /// <summary>
     /// Identity transfer function.
     /// </summary>
-    sealed class IdentityTransfer : ITransfer
+    public sealed class IdentityTransfer : ITransfer
     {
         /// <summary>
         /// Applies the transfer function to the values of <paramref name="z" />.

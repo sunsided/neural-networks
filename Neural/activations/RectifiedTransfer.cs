@@ -6,7 +6,7 @@ namespace Widemeadows.MachineLearning.Neural.Activations
     /// <summary>
     /// Rectifier function.
     /// </summary>
-    sealed class RectifiedTransfer : ITransfer
+    public sealed class RectifiedTransfer : ITransfer
     {
         /// <summary>
         /// Applies the transfer function to the values of <paramref name="z" />.

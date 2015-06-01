@@ -9,7 +9,7 @@ namespace Widemeadows.MachineLearning.Neural.Activations
     /// <remarks>
     /// The tanh function maps its outputs to the range of [-1; 1]
     /// </remarks>
-    sealed class TanhTransfer : ITransfer
+    public sealed class TanhTransfer : ITransfer
     {
         /// <summary>
         /// Applies the transfer function to the values of <paramref name="z" />.
