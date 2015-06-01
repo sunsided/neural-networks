@@ -316,7 +316,23 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
         private void PresentOutput(TrainingExample example, LinkedList<FeedforwardResult> result)
         {
             var label = PresentOutput(result);
-            labelNetworkOutput.ForeColor = label == example.Label ? Color.DarkGreen : Color.DarkRed;
+            var certainty = result.Last.Value.Output[label];
+
+            var isMatch = label == example.Label;
+            if (isMatch)
+            {
+                labelNetworkOutput.ForeColor = Color.DarkGreen;
+                labelLikelihood.ForeColor = certainty > 0.8
+                    ? Color.DarkGreen
+                    : (certainty > 0.5) ? Color.DarkOrange : Color.DarkRed;
+            }
+            else
+            {
+                labelNetworkOutput.ForeColor = Color.DarkRed;
+                labelLikelihood.ForeColor = certainty > 0.8
+                    ? Color.DarkRed
+                    : (certainty > 0.5) ? Color.DarkOrange : Color.DarkGreen;
+            }
         }
 
         /// <summary>
