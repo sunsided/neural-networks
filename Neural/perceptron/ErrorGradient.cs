@@ -84,8 +84,8 @@ namespace Widemeadows.MachineLearning.Neural.Perceptron
         /// <returns>The result of the operator.</returns>
         public static ErrorGradient operator +(ErrorGradient a, ErrorGradient b)
         {
-            var weight = a.Weight + b.Weight;
-            var bias = a.Bias + b.Bias;
+            var weight = a.Weight.Add(b.Weight);
+            var bias = a.Bias.Add(b.Bias);
             return new ErrorGradient(weight, bias);
         }
 

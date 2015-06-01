@@ -1,6 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Concurrent;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
 using Widemeadows.MachineLearning.Neural.Cost;
@@ -129,9 +133,10 @@ namespace Widemeadows.MachineLearning.Neural.Training
             // Map: Apply training method to each example
             var trainingResults = trainingSet.Select(example => CalculateCostAndGradientUnregularized(network, example));
 
+#if SINGLE_THREADED_GRADIENT_ACCUMULATION
+
             // initialize cost and accumulated gradients
             var gradientDictionary = new Dictionary<Layer, ErrorGradient>();
-            var cost = 0.0F;
 
             // for each layer after the input, initialize the gradient
             // accumulation matrices to zero
@@ -143,14 +148,15 @@ namespace Widemeadows.MachineLearning.Neural.Training
                 gradientDictionary.Add(layer, gradient);
             }
 
-            // Reduce: merge the training examples
+            // reduce
+            var cost = 0F;
             foreach (var trainingResult in trainingResults)
             {
                 // accumulate cost over all training examples
                 cost += trainingResult.Cost;
 
                 // iterate over all layer's error gradients of this training example
-                // TODO: this is data parallel with respect to layers, so may run in parallel
+                // this is data parallel with respect to layers, so may run in parallel
                 var trainingGradients = trainingResult.ErrorGradients;
                 foreach (var trainingGradient in trainingGradients)
                 {
@@ -161,12 +167,68 @@ namespace Widemeadows.MachineLearning.Neural.Training
                     gradientDictionary[layer] += gradient;
                 }
             }
+#else
 
-            // scale cost and gradients by the number of training examples
+            // a queue that sums the costs and a queue per layer that sums the gradients
+            var costQueue = new BlockingCollection<float>(new ConcurrentBag<float>());
+            var layerGradientQueue = new Dictionary<Layer, BlockingCollection<ErrorGradient>>();
+
+            // the cost task will accumulate the cost per training example
+            var costTask = Task<float>.Factory.StartNew(() => costQueue.GetConsumingEnumerable().Sum());
+
+            // the layer gradient tasks will accumulate the gradient per layer and training example
+            var layerGradientTasks = new Dictionary<Layer, Task<ErrorGradient>>();
+            foreach (var layer in network.Skip(1))
+            {
+                // initialize the gradient collections
+                var collection = new BlockingCollection<ErrorGradient>(new ConcurrentBag<ErrorGradient>());
+                layerGradientQueue.Add(layer, collection);
+
+                // fire up the task
+                var emptyGradient = ErrorGradient.EmptyFromLayer(layer);
+                var task = Task.Factory.StartNew(() => collection.GetConsumingEnumerable().Aggregate(emptyGradient, (current, next) => current + next));
+                layerGradientTasks.Add(layer, task);
+            }
+
+            // Reduce: merge the training examples
+            foreach (var trainingResult in trainingResults.AsParallel())
+            {
+                // to accumulate cost over all training examples, we add the current
+                // cost to the cost accumulation queue
+                costQueue.Add(trainingResult.Cost);
+
+                // iterate over all layer's error gradients of this training example
+                var trainingGradients = trainingResult.ErrorGradients;
+                foreach (var trainingGradient in trainingGradients)
+                {
+                    var layer = trainingGradient.Key;
+                    var gradient = trainingGradient.Value;
+
+                    // to accumulate gradients over all training examples we
+                    // add it to this layer's accumulation queue
+                    layerGradientQueue[layer].Add(gradient);
+                }
+            }
+
+            // allow the reducer tasks to stop
+            costQueue.CompleteAdding();
+            foreach (var pair in layerGradientQueue)
+            {
+                pair.Value.CompleteAdding();
+            }
+
+            // wait for the reducer tasks to finish,
+            // then scale the results by the number of training examples
             var inverseExampleCount = 1.0F / trainingSet.Count;
-            cost *= inverseExampleCount;
-            gradientDictionary = gradientDictionary.AsParallel()
-                .ToDictionary(item => item.Key, item => item.Value * inverseExampleCount);
+
+            costTask.Wait();
+            var cost = costTask.Result * inverseExampleCount;
+            var gradientDictionary = layerGradientTasks.AsParallel().ToDictionary(pair => pair.Key, pair =>
+                                                              {
+                                                                  pair.Value.Wait();
+                                                                  return pair.Value.Result * inverseExampleCount;
+                                                              });
+#endif
 
             return new TrainingResult(cost, gradientDictionary);
         }
