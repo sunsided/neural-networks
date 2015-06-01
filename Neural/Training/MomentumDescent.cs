@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Widemeadows.MachineLearning.Neural.Cost;
 using Widemeadows.MachineLearning.Neural.Perceptron;
@@ -226,6 +227,9 @@ namespace Widemeadows.MachineLearning.Neural.Training
                     throw new InvalidOperationException("Cost evaluated to Single.NaN");
                 }
 
+                // early exit
+                if (cancellationToken.IsCancellationRequested) break;
+
                 // perform a single gradient descent step
                 GradientDescend(trainingResult, previousDeltas, learningRate, momentum);
 
@@ -250,26 +254,40 @@ namespace Widemeadows.MachineLearning.Neural.Training
         private static void GradientDescend(TrainingResult trainingResult, [NotNull] IDictionary<Layer, ErrorGradient> previousDeltas, float learningRate, float momentum)
         {
             var gradientEntries = trainingResult.ErrorGradients;
-            // TODO: Since each gradient describes a single layer, this operation is fully data parallel
-            foreach (var entry in gradientEntries)
-            {
-                var layer = entry.Key;
-                var gradient = entry.Value;
-                var previousDelta = previousDeltas[layer];
 
-                // calculate the descend step size and update
-                // the layer's weights accordingly
-                var weightDelta = learningRate * gradient.Weight + momentum * previousDelta.Weight;
-                var biasDelta = learningRate * gradient.Bias + momentum * previousDelta.Bias;
+            // Since each gradient describes a single layer, this operation is fully data parallel
+            Parallel.ForEach(gradientEntries, entry =>
+                                              {
+                                                  var layer = entry.Key;
+                                                  var gradient = entry.Value;
+                                                  DescendOnSingleLayer(previousDeltas, learningRate, momentum, layer, gradient);
+                                              });
+        }
 
-                // note that simply by definition of the error's sign we subtract the
-                // deltas from the weights instead of adding them.
-                layer.Weights.MapIndexedInplace((row, column, value) => value - weightDelta[row, column]);
-                layer.Bias.MapIndexedInplace((row, value) => value - biasDelta[row]);
+        /// <summary>
+        /// Descends the on single gradient.
+        /// </summary>
+        /// <param name="previousDeltas">The previous deltas.</param>
+        /// <param name="learningRate">The learning rate.</param>
+        /// <param name="momentum">The momentum.</param>
+        /// <param name="layer">The layer.</param>
+        /// <param name="gradient">The gradient.</param>
+        private static void DescendOnSingleLayer([NotNull] IDictionary<Layer, ErrorGradient> previousDeltas, float learningRate, float momentum, [NotNull] Layer layer, ErrorGradient gradient)
+        {
+            var previousDelta = previousDeltas[layer];
 
-                // store the current delta
-                previousDeltas[layer] = new ErrorGradient(weightDelta, biasDelta);
-            }
+            // calculate the descend step size and update
+            // the layer's weights accordingly
+            var weightDelta = learningRate*gradient.Weight + momentum*previousDelta.Weight;
+            var biasDelta = learningRate*gradient.Bias + momentum*previousDelta.Bias;
+
+            // note that simply by definition of the error's sign we subtract the
+            // deltas from the weights instead of adding them.
+            layer.Weights.MapIndexedInplace((row, column, value) => value - weightDelta[row, column]);
+            layer.Bias.MapIndexedInplace((row, value) => value - biasDelta[row]);
+
+            // store the current delta
+            previousDeltas[layer] = new ErrorGradient(weightDelta, biasDelta);
         }
     }
 }
