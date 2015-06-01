@@ -78,16 +78,16 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
         private MomentumDescent GenerateNetworkTraining()
         {
             // select a cost function
-            var cost = new SumSquaredErrorCost();
+            var cost = new LogisticCost();
 
             // select a training strategy
             return new MomentumDescent(cost)
             {
-                LearningRate = 0.3F,
+                LearningRate = 0.5F,
                 Momentum = 0.8F,
-                MaximumIterationCount = 400,
+                MaximumIterationCount = 600,
                 MinimumIterationCount = 10,
-                RegularizationStrength = 0.02F
+                RegularizationStrength = 0.03F
             };
         }
 
