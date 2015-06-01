@@ -211,7 +211,7 @@ namespace Widemeadows.MachineLearning.Neural.Training
 
                 // determine cost delta and early-exit if it is smaller than epsilon
                 var costDelta = lastCost - trainingResult.Cost;
-                if (costDelta <= epsilon && i >= minimumIterations)
+                if (costDelta >= 0 && costDelta <= epsilon && i >= minimumIterations)
                 {
                     Debug.WriteLine("Training stopped at iteration {0} because cost delta {1} <= {2}", i, costDelta, epsilon);
                     return TrainingStop.EpsilonReached;
