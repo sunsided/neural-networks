@@ -27,15 +27,6 @@ namespace Widemeadows.MachineLearning.Neural.Training
         /// Initializes a new instance of the <see cref="MomentumDescent"/> class.
         /// </summary>
         /// <param name="cost">The cost function.</param>
-        public MomentumDescent([NotNull] ICostFunction cost)
-        {
-            _cost = new DefaultCostGradient(cost);
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MomentumDescent"/> class.
-        /// </summary>
-        /// <param name="cost">The cost function.</param>
         public MomentumDescent([NotNull] ICostGradient cost)
         {
             _cost = cost;
@@ -210,6 +201,8 @@ namespace Widemeadows.MachineLearning.Neural.Training
                 // perform the training magic
                 var trainingResult = costFunction.CalculateCostAndGradient(network, trainingSet, lambda);
 
+                #region Tests and outputs
+
                 // determine cost delta and early-exit if it is smaller than epsilon
                 var costDelta = lastCost - trainingResult.Cost;
                 if (costDelta >= 0 && costDelta <= epsilon && i >= minimumIterations)
@@ -230,6 +223,8 @@ namespace Widemeadows.MachineLearning.Neural.Training
                 // early exit
                 if (cancellationToken.IsCancellationRequested) break;
 
+                #endregion
+
                 // perform a single gradient descent step
                 GradientDescend(trainingResult, previousDeltas, learningRate, momentum);
 
@@ -245,15 +240,15 @@ namespace Widemeadows.MachineLearning.Neural.Training
         }
 
         /// <summary>
-        /// Updates the layer weights according to the <paramref name="trainingResult" />
+        /// Updates the layer weights according to the <paramref name="costGradient" />
         /// </summary>
-        /// <param name="trainingResult">The training result.</param>
+        /// <param name="costGradient">The training result.</param>
         /// <param name="previousDeltas">The previous iteration deltas per layer.</param>
         /// <param name="learningRate">The learning rate.</param>
         /// <param name="momentum">The descent momentum.</param>
-        private static void GradientDescend(TrainingResult trainingResult, [NotNull] IDictionary<Layer, ErrorGradient> previousDeltas, float learningRate, float momentum)
+        private static void GradientDescend(CostGradient costGradient, [NotNull] IDictionary<Layer, ErrorGradient> previousDeltas, float learningRate, float momentum)
         {
-            var gradientEntries = trainingResult.ErrorGradients;
+            var gradientEntries = costGradient.ErrorGradients;
 
             // Since each gradient describes a single layer, this operation is fully data parallel
             Parallel.ForEach(gradientEntries, entry =>

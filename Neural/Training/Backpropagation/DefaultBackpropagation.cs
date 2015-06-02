@@ -8,7 +8,7 @@ namespace Widemeadows.MachineLearning.Neural.Training.Backpropagation
     /// <summary>
     /// Class DefaultBackpropagationLearning.
     /// </summary>
-    internal abstract class DefaultBackpropagationLearning
+    public sealed class DefaultBackpropagation : IBackpropagation
     {
         /// <summary>
         /// The default flat spot elimination amount
@@ -41,19 +41,19 @@ namespace Widemeadows.MachineLearning.Neural.Training.Backpropagation
         /// Performs a backpropagation step of the layer's <paramref name="outputErrors" />.
         /// </summary>
         /// <param name="layer">The layer.</param>
-        /// <param name="feeforwardResult">The layer's feedforward result.</param>
+        /// <param name="feedforwardResult">The layer's feedforward result.</param>
         /// <param name="outputErrors">The training errors.</param>
         /// <returns>The activations of this layer's perceptrons.</returns>
         /// <exception cref="System.InvalidOperationException">Attempted to backpropagate through the input layer.</exception>
         [Pure]
-        protected BackpropagationResult Backpropagate([NotNull] Layer layer, FeedforwardResult feeforwardResult, [NotNull] Vector<float> outputErrors)
+        public BackpropagationResult Backpropagate(Layer layer, FeedforwardResult feedforwardResult, Vector<float> outputErrors)
         {
             if (layer.Type != LayerType.Hidden) throw new InvalidOperationException("Backpropagation only allowed on hidden layers.");
 
             // calculate the gradient of the transfer function.
             // This function will fail on the input layer.
-            var weightedInputs = feeforwardResult.WeightedInputs;
-            var activations = feeforwardResult.Output;
+            var weightedInputs = feedforwardResult.WeightedInputs;
+            var activations = feedforwardResult.Output;
             var fse = _flatSpotElimination;
 
             var transferFunction = layer.TransferFunction;

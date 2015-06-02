@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using JetBrains.Annotations;
+using Widemeadows.MachineLearning.Neural.Perceptron;
 
-namespace Widemeadows.MachineLearning.Neural.Perceptron
+namespace Widemeadows.MachineLearning.Neural.Cost
 {
     /// <summary>
-    /// Struct TrainingResult
+    /// Struct CostGradient
     /// </summary>
     [DebuggerDisplay("cost: {Cost,nq}")]
-    public struct TrainingResult
+    public struct CostGradient
     {
         /// <summary>
         /// The training cost for evaluation in gradient descent.
@@ -22,11 +23,11 @@ namespace Widemeadows.MachineLearning.Neural.Perceptron
         public readonly IReadOnlyDictionary<Layer, ErrorGradient> ErrorGradients;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="TrainingResult"/> struct.
+        /// Initializes a new instance of the <see cref="CostGradient" /> struct.
         /// </summary>
+        /// <param name="cost">The network cost.</param>
         /// <param name="errorGradients">The error gradients.</param>
-        /// <param name="cost">The cost.</param>
-        public TrainingResult(float cost, [NotNull] IReadOnlyDictionary<Layer, ErrorGradient> errorGradients)
+        public CostGradient(float cost, [NotNull] IReadOnlyDictionary<Layer, ErrorGradient> errorGradients)
         {
             Cost = cost;
             ErrorGradients = errorGradients;

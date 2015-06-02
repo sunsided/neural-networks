@@ -17,6 +17,7 @@ using Widemeadows.MachineLearning.Neural.Activations;
 using Widemeadows.MachineLearning.Neural.Cost;
 using Widemeadows.MachineLearning.Neural.Perceptron;
 using Widemeadows.MachineLearning.Neural.Training;
+using Widemeadows.MachineLearning.Neural.Training.Backpropagation;
 
 namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
 {
@@ -77,17 +78,17 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
         [NotNull]
         private MomentumDescent GenerateNetworkTraining()
         {
-            // select a cost function
-            var cost = new LogisticCost();
-
-            // select the gradient implementation
-            var cg = new DefaultCostGradient(cost)
+            // select a backpropagation algorithm
+            var bp = new DefaultBackpropagation
                      {
                          FlatSpotElimination = 0.1F
                      };
 
+            // select a cost function
+            var cost = new LogisticCost(bp);
+
             // select a training strategy
-            return new MomentumDescent(cg)
+            return new MomentumDescent(cost)
             {
                 LearningRate = 0.5F,
                 Momentum = 0.8F,

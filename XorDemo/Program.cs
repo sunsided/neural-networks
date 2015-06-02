@@ -7,6 +7,7 @@ using Widemeadows.MachineLearning.Neural.Activations;
 using Widemeadows.MachineLearning.Neural.Cost;
 using Widemeadows.MachineLearning.Neural.Perceptron;
 using Widemeadows.MachineLearning.Neural.Training;
+using Widemeadows.MachineLearning.Neural.Training.Backpropagation;
 
 namespace Widemeadows.MachineLearning.Neural.Demonstration.Xor
 {
@@ -25,10 +26,7 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Xor
 
             // obtain a transfer function
             ITransfer hiddenActivation = new SigmoidTransfer();
-            ITransfer outputActivation = new StepTransfer
-                                         {
-                                             Epsilon = 0
-                                         };
+            ITransfer outputActivation = new SigmoidTransfer();
 
             // input layers with two neurons
             var inputLayer = LayerConfiguration.ForInput(2);
@@ -55,8 +53,11 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Xor
                                new TrainingExample(Vector<float>.Build.DenseOfArray(new[] {1F, 1F}), Vector<float>.Build.DenseOfArray((new [] { 0F }))),
                            };
 
+            // select a backpropagation algorithm
+            var bp = new DefaultBackpropagation();
+
             // select a cost function
-            var cost = new SumSquaredErrorCost();
+            var cost = new LogisticCost(bp);
 
             // select a training strategy
             var training = new MomentumDescent(cost)

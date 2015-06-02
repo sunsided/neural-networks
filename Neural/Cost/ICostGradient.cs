@@ -2,12 +2,12 @@ using System.Collections.Generic;
 using JetBrains.Annotations;
 using Widemeadows.MachineLearning.Neural.Perceptron;
 
-namespace Widemeadows.MachineLearning.Neural.Training
+namespace Widemeadows.MachineLearning.Neural.Cost
 {
     /// <summary>
     /// Interface ICostGradientFunction
     /// </summary>
-    public interface ICostGradient
+    public interface ICostGradient : ICostFunction
     {
         /// <summary>
         /// Calculates the cost and the gradient of the cost function given the training examples.
@@ -17,6 +17,6 @@ namespace Widemeadows.MachineLearning.Neural.Training
         /// <param name="lambda">The regularization parameter.</param>
         /// <returns>System.Single.</returns>
         [Pure]
-        TrainingResult CalculateCostAndGradient([NotNull] Network network, [NotNull] IReadOnlyCollection<TrainingExample> trainingSet, float lambda);
+        CostGradient CalculateCostAndGradient([NotNull] Network network, [NotNull] IReadOnlyCollection<TrainingExample> trainingSet, float lambda);
     }
 }
