@@ -67,7 +67,6 @@ namespace Widemeadows.MachineLearning.Neural.Training
         /// <param name="expectedOutput">The expected output, i.e. ground truth.</param>
         /// <param name="networkOutput">The network output.</param>
         /// <returns>System.Single.</returns>
-        [DebuggerStepThrough]
         protected virtual float CalculateCost(Vector<float> expectedOutput, Vector<float> networkOutput)
         {
             return _costFunction.CalculateCost(expectedOutput, networkOutput);
@@ -79,7 +78,6 @@ namespace Widemeadows.MachineLearning.Neural.Training
         /// <param name="expectedOutput">The expected output, i.e. ground truth.</param>
         /// <param name="networkOutput">The network output.</param>
         /// <returns>System.Single.</returns>
-        [DebuggerStepThrough]
         protected float CalculateCost(Vector<float> expectedOutput, FeedforwardResult networkOutput)
         {
             Debug.Assert(networkOutput.LayerType == LayerType.Output, "networkOutput.LayerType == LayerType.Output");
@@ -218,24 +216,24 @@ namespace Widemeadows.MachineLearning.Neural.Training
             }
 
             // Reduce: merge the training examples
-            foreach (var trainingResult in trainingResults.AsParallel())
-            {
-                // to accumulate cost over all training examples, we add the current
-                // cost to the cost accumulation queue
-                costQueue.Add(trainingResult.Cost);
+            Parallel.ForEach(trainingResults, trainingResult =>
+                                              {
+                                                  // to accumulate cost over all training examples, we add the current
+                                                  // cost to the cost accumulation queue
+                                                  costQueue.Add(trainingResult.Cost);
 
-                // iterate over all layer's error gradients of this training example
-                var trainingGradients = trainingResult.ErrorGradients;
-                foreach (var trainingGradient in trainingGradients)
-                {
-                    var layer = trainingGradient.Key;
-                    var gradient = trainingGradient.Value;
+                                                  // iterate over all layer's error gradients of this training example
+                                                  var trainingGradients = trainingResult.ErrorGradients;
+                                                  foreach (var trainingGradient in trainingGradients)
+                                                  {
+                                                      var layer = trainingGradient.Key;
+                                                      var gradient = trainingGradient.Value;
 
-                    // to accumulate gradients over all training examples we
-                    // add it to this layer's accumulation queue
-                    layerGradientQueue[layer].Add(gradient);
-                }
-            }
+                                                      // to accumulate gradients over all training examples we
+                                                      // add it to this layer's accumulation queue
+                                                      layerGradientQueue[layer].Add(gradient);
+                                                  }
+                                              });
 
             // allow the reducer tasks to stop
             costQueue.CompleteAdding();
@@ -266,6 +264,7 @@ namespace Widemeadows.MachineLearning.Neural.Training
         /// <param name="network">The network.</param>
         /// <param name="example">The training example.</param>
         /// <returns>TrainingResult.</returns>
+        /// <exception cref="System.InvalidOperationException">Cost evaluated to NaN or infinity</exception>
         [Pure]
         protected virtual TrainingResult OnlineCalculateCostAndGradientUnregularized([NotNull] Network network, TrainingExample example)
         {
@@ -293,6 +292,11 @@ namespace Widemeadows.MachineLearning.Neural.Training
 
             // calculate the training cost
             var j = CalculateCost(expectedOutput, resultNode.Value);
+
+            if (float.IsNaN(j) || float.IsInfinity(j))
+            {
+                throw new InvalidOperationException("Cost evaluated to NaN or infinity");
+            }
 
             // as long as we do not hit the input layer, iterate backwards
             // through all hidden layers
