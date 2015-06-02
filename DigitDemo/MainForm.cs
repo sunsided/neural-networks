@@ -80,8 +80,14 @@ namespace Widemeadows.MachineLearning.Neural.Demonstration.Digit
             // select a cost function
             var cost = new LogisticCost();
 
+            // select the gradient implementation
+            var cg = new DefaultCostGradient(cost)
+                     {
+                         FlatSpotElimination = 0.1F
+                     };
+
             // select a training strategy
-            return new MomentumDescent(cost)
+            return new MomentumDescent(cg)
             {
                 LearningRate = 0.5F,
                 Momentum = 0.8F,

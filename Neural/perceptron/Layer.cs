@@ -193,18 +193,20 @@ namespace Widemeadows.MachineLearning.Neural.Perceptron
         /// </summary>
         /// <param name="feeforwardResult">The layer's feedforward result.</param>
         /// <param name="outputErrors">The training errors.</param>
+        /// <param name="flatSpotElimination">The flat spot elimination value.</param>
         /// <returns>The activations of this layer's perceptrons.</returns>
         /// <exception cref="System.InvalidOperationException">Attempted to backpropagate through the input layer.</exception>
-        [Pure, NotNull]
-        public BackpropagationResult Backpropagate(FeedforwardResult feeforwardResult, [NotNull] Vector<float> outputErrors)
+        [Pure]
+        public BackpropagationResult Backpropagate(FeedforwardResult feeforwardResult, [NotNull] Vector<float> outputErrors, float flatSpotElimination = 0.0F)
         {
             if (Type != LayerType.Hidden) throw new InvalidOperationException("Backpropagation only allowed on hidden layers.");
+            Debug.Assert(flatSpotElimination >= 0.0F && !Double.IsInfinity(flatSpotElimination), "flatSpotElimination >= 0.0F && !Double.IsInfinity(flatSpotElimination)");
 
             // calculate the gradient of the transfer function.
             // This function will fail on the input layer.
             var weightedInputs = feeforwardResult.WeightedInputs;
             var activations = feeforwardResult.Output;
-            var gradient = _derivativeFunction(weightedInputs, activations);
+            var gradient = _derivativeFunction(weightedInputs, activations) + flatSpotElimination;
 
             // In case of the output layer, the error is trivially
             // the difference of expected and calculated outputs,
