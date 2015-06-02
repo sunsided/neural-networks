@@ -222,9 +222,9 @@ namespace Widemeadows.MachineLearning.Neural.Training
                 lastCost = trainingResult.Cost;
                 Debug.WriteLine("iteration {0}: cost {1}, cost delta {2}", i, trainingResult.Cost, costDelta);
 
-                if (float.IsNaN(lastCost))
+                if (float.IsNaN(lastCost) || float.IsInfinity(lastCost))
                 {
-                    throw new InvalidOperationException("Cost evaluated to Single.NaN");
+                    throw new InvalidOperationException("Cost evaluated to NaN or infinity");
                 }
 
                 // early exit
