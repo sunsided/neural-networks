@@ -117,8 +117,8 @@ namespace Widemeadows.MachineLearning.Neural.Training
         public TrainingResult CalculateCostAndGradient(Network network, IReadOnlyCollection<TrainingExample> trainingSet, float lambda)
         {
             return lambda > 0
-                ? CalculateCostAndGradientRegularized(network, trainingSet, lambda)
-                : CalculateCostAndGradientUnregularized(network, trainingSet);
+                ? BatchCalculateCostAndGradientRegularized(network, trainingSet, lambda)
+                : BatchCalculateCostAndGradientUnregularized(network, trainingSet);
         }
 
         /// <summary>
@@ -128,10 +128,10 @@ namespace Widemeadows.MachineLearning.Neural.Training
         /// <param name="trainingSet">The training set.</param>
         /// <returns>System.Single.</returns>
         [Pure]
-        protected virtual TrainingResult CalculateCostAndGradientUnregularized(Network network, IReadOnlyCollection<TrainingExample> trainingSet)
+        protected virtual TrainingResult BatchCalculateCostAndGradientUnregularized([NotNull] Network network, [NotNull] IReadOnlyCollection<TrainingExample> trainingSet)
         {
             // Map: Apply training method to each example
-            var trainingResults = trainingSet.Select(example => CalculateCostAndGradientUnregularized(network, example));
+            var trainingResults = trainingSet.Select(example => OnlineCalculateCostAndGradientUnregularized(network, example));
 
 #if SINGLE_THREADED_GRADIENT_ACCUMULATION
 
@@ -240,7 +240,7 @@ namespace Widemeadows.MachineLearning.Neural.Training
         /// <param name="example">The training example.</param>
         /// <returns>TrainingResult.</returns>
         [Pure]
-        protected virtual TrainingResult CalculateCostAndGradientUnregularized(Network network, TrainingExample example)
+        protected virtual TrainingResult OnlineCalculateCostAndGradientUnregularized([NotNull] Network network, TrainingExample example)
         {
             // prepare the output structures
             var gradients = new Dictionary<Layer, ErrorGradient>();
@@ -308,9 +308,9 @@ namespace Widemeadows.MachineLearning.Neural.Training
         /// <param name="lambda">The regularization parameter.</param>
         /// <returns>System.Single.</returns>
         [Pure]
-        private TrainingResult CalculateCostAndGradientRegularized([NotNull] Network network, [NotNull] IReadOnlyCollection<TrainingExample> trainingSet, float lambda)
+        private TrainingResult BatchCalculateCostAndGradientRegularized([NotNull] Network network, [NotNull] IReadOnlyCollection<TrainingExample> trainingSet, float lambda)
         {
-            var unregularizedResult = CalculateCostAndGradientUnregularized(network, trainingSet);
+            var unregularizedResult = BatchCalculateCostAndGradientUnregularized(network, trainingSet);
             var count = trainingSet.Count;
 
             // regularize the training cost
