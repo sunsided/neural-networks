@@ -1,7 +1,7 @@
 ﻿using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
 
-namespace Widemeadows.MachineLearning.Neural.Perceptron
+namespace Widemeadows.MachineLearning.Neural.Training.Backpropagation
 {
     /// <summary>
     /// Struct BackpropagationResult

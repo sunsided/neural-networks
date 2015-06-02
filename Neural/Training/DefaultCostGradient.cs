@@ -9,6 +9,7 @@ using JetBrains.Annotations;
 using MathNet.Numerics.LinearAlgebra;
 using Widemeadows.MachineLearning.Neural.Cost;
 using Widemeadows.MachineLearning.Neural.Perceptron;
+using Widemeadows.MachineLearning.Neural.Training.Backpropagation;
 
 namespace Widemeadows.MachineLearning.Neural.Training
 {
@@ -22,33 +23,6 @@ namespace Widemeadows.MachineLearning.Neural.Training
         /// </summary>
         [NotNull]
         private readonly ICostFunction _costFunction;
-
-        /// <summary>
-        /// The default flat spot elimination amount
-        /// </summary>
-        private const float DefaultFSE = 0.1F;
-
-        /// <summary>
-        /// The flat spot elimination amount
-        /// </summary>
-        private float _flatSpotElimination = DefaultFSE;
-
-        /// <summary>
-        /// Gets or sets the flat spot elimination amount.
-        /// </summary>
-        /// <value>The regularization strength.</value>
-        /// <exception cref="System.ArgumentOutOfRangeException">Flat spot elimination parameter must be nonnegative</exception>
-        /// <exception cref="System.NotFiniteNumberException">Flat spot elimination parameter must be a finite number</exception>
-        public float FlatSpotElimination
-        {
-            get { return _flatSpotElimination; }
-            set
-            {
-                if (value < 0) throw new ArgumentOutOfRangeException("value", value, "Regularization parameter must be nonnegative");
-                if (double.IsInfinity(value) || double.IsNaN(value)) throw new NotFiniteNumberException("Regularization parameter must be a finite number", value);
-                _flatSpotElimination = value;
-            }
-        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="DefaultCostGradient"/> class.

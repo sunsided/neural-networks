@@ -28,7 +28,7 @@ namespace Widemeadows.MachineLearning.Neural.Perceptron
         /// The transfer function
         /// </summary>
         /// <seealso cref="_derivativeFunction"/>
-        [NotNull] private readonly Func<Vector<float>, Vector<float>> _transferFunction;
+        [NotNull] private readonly ITransfer _transferFunction;
 
         /// <summary>
         /// The gradient function
@@ -129,6 +129,16 @@ namespace Widemeadows.MachineLearning.Neural.Perceptron
         }
 
         /// <summary>
+        /// Gets the transfer function of the neuron determined by the given <paramref name="index"/>.
+        /// </summary>
+        /// <returns>ITransfer.</returns>
+        public ITransfer TransferFunction
+        {
+            [Pure, NotNull]
+            get { return _transferFunction; } // TODO: each neuron may have a different activation function
+        }
+
+        /// <summary>
         /// Creates an empty weight matrix from the given <paramref name="layer"/>
         /// </summary>
         /// <param name="layer">The layer.</param>
@@ -167,8 +177,7 @@ namespace Widemeadows.MachineLearning.Neural.Perceptron
             _nextLayer = nextLayer;
             _biasVector = biasVector;
             _weightMatrix = weightMatrix;
-            _transferFunction = transferFunction.Transfer;
-            _derivativeFunction = transferFunction.Derivative;
+            _transferFunction = transferFunction;
         }
 
         /// <summary>
@@ -183,48 +192,9 @@ namespace Widemeadows.MachineLearning.Neural.Perceptron
             var activation = _weightMatrix*input + _biasVector;
 
             // apply the activation function to each weighted activation
-            var output = _transferFunction(activation);
+            var output = _transferFunction.Transfer(activation); // TODO: each neuron may have a different activation function
 
             return new FeedforwardResult(this, activation, output);
-        }
-
-        /// <summary>
-        /// Performs a backpropagation step of the layer's <paramref name="outputErrors" />.
-        /// </summary>
-        /// <param name="feeforwardResult">The layer's feedforward result.</param>
-        /// <param name="outputErrors">The training errors.</param>
-        /// <param name="flatSpotElimination">The flat spot elimination value.</param>
-        /// <returns>The activations of this layer's perceptrons.</returns>
-        /// <exception cref="System.InvalidOperationException">Attempted to backpropagate through the input layer.</exception>
-        [Pure]
-        public BackpropagationResult Backpropagate(FeedforwardResult feeforwardResult, [NotNull] Vector<float> outputErrors, float flatSpotElimination = 0.0F)
-        {
-            if (Type != LayerType.Hidden) throw new InvalidOperationException("Backpropagation only allowed on hidden layers.");
-            Debug.Assert(flatSpotElimination >= 0.0F && !Double.IsInfinity(flatSpotElimination), "flatSpotElimination >= 0.0F && !Double.IsInfinity(flatSpotElimination)");
-
-            // calculate the gradient of the transfer function.
-            // This function will fail on the input layer.
-            var weightedInputs = feeforwardResult.WeightedInputs;
-            var activations = feeforwardResult.Output;
-            var gradient = _derivativeFunction(weightedInputs, activations) + flatSpotElimination;
-
-            // In case of the output layer, the error is trivially
-            // the difference of expected and calculated outputs,
-            // so nothing needs to be done.
-            // On hidden layers, the error is the weighted sum
-            // of the errors to each originating neuron.
-
-            // sum errors weighted by connection weights
-            var transposedMatrix = Next._weightMatrix.Transpose();
-            var weightError = (transposedMatrix * outputErrors).PointwiseMultiply(gradient);
-
-            // calculate the bias error for the current layer
-            // in analogy to the weight error calculaction above; however, since
-            // the bias unit is not affected by the nonlinear transfer function,
-            // it has linear effect, hence the multiplication with b' = 1.
-            var biasError = (Next._biasVector * outputErrors) * 1.0F;
-
-            return new BackpropagationResult(weightError, biasError);
         }
 
         /// <summary>
